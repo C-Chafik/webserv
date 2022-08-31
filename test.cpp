@@ -7,55 +7,63 @@
 #include <signal.h>
 
 
-int connection;
-int socketFd;
 
+
+int serverFd;
 void endWell(int num){
-	close(connection);
-	close(socketFd);
+	close(serverFd);
+	exit(EXIT_SUCCESS);
 }
 
 int main(){
 
-	socketFd = socket(AF_INET, SOCK_STREAM, 0);
+	int clientFd;
 
-	if (socketFd == -1){
+	serverFd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (serverFd == -1){
 		std::cerr << "Error when creating socket!" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	signal(SIGINT, endWell);
 
-	sockaddr_in socketInfo;
-	socketInfo.sin_family = AF_INET;
-	socketInfo.sin_addr.s_addr = INADDR_ANY;
-	socketInfo.sin_port = htons(9999);
+	sockaddr_in serverInfo;
+	serverInfo.sin_family = AF_INET;
+	serverInfo.sin_addr.s_addr = INADDR_ANY;
+	serverInfo.sin_port = htons(9998);
 
-	if (bind(socketFd, reinterpret_cast<struct sockaddr *>(&socketInfo), sizeof(socketInfo)) < 0){
+	if (bind(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), sizeof(serverInfo)) < 0){
 		std::cerr << "Error when binding socket to address!" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	if (listen(socketFd, 10) == -1){
+	if (listen(serverFd, 10) == -1){
 		std::cerr << "Error when listening for new connections!" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	socklen_t socketInfoSize= static_cast<socklen_t>(sizeof(socketInfo));
+	socklen_t serverInfoSize = static_cast<socklen_t>(sizeof(serverInfo));
 
-	connection = accept(socketFd, reinterpret_cast<struct sockaddr *>(&socketInfo), &socketInfoSize);
+	while (1){
 
-	if (connection == -1){
-		std::cerr << "Error when accepting new connetion!" << std::endl;
+		clientFd = accept(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), &serverInfoSize );
+
+		if (clientFd == -1){
+			std::cerr << "Error when accepting new connetion!" << std::endl;
+		}
+
+		char buff[1000];
+		recv(clientFd, buff, 1000, 0);
+		std::cout << buff << std::endl;
+
+		std::string response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!\n";
+		send(clientFd, response.c_str(), response.size(), SOCK_DGRAM);
+
+		close(clientFd);
+
 	}
-
-	char buff[1000];
-	recv(connection, buff, 1000, 0);
-	std::cout << buff << std::endl;
-
-	std::string response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!\n";
-	send(connection, response.c_str(), response.size(), SOCK_DGRAM);
-
+	close(serverFd);
 	
 	return 0;
 }
