@@ -57,7 +57,7 @@ int main(){
 		recv(clientFd, buff, 1000, 0);
 		std::cout << buff << std::endl;
 
-		std::string response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!\n";
+		std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 88\n\n<html>\n<head><title>test</title></head>\n<body>\n<h1>Title test</h1>\n</body>\n<html>\n";
 		send(clientFd, response.c_str(), response.size(), SOCK_DGRAM);
 
 		close(clientFd);
