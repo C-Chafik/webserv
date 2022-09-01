@@ -4,10 +4,10 @@
 #include <netinet/in.h>//sockaddress_in
 #include <iostream>//std::cerr
 #include <unistd.h>//close
-#include <signal.h>
+#include <signal.h>//signal
+#include <fstream>//fstream
 
-
-
+#include "HeaderGen.hpp"
 
 int serverFd;
 void endWell(int num){
@@ -15,10 +15,7 @@ void endWell(int num){
 	exit(EXIT_SUCCESS);
 }
 
-int main(){
-
-	int clientFd;
-
+sockaddr_in startListening(){
 	serverFd = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (serverFd == -1){
@@ -43,9 +40,47 @@ int main(){
 		exit(EXIT_FAILURE);
 	}
 
+	return serverInfo;
+}
+
+std::string fileToString(std::string fileName){
+		std::ifstream file;
+		std::string	buffer;
+		std::string	fileSTR;
+
+		file.open(fileName);
+		if (!file.is_open())
+		{
+			std::cout << "Fail when creating file" << std::endl;
+			close(serverFd);
+			exit (EXIT_FAILURE);
+		}
+		while (getline(file, buffer, '\n'))
+		{
+			fileSTR += buffer;
+			fileSTR += "\n";
+		}
+
+		return fileSTR;
+}
+
+void printRequest(int requestFd){
+	char buff[1000];
+	recv(requestFd, buff, 1000, 0);
+	std::cout << buff << std::endl;
+}
+
+int main(){
+
+	int clientFd;
+
+	sockaddr_in serverInfo = startListening();
+
 	socklen_t serverInfoSize = static_cast<socklen_t>(sizeof(serverInfo));
 
+
 	while (1){
+		HeaderGen HGen;
 
 		clientFd = accept(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), &serverInfoSize );
 
@@ -53,15 +88,19 @@ int main(){
 			std::cerr << "Error when accepting new connetion!" << std::endl;
 		}
 
-		char buff[1000];
-		recv(clientFd, buff, 1000, 0);
-		std::cout << buff << std::endl;
+		printRequest(clientFd);
 
-		std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 88\n\n<html>\n<head><title>test</title></head>\n<body>\n<h1>Title test</h1>\n</body>\n<html>\n";
+		std::string fileSTR = fileToString("test.html");
+
+		HGen.setStatus("200 OK");
+		HGen.setType("text/html");
+		HGen.setContentString(fileSTR);
+		HGen.processResponse();
+
+		std::string response = HGen.getStr();
 		send(clientFd, response.c_str(), response.size(), SOCK_DGRAM);
 
 		close(clientFd);
-
 	}
 	close(serverFd);
 	
