@@ -8,12 +8,28 @@
 #include <fstream>//fstream
 
 #include "HeaderGen.hpp"
+#include "request_handler.cpp"
+#include "request_handler.hpp"
 
 int serverFd;
 void endWell(int num){
 	close(serverFd);
 	exit(EXIT_SUCCESS);
 }
+
+int treat_request( int requestFd )
+{
+	char header[1000];
+	recv(requestFd, header, 1000, 0);
+
+	request_handler request(header);
+	
+	request.parse_header();
+
+	return request.state;
+}
+
+
 
 sockaddr_in startListening(){
 	serverFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -28,7 +44,7 @@ sockaddr_in startListening(){
 	sockaddr_in serverInfo;
 	serverInfo.sin_family = AF_INET;
 	serverInfo.sin_addr.s_addr = INADDR_ANY;
-	serverInfo.sin_port = htons(9998);
+	serverInfo.sin_port = htons(9999);
 
 	if (bind(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), sizeof(serverInfo)) < 0){
 		std::cerr << "Error when binding socket to address!" << std::endl;
@@ -88,7 +104,13 @@ int main(){
 			std::cerr << "Error when accepting new connetion!" << std::endl;
 		}
 
-		printRequest(clientFd);
+		if (treat_request(clientFd) == 0)
+		{
+			std::cout << "NOT ENOUGH INFORMATIONS IN THE REQUEST " << std::endl;
+			return 0;
+		}
+		
+		// printRequest(clientFd);//for logs
 
 		std::string fileSTR = fileToString("test.html");
 
