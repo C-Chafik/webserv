@@ -5,14 +5,23 @@
 #include <iostream>//std::cerr
 #include <unistd.h>//close
 #include <signal.h>
-
-
+#include "request_handler.cpp"
+#include "request_handler.hpp"
 
 
 int serverFd;
 void endWell(int num){
 	close(serverFd);
 	exit(EXIT_SUCCESS);
+}
+
+int treat_request( char * header )
+{
+	request_handler request(header);
+	
+	request.parse_header();
+
+	return request.state;
 }
 
 int main(){
@@ -55,6 +64,12 @@ int main(){
 
 		char buff[1000];
 		recv(clientFd, buff, 1000, 0);
+
+		if (treat_request(buff) == 0)
+		{
+			std::cout << "NOT ENOUGH INFORMATIONS IN THE REQUEST " << std::endl;
+			return 0;
+		}
 		std::cout << buff << std::endl;
 
 		std::string response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!\n";
