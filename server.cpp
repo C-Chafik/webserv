@@ -45,18 +45,6 @@ std::string fileToString(std::string fileName, struct serverInfo serverInfo){
 	return fileSTR;
 }
 
-int treat_request( int requestFd )
-{
-    char header[1000];
-    recv(requestFd, header, 1000, 0);
-
-    request_handler request(header);
-    
-    request.parse_header();
-
-    return request.state;
-}
-
 struct serverInfo listenSocketServer(){
 	struct serverInfo serverInfo;
 
@@ -130,10 +118,6 @@ int treat_request( int requestFd )
 }
 
 void handle_connection(int clientSocket, struct serverInfo serverInfo){
-<<<<<<< HEAD
-=======
-	treat_request(clientSocket);
->>>>>>> ce48bb64f3a191f59ed05d9ab366f1689ca1292b
 
 	if ((treat_request(clientSocket) == 0))
 	{
