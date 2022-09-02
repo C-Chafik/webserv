@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string>
+#include <string.h>
 #include <fstream>
 
 #include "HeaderGen.hpp"
@@ -90,11 +91,39 @@ int accept_connection(struct serverInfo serverInfo){
 	return clientFd;
 }
 
-void handle_connection(int clientSocket, struct serverInfo serverInfo){
-	char buff[1000];
-	recv(clientSocket, buff, 1000, 0);
-	std::cout << buff << std::endl;
+int treat_request( int requestFd )
+{
+    char header[4096 + 1];
+	size_t end;
 
+	memset(header, 0, 4096);
+	while ( (end = recv(requestFd, header, 4096 - 1, 0)) > 0 )
+	{
+		if ( header[end - 1] == '\n' )
+			break ;
+		memset(header, 0, 4096);
+	}
+	if ( end == -1 )
+	{
+		std::cout << "ERROR RECEIVING THE HEADER " << std::endl;
+		exit(0);
+	}
+	std::cout << YELLOW << header << WHITE << std::endl;
+
+    request_handler request(header);
+    
+    request.parse_header();
+
+    return request.state;
+}
+
+void handle_connection(int clientSocket, struct serverInfo serverInfo){
+
+	if ((treat_request(clientSocket) == 0))
+	{
+		std::cout << "ERROR IN TREATING REQUEST" << std::endl;
+		return ;
+	}
 	//traitement de la request
 
 	HeaderGen HGen;
