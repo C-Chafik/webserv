@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/01 14:48:30 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/02 15:55:59 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 # define WHITE   "\033[1m\033[37m"
 
 # include <vector>
-#include <iostream>
+# include <list>
+# include <iostream>
 # include <string>
 
 class request_handler
@@ -34,6 +35,7 @@ class request_handler
         ~request_handler( void );
         bool                     state;
 
+        std::list<std::string> ft_split(std::string header, std::string charset );
         void parse_header( void );
 
     private:
