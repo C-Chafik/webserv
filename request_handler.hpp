@@ -24,6 +24,7 @@
 
 # include <vector>
 # include <list>
+# include <iostream>
 # include <string>
 
 class request_handler
