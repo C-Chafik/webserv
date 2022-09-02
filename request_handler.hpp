@@ -23,6 +23,7 @@
 # define WHITE   "\033[1m\033[37m"
 
 # include <vector>
+#include <iostream>
 # include <string>
 
 class request_handler

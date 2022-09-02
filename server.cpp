@@ -1,130 +1,148 @@
-#include <sys/socket.h>//socket
-#include <stdio.h>//fprintf
-#include <stdlib.h>//exit
-#include <netinet/in.h>//sockaddress_in
-#include <iostream>//std::cerr
-#include <unistd.h>//close
-#include <signal.h>//signal
-#include <fstream>//fstream
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <iostream>
+#include <unistd.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <string>
+#include <fstream>
 
 #include "HeaderGen.hpp"
-#include "request_handler.cpp"
 #include "request_handler.hpp"
 
-int serverFd;
-void endWell(int num){
-	close(serverFd);
-	exit(EXIT_SUCCESS);
-}
-
-int treat_request( int requestFd )
-{
-	char header[1000];
-	recv(requestFd, header, 1000, 0);
-
-	request_handler request(header);
-	
-	request.parse_header();
-
-	return request.state;
-}
+#define PORT 9999
+#define BACKLOG 10
 
 
+struct serverInfo{
+	int			serverSocket;
+	sockaddr_in	serverSocketStruct;
+};
 
-sockaddr_in startListening(){
-	serverFd = socket(AF_INET, SOCK_STREAM, 0);
+std::string fileToString(std::string fileName, struct serverInfo serverInfo){
+	std::ifstream file;
+	std::string	buffer;
+	std::string	fileSTR;
 
-	if (serverFd == -1){
-		std::cerr << "Error when creating socket!" << std::endl;
-		exit(EXIT_FAILURE);
+	file.open(fileName);
+	if (!file.is_open())
+	{
+		std::cout << "Fail when creating file" << std::endl;
+		close(serverInfo.serverSocket);
+		exit (EXIT_FAILURE);
+	}
+	while (getline(file, buffer, '\n'))
+	{
+		fileSTR += buffer;
+		fileSTR += "\n";
 	}
 
-	signal(SIGINT, endWell);
+	return fileSTR;
+}
 
-	sockaddr_in serverInfo;
-	serverInfo.sin_family = AF_INET;
-	serverInfo.sin_addr.s_addr = INADDR_ANY;
-	serverInfo.sin_port = htons(9999);
+struct serverInfo listenSocketServer(){
+	struct serverInfo serverInfo;
 
-	if (bind(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), sizeof(serverInfo)) < 0){
-		std::cerr << "Error when binding socket to address!" << std::endl;
-		exit(EXIT_FAILURE);
+	serverInfo.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (serverInfo.serverSocket == -1){
+		std::cerr << "Error when creating server's socket!" << std::endl;
+		exit (EXIT_FAILURE);
 	}
 
-	if (listen(serverFd, 10) == -1){
-		std::cerr << "Error when listening for new connections!" << std::endl;
-		exit(EXIT_FAILURE);
+	serverInfo.serverSocketStruct.sin_family = AF_INET;
+	serverInfo.serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
+	serverInfo.serverSocketStruct.sin_port = htons(PORT);
+
+	if (bind(serverInfo.serverSocket,
+		reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct),
+		sizeof(serverInfo.serverSocketStruct)) == -1){
+			std::cerr << "Error when binding socket and address!" << std::endl;
+			close (serverInfo.serverSocket);
+			exit (EXIT_FAILURE);
+	}
+
+	if (listen(serverInfo.serverSocket, BACKLOG) == -1){
+			std::cerr << "Error when server started listening!" << std::endl;
+			close (serverInfo.serverSocket);
+			exit (EXIT_FAILURE);
 	}
 
 	return serverInfo;
 }
 
-std::string fileToString(std::string fileName){
-		std::ifstream file;
-		std::string	buffer;
-		std::string	fileSTR;
+int accept_connection(struct serverInfo serverInfo){
+	int clientFd;
+	socklen_t serverInfoSize = static_cast<socklen_t>(sizeof(serverInfo.serverSocketStruct));
 
-		file.open(fileName);
-		if (!file.is_open())
-		{
-			std::cout << "Fail when creating file" << std::endl;
-			close(serverFd);
-			exit (EXIT_FAILURE);
-		}
-		while (getline(file, buffer, '\n'))
-		{
-			fileSTR += buffer;
-			fileSTR += "\n";
-		}
+	clientFd = accept(serverInfo.serverSocket, reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct)
+		, &serverInfoSize);
+	if (clientFd == -1){
+		std::cerr << "Error when accept new connection!" << std::endl;
+		close (serverInfo.serverSocket);
+		exit (EXIT_FAILURE);
+	}
 
-		return fileSTR;
+	return clientFd;
 }
 
-void printRequest(int requestFd){
+void handle_connection(int clientSocket, struct serverInfo serverInfo){
 	char buff[1000];
-	recv(requestFd, buff, 1000, 0);
+	recv(clientSocket, buff, 1000, 0);
 	std::cout << buff << std::endl;
+
+	//traitement de la request
+
+	HeaderGen HGen;
+
+	std::string fileSTR = fileToString("test.html", serverInfo);
+
+	HGen.setStatus("200 OK");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+
+	std::string response = HGen.getStr();
+	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 }
 
 int main(){
+	struct serverInfo serverInfo;
 
-	int clientFd;
+	serverInfo = listenSocketServer();
 
-	sockaddr_in serverInfo = startListening();
+	fd_set current_connections;
+	fd_set ready_connections;
 
-	socklen_t serverInfoSize = static_cast<socklen_t>(sizeof(serverInfo));
+	FD_ZERO(&current_connections);
+	FD_SET(serverInfo.serverSocket, &current_connections);
 
+	while (true){
+		ready_connections = current_connections;
 
-	while (1){
-		HeaderGen HGen;
-
-		clientFd = accept(serverFd, reinterpret_cast<struct sockaddr *>(&serverInfo), &serverInfoSize );
-
-		if (clientFd == -1){
-			std::cerr << "Error when accepting new connetion!" << std::endl;
+		if (select(FD_SETSIZE, &ready_connections, NULL, NULL, NULL) == -1){
+			std::cerr << "Error when select ready sockets!" << std::endl;
+			close (serverInfo.serverSocket);
+			exit (EXIT_FAILURE);
 		}
 
-		if (treat_request(clientFd) == 0)
-		{
-			std::cout << "NOT ENOUGH INFORMATIONS IN THE REQUEST " << std::endl;
-			return 0;
+		for (int i = 0; i < FD_SETSIZE; i++){
+			if (FD_ISSET(i, &ready_connections)){
+				if (i == serverInfo.serverSocket){
+					int clientSocket = accept_connection(serverInfo);
+					FD_SET(clientSocket,  &current_connections);
+				}
+				else{
+					handle_connection(i, serverInfo);
+					FD_CLR(i, &current_connections);
+				}
+			}
 		}
-		
-		// printRequest(clientFd);//for logs
-
-		std::string fileSTR = fileToString("test.html");
-
-		HGen.setStatus("200 OK");
-		HGen.setType("text/html");
-		HGen.setContentString(fileSTR);
-		HGen.processResponse();
-
-		std::string response = HGen.getStr();
-		send(clientFd, response.c_str(), response.size(), SOCK_DGRAM);
-
-		close(clientFd);
 	}
-	close(serverFd);
-	
-	return 0;
+
+	return (EXIT_SUCCESS);
 }
