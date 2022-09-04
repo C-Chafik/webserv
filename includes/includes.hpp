@@ -16,14 +16,30 @@
 #include <string>
 #include <fstream>
 #include <cstring>
+#include <utility>
 
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
+
+enum    METHOD{
+    GET,
+    POST,
+    DELETE
+};
 
 struct serverInfo{
     int			serverSocket;
     sockaddr_in	serverSocketStruct;
 };
+
+struct config{
+    std::string server_name;
+    std::string location_get_dir;
+    int         listen_address;
+    int         listen_port;
+    int         body_max_size;
+    std::vector< std::pair<std::vector<int>, std::string> > errors;
+}
 
 int accept_connection(struct serverInfo serverInfo);
 int treat_request( int requestFd );

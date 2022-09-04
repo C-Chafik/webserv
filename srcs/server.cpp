@@ -57,6 +57,7 @@ struct serverInfo listenSocketServer(){
 
 int main(){
 	struct serverInfo serverInfo;
+	std::vector< struct config > servers;
 
 	serverInfo = listenSocketServer();
 
