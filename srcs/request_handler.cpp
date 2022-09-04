@@ -76,3 +76,29 @@ void request_handler::parse_header( void )
 	// }
 	return ;
 }
+
+int treat_request( int requestFd )
+{
+    char header[4096 + 1];
+	size_t end;
+
+	memset(header, 0, 4096);
+	while ( (end = recv(requestFd, header, 4096 - 1, 0)) > 0 )
+	{
+		if ( header[end - 1] == '\n' )
+			break ;
+		memset(header, 0, 4096);
+	}
+	if ( end == -1 )
+	{
+		std::cout << "ERROR RECEIVING THE HEADER " << std::endl;
+		exit(0);
+	}
+	std::cout << YELLOW << header << WHITE << std::endl;
+
+    request_handler request(header);
+    
+    request.parse_header();
+
+    return request.state;
+}

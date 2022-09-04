@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <string>
 #include <fstream>
+#include <cstring>
 
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
@@ -23,9 +24,10 @@ struct serverInfo{
     int			serverSocket;
     sockaddr_in	serverSocketStruct;
 };
+
 int accept_connection(struct serverInfo serverInfo);
-void handle_connection(int clientSocket, struct serverInfo serverInfo);
 int treat_request( int requestFd );
+void handle_connection(int clientSocket, struct serverInfo serverInfo);
 std::string fileToString(std::string fileName, struct serverInfo serverInfo);
 
 
