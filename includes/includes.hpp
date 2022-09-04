@@ -17,6 +17,7 @@
 #include <fstream>
 #include <cstring>
 #include <utility>
+#include <thread>
 
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
@@ -39,8 +40,9 @@ struct config{
     int         listen_port;
     int         body_max_size;
     std::vector< std::pair<std::vector<int>, std::string> > errors;
-}
+};
 
+void server(int port);
 int accept_connection(struct serverInfo serverInfo);
 int treat_request( int requestFd );
 void handle_connection(int clientSocket, struct serverInfo serverInfo);

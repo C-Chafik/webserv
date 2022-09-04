@@ -1,15 +1,16 @@
 NAME=WebServer
 CC=c++
 FLAGS=-Wall -Werror -Wextra
-SRC=server.cpp request_handler.cpp accept_connection.cpp handle_request.cpp
+SRC=main.cpp server.cpp request_handler.cpp accept_connection.cpp handle_request.cpp
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes
+LIB=-pthread
 OBJS=${SRC:.cpp=.o}
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(LIB)  $(OBJS) -o $(NAME)
 
 $(OBJS): $(SRCS)
 	$(CC) -I$(INC_DIR) $(SRCS) -c

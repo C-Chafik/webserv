@@ -24,7 +24,7 @@ std::string fileToString(std::string fileName, struct serverInfo serverInfo){
 	return fileSTR;
 }
 
-struct serverInfo listenSocketServer(){
+struct serverInfo listenSocketServer(int port){
 	struct serverInfo serverInfo;
 
 	serverInfo.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -36,7 +36,7 @@ struct serverInfo listenSocketServer(){
 
 	serverInfo.serverSocketStruct.sin_family = AF_INET;
 	serverInfo.serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
-	serverInfo.serverSocketStruct.sin_port = htons(PORT);
+	serverInfo.serverSocketStruct.sin_port = htons(port);
 
 	if (bind(serverInfo.serverSocket,
 		reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct),
@@ -55,11 +55,11 @@ struct serverInfo listenSocketServer(){
 	return serverInfo;
 }
 
-int main(){
+void server(int port){
 	struct serverInfo serverInfo;
 	std::vector< struct config > servers;
 
-	serverInfo = listenSocketServer();
+	serverInfo = listenSocketServer(port);
 
 	fd_set current_connections;
 	fd_set ready_connections;
@@ -89,6 +89,4 @@ int main(){
 			}
 		}
 	}
-
-	return (EXIT_SUCCESS);
 }
