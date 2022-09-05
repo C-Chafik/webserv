@@ -1,11 +1,9 @@
 #include "includes.hpp"
 
-void handle_connection(int clientSocket, struct serverInfo serverInfo){
+void Server::handle_connection(int clientSocket, struct serverInfo serverInfo){
 	treat_request(clientSocket);
 
 	//traitement de la request
-
-	HeaderGen HGen;
 
 	std::string fileSTR = fileToString("html_files/test.html", serverInfo);
 
