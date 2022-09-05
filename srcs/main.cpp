@@ -1,4 +1,4 @@
-#include "includes.hpp"
+#include "../includes/includes.hpp"
 
 std::vector< std::thread > *global = NULL;
 
@@ -12,6 +12,10 @@ void endWell(int num){
 }
 
 int main(){
+	parseConfig parse("conf/default.conf");
+	if ( parse.state() == false )
+		return parse.exit_on_error();
+	return 0;
 	std::vector< std::thread > threads;
 	global = &threads;
 
