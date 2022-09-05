@@ -30,7 +30,26 @@ int main(){
 }
 
 /*
-server config = struct_server
-location config = vector de pair (std::string location, struct config_loc)
-a faire, fonction qui va check la location du fichier et sa config et envoie conportement a adopter
+	* server config = struct_server
+	* location config = vector de pair (std::string location, struct config_loc)
+	* a faire, fonction qui va check la location du fichier et sa config et envoie comportement a adopter
+*/
+
+/*
+instruction config file:
+- global :
+	* listen
+	* server_name
+	* error_page
+	* client_max_body_size
+
+- global et par location:
+	* limit_except
+	* return 301 (30x / redirection)
+	* root
+	* autoindex on/off
+	* ...
+	* location ~ \.php$
+	* default_type application/octet-stream;
+
 */
