@@ -11,6 +11,11 @@ void endWell(int num){
 		}
 }
 
+void run_thread(int port){
+	Server serv;
+	serv.run(port);
+}
+
 int main(){
 	Server serv;
 	std::vector< std::thread > threads;
@@ -21,7 +26,7 @@ int main(){
 	for (unsigned nb_thread = 0; nb_thread < 5; nb_thread++){
 		//parse config file (file = open(env[nb_thread + 1]))
 		//give parse struct as parameter to server
-		threads.push_back(std::thread(&Server::run, serv, 9995 + nb_thread/*tmp*/));//handle connection
+		threads.push_back(std::thread(run_thread, 9995 + nb_thread/*tmp*/));//handle connection
 	}
 
 	for (std::vector< std::thread >::iterator it = threads.begin(); it != threads.end(); it++)
