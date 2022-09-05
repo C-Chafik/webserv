@@ -18,6 +18,7 @@
 #include <cstring>
 #include <utility>
 #include <thread>
+#include <signal.h>
 
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
