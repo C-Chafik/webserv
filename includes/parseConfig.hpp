@@ -17,6 +17,7 @@ class parseConfig
 
         std::list<std::string> ft_split(std::string header, std::string charset );
         void    remove_tab( std::string & str );
+        std::list<std::string>::iterator remove_empty_line(  std::list<std::string>::iterator it );
 
 
 

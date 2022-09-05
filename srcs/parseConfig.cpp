@@ -64,14 +64,25 @@ int parseConfig::exit_on_error ( void )
 	return 1;
 }
 
-// void	parseConfig::remove_tab( std::string & str )
-// {
-// 	for ( size_t i = 0 ; i < str.size() ; i++ )
-// 	{
-// 		if ( str.find('\t') )
-// 			str.erase(str.find('\t'));
-// 	}
-// }
+void	parseConfig::remove_tab( std::string & str )
+{
+	std::string::size_type i = 0;
+	while (i < str.size())
+	{
+		if ( str.find('\t', i) != std::string::npos )
+			str.erase(i, 1);
+		i++;
+	}
+}
+
+std::list<std::string>::iterator parseConfig::remove_empty_line(  std::list<std::string>::iterator it )
+{
+	if (it->empty())
+		_file.erase(it);
+	std::list<std::string>::iterator new_it = _file.begin();
+	return new_it;
+}
+
 
 bool parseConfig::fill_file( void )
 {
@@ -90,17 +101,21 @@ bool parseConfig::fill_file( void )
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
-
 	_file = ft_split(fileSTR, "\n");
-
-	// for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
-	// {
-	// 	remove_tab(*it);
-	// }
-
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
 	{
-		std::cout << *it;
+		remove_tab(*it);
+	}
+	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
+	{
+		if (it->empty())
+		{
+			it = remove_empty_line(it);
+		}
+	}
+	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
+	{
+		std::cout << "[" << *it << "]" << std::endl;
 	}
 	return true;
 }
