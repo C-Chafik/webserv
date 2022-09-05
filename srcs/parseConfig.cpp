@@ -64,6 +64,15 @@ int parseConfig::exit_on_error ( void )
 	return 1;
 }
 
+// void	parseConfig::remove_tab( std::string & str )
+// {
+// 	for ( size_t i = 0 ; i < str.size() ; i++ )
+// 	{
+// 		if ( str.find('\t') )
+// 			str.erase(str.find('\t'));
+// 	}
+// }
+
 bool parseConfig::fill_file( void )
 {
 	std::ifstream file;
@@ -82,11 +91,16 @@ bool parseConfig::fill_file( void )
 		fileSTR += "\n";
 	}
 
-	_file = ft_split(fileSTR, "");
+	_file = ft_split(fileSTR, "\n");
+
+	// for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
+	// {
+	// 	remove_tab(*it);
+	// }
 
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
 	{
-		std::cout << *it << " ";
+		std::cout << *it;
 	}
 	return true;
 }

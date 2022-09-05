@@ -16,6 +16,7 @@ class parseConfig
         int     exit_on_error( void );
 
         std::list<std::string> ft_split(std::string header, std::string charset );
+        void    remove_tab( std::string & str );
 
 
 
