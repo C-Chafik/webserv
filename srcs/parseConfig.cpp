@@ -13,8 +13,12 @@ parseConfig::parseConfig( void )
 
 parseConfig::parseConfig( std::string path ) : _file_path(path)
 {
+	_closed = 0;
+	_inside = 0;
+	_state = false;
 	if ( fill_file() == false )
 		return ;
+	parse_file();
 }
 
 parseConfig::~parseConfig( void )
@@ -113,9 +117,69 @@ bool parseConfig::fill_file( void )
 			it = remove_empty_line(it);
 		}
 	}
-	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
-	{
-		std::cout << "[" << *it << "]" << std::endl;
-	}
+	// for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
+	// {
+	// 	std::cout << "[" << *it << "]" << std::endl;
+	// }
 	return true;
+}
+
+std::pair<std::string, std::string> parseConfig::insert_port( std::string raw_address )
+{
+	std::string address;
+	std::string port;
+	std::string ip_address;
+
+	address.assign(raw_address, 7);
+	address.erase(address.find(";"));
+	// if (address.empty())
+	// 	FATAL ERROR
+	if ( address.find(":") != std::string::npos )
+	{
+		ip_address.substr(0, address.find(":"));
+		port.substr(address.find(":"), port.length());
+	}
+	else if ( address.find(".") != std::string::npos )
+	{
+		ip_address.assign(address);
+		port.assign("*");
+	}
+	else
+	{
+		port.assign(address);
+		ip_address.assign("*");
+	}
+
+	return std::pair<std::string, std::string>(ip_address, port);
+}
+
+void	parseConfig::parse_file( void )
+{
+	std::list<std::string>::iterator it = _file.begin();
+	std::list<std::string>::iterator ite = _file.end();
+
+	while (it->empty())
+		it++;
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->find("server") != std::string::npos )
+		{
+			_inside = 1;
+			while ( it != ite )
+			{
+				if ( it->find("{") != std::string::npos )
+					_closed = 1;
+				if ( (it->find("}") != std::string::npos ) && _closed == 1 )
+				{
+					std::cout << "break ;" << std::endl;
+					break ;
+				}
+				if ( it->find("listen") != std::string::npos )
+					_config.listening.insert(insert_port(*it));
+				it++;
+			}
+		}
+		if ( it == ite )
+			break ;
+	}
 }

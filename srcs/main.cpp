@@ -18,11 +18,12 @@ void run_thread(int port){
 
 int main(){
 
-	// parseConfig parse("conf/default.conf");
-	// if ( parse.state() == false )
-	// 	return parse.exit_on_error();
-	// return 0;
+	parseConfig parse("conf/default.conf");
+	if ( parse.state() == false )
+		return parse.exit_on_error();
+	return 0;
 
+	
 	Server serv;
 
 	std::vector< std::thread > threads;

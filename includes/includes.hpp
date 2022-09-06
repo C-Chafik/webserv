@@ -21,6 +21,16 @@
 #include <signal.h>
 #include <map>
 
+struct config{
+    std::string server_name;
+    std::string location_get_dir;
+    // std::string         listen_address;
+    // std::string         listen_port;
+    std::map<std::string, std::string> listening;
+    int         body_max_size;
+    std::vector< std::pair<std::vector<int>, std::string> > errors;
+};
+
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
@@ -32,14 +42,6 @@ enum    METHOD{
     DELETE
 };
 
-struct config{
-    std::string server_name;
-    std::string location_get_dir;
-    std::string         listen_address;
-    std::string         listen_port;
-    int         body_max_size;
-    std::vector< std::pair<std::vector<int>, std::string> > errors;
-};
 
 
 #endif
