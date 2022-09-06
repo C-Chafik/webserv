@@ -1,4 +1,4 @@
-#include "../includes/includes.hpp"
+#include "includes.hpp"
 
 std::vector< std::thread > *global = NULL;
 
@@ -18,10 +18,10 @@ void run_thread(int port){
 
 int main(){
 
-	parseConfig parse("conf/default.conf");
-	if ( parse.state() == false )
-		return parse.exit_on_error();
-	return 0;
+	// parseConfig parse("conf/default.conf");
+	// if ( parse.state() == false )
+	// 	return parse.exit_on_error();
+	// return 0;
 
 	Server serv;
 
