@@ -19,20 +19,17 @@
 #include <utility>
 #include <thread>
 #include <signal.h>
+#include <map>
 
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
+#include "server.hpp"
 
 enum    METHOD{
     GET,
     POST,
     DELETE
-};
-
-struct serverInfo{
-    int			serverSocket;
-    sockaddr_in	serverSocketStruct;
 };
 
 struct config{
@@ -43,12 +40,6 @@ struct config{
     int         body_max_size;
     std::vector< std::pair<std::vector<int>, std::string> > errors;
 };
-
-void server(int port);
-int accept_connection(struct serverInfo serverInfo);
-int treat_request( int requestFd );
-void handle_connection(int clientSocket, struct serverInfo serverInfo);
-std::string fileToString(std::string fileName, struct serverInfo serverInfo);
 
 
 #endif

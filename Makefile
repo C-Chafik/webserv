@@ -1,7 +1,8 @@
 NAME=WebServer
 CC=c++
 FLAGS=-Wall -Werror -Wextra -std=c++98
-SRC=main.cpp server.cpp request_handler.cpp accept_connection.cpp handle_request.cpp parseConfig.cpp
+
+SRC=main.cpp server.cpp request_handler.cpp accept_connection.cpp handle_request.cpp parse_location.cpp parseConfig.cpp
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes
 LIB=-pthread

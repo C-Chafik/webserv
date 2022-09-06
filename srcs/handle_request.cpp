@@ -1,13 +1,16 @@
 #include "includes.hpp"
 
-void handle_connection(int clientSocket, struct serverInfo serverInfo){
+void Server::handle_connection(int clientSocket, struct serverInfo serverInfo){
 	treat_request(clientSocket);
 
 	//traitement de la request
 
-	HeaderGen HGen;
+	//	tmp attend pour parsing autofill
+	parseG.location["html_files"].root = "/var/www/html/";
 
+	std::cout << fileLocation("html_files/test.html") << std::endl;
 	std::string fileSTR = fileToString("html_files/test.html", serverInfo);
+
 
 	HGen.setStatus("200 OK");
 	HGen.setType("text/html");

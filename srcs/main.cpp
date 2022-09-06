@@ -11,11 +11,20 @@ void endWell(int num){
 		}
 }
 
+void run_thread(int port){
+	Server serv;
+	serv.run(port);
+}
+
 int main(){
+
 	parseConfig parse("conf/default.conf");
 	if ( parse.state() == false )
 		return parse.exit_on_error();
 	return 0;
+
+	Server serv;
+
 	std::vector< std::thread > threads;
 	global = &threads;
 
@@ -24,11 +33,13 @@ int main(){
 	for (unsigned nb_thread = 0; nb_thread < 5; nb_thread++){
 		//parse config file (file = open(env[nb_thread + 1]))
 		//give parse struct as parameter to server
-		threads.push_back(std::thread(server, 9995 + nb_thread/*tmp*/));//handle connection
+		threads.push_back(std::thread(run_thread, 9995 + nb_thread/*tmp*/));//handle connection
 	}
 
 	for (std::vector< std::thread >::iterator it = threads.begin(); it != threads.end(); it++)
 		it->join();
+
+	serv.run(9999);	
 
 	return EXIT_SUCCESS;
 }
