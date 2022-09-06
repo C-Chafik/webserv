@@ -5,7 +5,12 @@ void Server::handle_connection(int clientSocket, struct serverInfo serverInfo){
 
 	//traitement de la request
 
+	//	tmp attend pour parsing autofill
+	parseG.location["html_files"].root = "/var/www/html/";
+
+	std::cout << fileLocation("html_files/test.html") << std::endl;
 	std::string fileSTR = fileToString("html_files/test.html", serverInfo);
+
 
 	HGen.setStatus("200 OK");
 	HGen.setType("text/html");

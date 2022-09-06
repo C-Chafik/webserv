@@ -19,6 +19,7 @@
 #include <utility>
 #include <thread>
 #include <signal.h>
+#include <map>
 
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
