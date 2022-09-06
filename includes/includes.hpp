@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <map>
 
+#include "parseConfig.hpp"
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
 #include "server.hpp"
@@ -34,8 +35,8 @@ enum    METHOD{
 struct config{
     std::string server_name;
     std::string location_get_dir;
-    int         listen_address;
-    int         listen_port;
+    std::string         listen_address;
+    std::string         listen_port;
     int         body_max_size;
     std::vector< std::pair<std::vector<int>, std::string> > errors;
 };
