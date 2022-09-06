@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-int accept_connection(struct serverInfo serverInfo){
+int Server::accept_connection(struct serverInfo serverInfo){
 	int clientFd;
 	socklen_t serverInfoSize = static_cast<socklen_t>(sizeof(serverInfo.serverSocketStruct));
 

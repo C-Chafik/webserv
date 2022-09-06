@@ -3,7 +3,7 @@
 
 #include "includes.hpp"
 
-std::string fileToString(std::string fileName, struct serverInfo serverInfo){
+std::string Server::fileToString(std::string fileName, struct serverInfo serverInfo){
 	std::ifstream file;
 	std::string	buffer;
 	std::string	fileSTR;
@@ -24,9 +24,7 @@ std::string fileToString(std::string fileName, struct serverInfo serverInfo){
 	return fileSTR;
 }
 
-struct serverInfo listenSocketServer(){
-	struct serverInfo serverInfo;
-
+void Server::listenSocketServer(int port){
 	serverInfo.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (serverInfo.serverSocket == -1){
@@ -36,7 +34,7 @@ struct serverInfo listenSocketServer(){
 
 	serverInfo.serverSocketStruct.sin_family = AF_INET;
 	serverInfo.serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
-	serverInfo.serverSocketStruct.sin_port = htons(PORT);
+	serverInfo.serverSocketStruct.sin_port = htons(port);
 
 	if (bind(serverInfo.serverSocket,
 		reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct),
@@ -51,18 +49,10 @@ struct serverInfo listenSocketServer(){
 			close (serverInfo.serverSocket);
 			exit (EXIT_FAILURE);
 	}
-
-	return serverInfo;
 }
 
-int main(){
-	struct serverInfo serverInfo;
-	std::vector< struct config > servers;
-
-	serverInfo = listenSocketServer();
-
-	fd_set current_connections;
-	fd_set ready_connections;
+void Server::run(int port){
+	listenSocketServer(port);
 
 	FD_ZERO(&current_connections);
 	FD_SET(serverInfo.serverSocket, &current_connections);
@@ -89,6 +79,4 @@ int main(){
 			}
 		}
 	}
-
-	return (EXIT_SUCCESS);
 }

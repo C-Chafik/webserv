@@ -77,7 +77,7 @@ void request_handler::parse_header( void )
 	return ;
 }
 
-int treat_request( int requestFd )
+int Server::treat_request( int requestFd )
 {
     char header[4096 + 1];
 	size_t end;
