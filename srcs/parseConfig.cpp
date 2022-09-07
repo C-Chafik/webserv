@@ -70,12 +70,9 @@ int parseConfig::exit_on_error ( void )
 
 void	parseConfig::remove_tab( std::string & str )
 {
-	std::string::size_type i = 0;
-	while (i < str.size())
+	for ( std::string::size_type i = 0 ; str[i] == '\t' ; i++ )
 	{
-		if ( str.find('\t', i) != std::string::npos )
-			str.erase(i, 1);
-		i++;
+		str.erase(i, 1);
 	}
 }
 
@@ -130,27 +127,70 @@ std::pair<std::string, std::string> parseConfig::insert_port( std::string raw_ad
 	std::string port;
 	std::string ip_address;
 
-	address.assign(raw_address, 7);
-	address.erase(address.find(";"));
-	// if (address.empty())
-	// 	FATAL ERROR
+	if ( raw_address.find("listen") != std::string::npos )
+		raw_address.erase(raw_address.find("listen"), 7);
+	while ( raw_address.find_first_of(" \t") != std::string::npos )
+	{
+		raw_address.erase(raw_address.find_first_of(" \t"), 1);
+	}
+
+	address.assign(raw_address);
+
+	if ( address.find(";") != std::string::npos )
+		address.erase(address.find(";"));
+	
 	if ( address.find(":") != std::string::npos )
 	{
-		ip_address.substr(0, address.find(":"));
-		port.substr(address.find(":"), port.length());
+		ip_address = address.substr(0, address.find(":"));
+		port = address.substr(address.find(":"), std::string::npos );
 	}
 	else if ( address.find(".") != std::string::npos )
 	{
 		ip_address.assign(address);
-		port.assign("*");
+		port.assign("80");
+	}
+	else if ( address == "localhost" )
+	{
+		port.assign("80");
+		ip_address.assign("localhost");
 	}
 	else
 	{
 		port.assign(address);
-		ip_address.assign("*");
+		ip_address.assign("localhost");
 	}
-
+	// std::cout << "PORT = " << port << std::endl;
+	// std::cout << "ip_address = " << ip_address << std::endl;
 	return std::pair<std::string, std::string>(ip_address, port);
+}
+
+std::vector<std::string> parseConfig::insert_server_names( std::string raw_server_name )
+{
+	//! faire une fonction qui automatise cette partie la du parsing.... (psk c'est bcp trop moche la)
+
+	if ( raw_server_name.find("server_name") != std::string::npos )
+		raw_server_name.erase(raw_server_name.find("server_name"), 11);
+	if ( raw_server_name.find(";") != std::string::npos )
+		raw_server_name.erase(raw_server_name.find(";"));
+	for ( std::string::size_type i = 0 ; (raw_server_name[i] == '\t' || raw_server_name[i] == ' ') ; i++ )
+	{
+		raw_server_name.erase(i, 1);
+	}
+	for ( std::string::size_type i = raw_server_name.length() - 1 ; (raw_server_name[i] == '\t' || raw_server_name[i] == ' ') ; i-- )
+	{
+		raw_server_name.erase(i, 1);
+	}
+	while ( raw_server_name.find("\t") != std::string::npos )
+		raw_server_name[raw_server_name.find("\t")] = ' ';
+	std::list<std::string> tmp = ft_split(raw_server_name, " ");
+	std::vector<std::string> server_names;
+
+	for ( std::list<std::string>::iterator it = tmp.begin() ; it != tmp.end() ; it++ )
+	{
+		if (!it->empty())
+			server_names.push_back(*it);
+	}
+	return server_names;
 }
 
 void	parseConfig::parse_file( void )
@@ -176,10 +216,18 @@ void	parseConfig::parse_file( void )
 				}
 				if ( it->find("listen") != std::string::npos )
 					_config.listening.insert(insert_port(*it));
+				if ( it->find("server_name") != std::string::npos )
+					_config.server_names = insert_server_names(*it);
 				it++;
 			}
 		}
 		if ( it == ite )
 			break ;
+	}
+	if ( _config.listening.empty() )
+		_config.listening.insert(insert_port("localhost:80"));
+	for ( std::vector<std::string>::iterator it = _config.server_names.begin() ; it !=  _config.server_names.end(); it++ )
+	{
+		std::cout << *it << " ";
 	}
 }

@@ -22,7 +22,7 @@
 #include <map>
 
 struct config{
-    std::string server_name;
+    std::vector<std::string> server_names;
     std::string location_get_dir;
     // std::string         listen_address;
     // std::string         listen_port;

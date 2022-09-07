@@ -13,6 +13,7 @@ class parseConfig
         ~parseConfig( void );
 
         std::pair<std::string, std::string> insert_port( std::string raw_address );
+        std::vector<std::string> insert_server_names( std::string raw_server_name );
         bool    fill_file( void );
         void	parse_file( void );
         int     exit_on_error( void );
