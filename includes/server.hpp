@@ -1,4 +1,10 @@
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
 #include "includes.hpp"
+
+#define D_200 0
+#define D_400 1
 
 class Server{
 	//struct
@@ -13,6 +19,8 @@ class Server{
 
 	struct parseGlobal{
 		std::map<std::string/*location*/, struct parseLocation> location;
+		in_addr_t ip_address;
+		std::vector<std::string> server_names;
 	};
 
 	//var
@@ -30,8 +38,13 @@ class Server{
 	std::string fileLocation(std::string request);
 	std::string fileToString(std::string fileName, struct serverInfo serverInfo);
 	void listenSocketServer(int port);
+	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
+	void send_200(std::string file);
+	void send_400();
 
 public:
 	void run(int port);
 
 };
+
+#endif

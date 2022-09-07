@@ -67,4 +67,6 @@ instruction config file:
 	* location ~ \.php$
 	* default_type application/octet-stream;
 
+server_name : "Host: "
+
 */
