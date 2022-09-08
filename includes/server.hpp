@@ -38,9 +38,11 @@ class Server{
 	std::string fileLocation(std::string request);
 	std::string fileToString(std::string fileName, struct serverInfo serverInfo);
 	void listenSocketServer(int port);
+	void check_host();
 	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
 	void send_200(std::string file);
 	void send_400();
+	void send_404();
 
 public:
 	void run(int port);

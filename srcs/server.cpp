@@ -11,9 +11,12 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 	file.open(fileName);
 	if (!file.is_open())
 	{
-		std::cout << "Fail when opening file" << std::endl;
-		close(serverInfo.serverSocket);
-		exit (EXIT_FAILURE);
+		file.open("html_files/error_404.html");
+		if (!file.is_open()){
+			std::cout << "Fail when opening file" << std::endl;
+			close(serverInfo.serverSocket);
+			exit (EXIT_FAILURE);
+		}
 	}
 	while (getline(file, buffer, '\n'))
 	{
