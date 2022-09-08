@@ -12,8 +12,12 @@ class parseConfig
         parseConfig( std::string path );
         ~parseConfig( void );
 
-        std::pair<std::string, std::string> insert_port( std::string raw_address );
+        std::pair<std::string, std::vector<std::string> > insert_port( std::string raw_address );
         std::vector<std::string> insert_server_names( std::string raw_server_name );
+        int                      insert_body_max_size( std::string raw_data );
+        std::pair<std::vector<int>, std::string> insert_error_page( std::string raw_error_page );
+        std::string trim_data( std::string raw_data, std::string data_name );
+        void    print_all_informations( void );
         bool    fill_file( void );
         void	parse_file( void );
         int     exit_on_error( void );

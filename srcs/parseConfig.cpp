@@ -19,6 +19,8 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 	if ( fill_file() == false )
 		return ;
 	parse_file();
+	if (_state == false)
+		return ;
 }
 
 parseConfig::~parseConfig( void )
@@ -121,28 +123,62 @@ bool parseConfig::fill_file( void )
 	return true;
 }
 
-std::pair<std::string, std::string> parseConfig::insert_port( std::string raw_address )
+void	parseConfig::print_all_informations( void )
+{
+	std::cout << MAGENTA << "PRINTING ALL GATHERED INFORMATIONS " << std::endl << std::endl;
+	std::map<std::string, std::vector<std::string> >::iterator mit = _config.listening.begin();
+	std::map<std::string, std::vector<std::string> >::iterator mite = _config.listening.end();
+
+	std::vector<std::string>::iterator vit = _config.server_names.begin();
+	std::vector<std::string>::iterator vite = _config.server_names.end();
+
+	std::vector< std::pair<std::vector<int>, std::string> >::iterator eit = _config.errors.begin();
+	std::vector< std::pair<std::vector<int>, std::string> >::iterator eite = _config.errors.end();
+
+
+	std::cout << "ALL LISTEN PORT AND IP " << std::endl;
+	for ( ; mit != mite ; mit++ )
+	{
+		std::cout << mit->first << " ";
+		for ( std::vector<std::string>::iterator it = mit->second.begin() ; it != mit->second.end() ; it++ )
+		{
+			std::cout << *it <<" : ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	std::cout << "ALL SERVER NAMES " << std::endl;
+	for ( ; vit != vite ; vit++ )
+	{
+		std::cout << *vit << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
+	std::cout << _config.body_max_size << std::endl;
+	std::cout << "ALL ERRORS PAGE" << std::endl;
+	for ( ; eit != eite ; eit++ )
+	{
+		std::cout << "ERROR PATH : " << eit->second << " FOR ERROR CODE -> ";
+		for ( std::vector<int>::iterator it = eit->first.begin() ; it != eit->first.end() ; it++ )
+		{
+			std::cout << *it <<": ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << WHITE << std::endl;
+}
+
+std::pair<std::string, std::vector<std::string> > parseConfig::insert_port( std::string raw_address )
 {
 	std::string address;
 	std::string port;
 	std::string ip_address;
 
-	if ( raw_address.find("listen") != std::string::npos )
-		raw_address.erase(raw_address.find("listen"), 7);
-	while ( raw_address.find_first_of(" \t") != std::string::npos )
-	{
-		raw_address.erase(raw_address.find_first_of(" \t"), 1);
-	}
-
-	address.assign(raw_address);
-
-	if ( address.find(";") != std::string::npos )
-		address.erase(address.find(";"));
-	
+	address.assign(trim_data(raw_address, "listen"));
 	if ( address.find(":") != std::string::npos )
 	{
 		ip_address = address.substr(0, address.find(":"));
-		port = address.substr(address.find(":"), std::string::npos );
+		port = address.substr(address.find(":") + 1, std::string::npos );
 	}
 	else if ( address.find(".") != std::string::npos )
 	{
@@ -159,29 +195,17 @@ std::pair<std::string, std::string> parseConfig::insert_port( std::string raw_ad
 		port.assign(address);
 		ip_address.assign("localhost");
 	}
-	// std::cout << "PORT = " << port << std::endl;
-	// std::cout << "ip_address = " << ip_address << std::endl;
-	return std::pair<std::string, std::string>(ip_address, port);
+
+	std::vector<std::string> ports(1, port);
+
+	std::pair<std::string, std::vector<std::string> > ret(ip_address, ports);
+
+	return ret;
 }
 
 std::vector<std::string> parseConfig::insert_server_names( std::string raw_server_name )
 {
-	//! faire une fonction qui automatise cette partie la du parsing.... (psk c'est bcp trop moche la)
-
-	if ( raw_server_name.find("server_name") != std::string::npos )
-		raw_server_name.erase(raw_server_name.find("server_name"), 11);
-	if ( raw_server_name.find(";") != std::string::npos )
-		raw_server_name.erase(raw_server_name.find(";"));
-	for ( std::string::size_type i = 0 ; (raw_server_name[i] == '\t' || raw_server_name[i] == ' ') ; i++ )
-	{
-		raw_server_name.erase(i, 1);
-	}
-	for ( std::string::size_type i = raw_server_name.length() - 1 ; (raw_server_name[i] == '\t' || raw_server_name[i] == ' ') ; i-- )
-	{
-		raw_server_name.erase(i, 1);
-	}
-	while ( raw_server_name.find("\t") != std::string::npos )
-		raw_server_name[raw_server_name.find("\t")] = ' ';
+	raw_server_name = trim_data(raw_server_name, "server_name");
 	std::list<std::string> tmp = ft_split(raw_server_name, " ");
 	std::vector<std::string> server_names;
 
@@ -191,6 +215,72 @@ std::vector<std::string> parseConfig::insert_server_names( std::string raw_serve
 			server_names.push_back(*it);
 	}
 	return server_names;
+}
+
+std::string parseConfig::trim_data( std::string raw_data, std::string data_name ) //! Trim at the begin and at the end every isspace, and transform every isspace that is not in the beginning or at the end, to a space ' ' for parsing purpose
+{
+	if ( raw_data.find(data_name) != std::string::npos )
+		raw_data.erase(raw_data.find(data_name), data_name.size());
+	if ( raw_data.find(";") != std::string::npos )
+		raw_data.erase(raw_data.find(";"));
+	
+	std::string::iterator it = raw_data.begin();
+	while ( it != raw_data.end() && isspace(*it) )
+		it++;
+	std::string::reverse_iterator rit = raw_data.rbegin();
+	while ( rit != raw_data.rend() && isspace(*rit) )
+		rit++;
+
+	std::string trimmed_raw_data(it, raw_data.end());
+
+	while (trimmed_raw_data.find("\t") != std::string::npos )
+		trimmed_raw_data[trimmed_raw_data.find("\t")] = ' ';
+	return trimmed_raw_data;
+}
+
+int	parseConfig::insert_body_max_size( std::string raw_data )
+{
+	std::string data = trim_data(raw_data, "client_max_body_size");
+	
+	std::string first_value;
+	for ( std::string::size_type i = 0 ; isdigit(data[i]) ; i++ )
+	{
+		first_value.append(1, data[i]);
+	}
+	if ( first_value.empty() )
+		return -1;
+	return std::atoi(first_value.c_str());
+}
+
+std::pair<std::vector<int>, std::string> parseConfig::insert_error_page( std::string raw_error_page )
+{
+	std::vector<int> errors;
+	std::string 	 error_path;
+	std::string		 error_code;
+	std::string::size_type i = 0;
+
+
+	std::string error_page = trim_data(raw_error_page, "error_page");
+
+
+	for ( ; i < error_page.size() ; i++ )
+	{
+		if ( error_page[i] == '/' )
+			break ;
+		for ( ; isdigit(error_page[i]) ; i++ )
+		{
+			error_code.append(1, error_page[i]);
+		}
+		if ( !error_code.empty() )
+		{
+			errors.push_back(std::atoi(error_code.c_str()));
+			error_code.clear();
+		}
+	}
+	error_path.append(error_page, i, std::string::npos);
+
+	std::pair<std::vector<int>, std::string> ret(errors, error_path);
+	return ret;
 }
 
 void	parseConfig::parse_file( void )
@@ -211,13 +301,35 @@ void	parseConfig::parse_file( void )
 					_closed = 1;
 				if ( (it->find("}") != std::string::npos ) && _closed == 1 )
 				{
-					std::cout << "break ;" << std::endl;
+					// std::cout << "break ;" << std::endl;
 					break ;
 				}
 				if ( it->find("listen") != std::string::npos )
-					_config.listening.insert(insert_port(*it));
+				{
+					std::pair<std::map<std::string, std::vector<std::string> >::iterator, bool > ret;
+					std::pair<std::string, std::vector<std::string> > listen(insert_port(*it));
+
+					ret = _config.listening.insert(listen);
+					if ( ret.second == false )
+						ret.first->second.push_back(listen.second.front());
+				}
 				if ( it->find("server_name") != std::string::npos )
 					_config.server_names = insert_server_names(*it);
+				if ( it->find("client_max_body_size") != std::string::npos )
+				{
+					_config.body_max_size = insert_body_max_size(*it);
+					if ( _config.body_max_size == -1 )
+					{
+						_actual_error = "ERROR AT : ";
+						_actual_error.append(*it);
+						_state = false;
+						return ;
+					}
+				}
+				if ( it->find("error_page") != std::string::npos )
+				{
+					_config.errors.push_back(insert_error_page(*it));
+				}
 				it++;
 			}
 		}
@@ -226,8 +338,5 @@ void	parseConfig::parse_file( void )
 	}
 	if ( _config.listening.empty() )
 		_config.listening.insert(insert_port("localhost:80"));
-	for ( std::vector<std::string>::iterator it = _config.server_names.begin() ; it !=  _config.server_names.end(); it++ )
-	{
-		std::cout << *it << " ";
-	}
+	print_all_informations();
 }
