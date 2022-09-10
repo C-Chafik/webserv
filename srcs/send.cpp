@@ -10,7 +10,7 @@ void Server::send_200(std::string file){
 }
 
 void Server::send_400(){
-	std::string fileSTR = fileToString("html_files/error_400.html", serverInfo);//!raw until parsing done (path of error 400)
+	std::string fileSTR = fileToString(parseG.path_e_400, serverInfo);//!raw until parsing done (path of error 400)
 
 	HGen.setStatus("400 Bad Request");
 	HGen.setType("text/html");
@@ -19,7 +19,7 @@ void Server::send_400(){
 }
 
 void Server::send_404(){
-	std::string fileSTR = fileToString("html_files/error_404.html", serverInfo);//!raw until parsing done (path of error 404)
+	std::string fileSTR = fileToString(parseG.path_e_404, serverInfo);//!raw until parsing done (path of error 404)
 
 	HGen.setStatus("400 Bad Request");
 	HGen.setType("text/html");

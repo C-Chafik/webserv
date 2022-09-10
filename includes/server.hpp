@@ -21,6 +21,8 @@ class Server{
 		std::map<std::string/*location*/, struct parseLocation> location;
 		in_addr_t ip_address;
 		std::vector<std::string> server_names;
+		std::string path_e_404;//init default path or parsed value
+		std::string path_e_400;//init default path or parsed value
 	};
 
 	//var

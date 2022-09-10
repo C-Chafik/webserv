@@ -11,7 +11,7 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 	file.open(fileName);
 	if (!file.is_open())
 	{
-		file.open("html_files/error_404.html");
+		file.open(parseG.path_e_404);
 		if (!file.is_open()){
 			std::cout << "Fail when opening file" << std::endl;
 			close(serverInfo.serverSocket);
@@ -23,6 +23,7 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
+	file.close();
 
 	return fileSTR;
 }
