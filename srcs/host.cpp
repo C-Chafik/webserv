@@ -11,8 +11,8 @@ void Server::check_host(){
 	switch (send_type)
 	{
 		case D_200:
-			send_200("index.html");//!raw until parsing done (GET /file)
-			// send_200("html_files/other.html");//print error
+			// send_200("index.html");//!raw until parsing done (GET /file)
+			send_200("html_files/other.html");//print error
 			// send_index();
 			break;
 		

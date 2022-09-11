@@ -39,7 +39,7 @@ class Server{
 	int treat_request( int requestFd );
 	void handle_connection(int clientSocket, struct serverInfo serverInfo);
 	std::string fileLocation(std::string request);
-	std::string fileToString(std::string fileName, struct serverInfo serverInfo);
+	std::string fileToString(std::string fileName, struct serverInfo serverInfo, bool error = false);
 	void listenSocketServer(int port);
 	void check_host();
 	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
