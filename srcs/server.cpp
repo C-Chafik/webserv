@@ -61,6 +61,12 @@ void Server::run(int port){
 	FD_ZERO(&current_connections);
 	FD_SET(serverInfo.serverSocket, &current_connections);
 
+	parseG.location["/"].root = "html_files/";// tmp attend pour parsing autofill && add setter to add / back if needed
+	parseG.location["error_files/"].root = "error_files/";// tmp attend pour parsing autofill && add setter to add / back if needed
+	parseG.path_e_400 = fileLocation("error_files/error_400.html");
+	parseG.path_e_404 = fileLocation("error_files/error_404.html");
+	parseG.index.push_back(fileLocation("index.html"));
+
 	while (true){
 		ready_connections = current_connections;
 
