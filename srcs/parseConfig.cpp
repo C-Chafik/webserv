@@ -294,15 +294,30 @@ void	parseConfig::parse_file( void )
 	{
 		if ( it->find("server") != std::string::npos )
 		{
-			_inside = 1;
 			while ( it != ite )
 			{
-				if ( it->find("{") != std::string::npos )
-					_closed = 1;
 				if ( (it->find("}") != std::string::npos ) && _closed == 1 )
 				{
-					// std::cout << "break ;" << std::endl;
+					if ( it->back() != '}' )
+					{
+						_actual_error = "INVALID CLOSURE ";
+						_state = false;
+						return ;
+					}
+					std::cout << "break ;" << std::endl;
 					break ;
+				}
+				if ( (it->find(";") == std::string::npos) && _closed == 1 && _inside == 1)
+				{
+					_actual_error = "MISSING ; : ";
+					_actual_error.append(*it);
+					_state = false;
+					return ;
+				}
+				if ( it->find("{") != std::string::npos )
+				{
+					_closed = 1;
+					_inside = 1;
 				}
 				if ( it->find("listen") != std::string::npos )
 				{
@@ -313,9 +328,9 @@ void	parseConfig::parse_file( void )
 					if ( ret.second == false )
 						ret.first->second.push_back(listen.second.front());
 				}
-				if ( it->find("server_name") != std::string::npos )
+				else if ( it->find("server_name") != std::string::npos )
 					_config.server_names = insert_server_names(*it);
-				if ( it->find("client_max_body_size") != std::string::npos )
+				else if ( it->find("client_max_body_size") != std::string::npos )
 				{
 					_config.body_max_size = insert_body_max_size(*it);
 					if ( _config.body_max_size == -1 )
@@ -326,13 +341,15 @@ void	parseConfig::parse_file( void )
 						return ;
 					}
 				}
-				if ( it->find("error_page") != std::string::npos )
+				else if ( it->find("error_page") != std::string::npos )
 				{
 					_config.errors.push_back(insert_error_page(*it));
 				}
 				it++;
 			}
 		}
+		_inside = 0;
+		_closed = 0;
 		if ( it == ite )
 			break ;
 	}
