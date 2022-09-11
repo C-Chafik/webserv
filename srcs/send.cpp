@@ -26,3 +26,25 @@ void Server::send_404(){
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
 }
+
+void Server::send_index(){
+	std::ifstream file;
+	std::string	buffer;
+	std::string	fileSTR;
+
+	for (int i = 0; i < parseG.index.size(); i++){
+		file.open(parseG.index[i]);
+		if (file.is_open())
+			break;
+	}
+
+	if (!file.is_open())
+		send_404();
+	
+	while (getline(file, buffer, '\n'))
+	{
+		fileSTR += buffer;
+		fileSTR += "\n";
+	}
+	file.close();
+}
