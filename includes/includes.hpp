@@ -23,6 +23,22 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+struct config {
+    std::vector<std::string> server_names; //! DONE
+    std::map<std::string, std::vector<std::string> > listening; //! DONE
+    std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
+    int         body_max_size; //! DONE
+
+    void clear( void )
+    {
+        server_names.clear();
+        listening.clear();
+        errors.clear();
+        body_max_size = 0;
+    }
+};
+
+
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
 #include "request_handler.hpp"
@@ -34,14 +50,6 @@ enum    METHOD{
     DELETE
 };
 
-struct config{
-    std::string server_name;
-    std::string location_get_dir;
-    std::string         listen_address;
-    std::string         listen_port;
-    int         body_max_size;
-    std::vector< std::pair<std::vector<int>, std::string> > errors;
-};
 
 
 #endif
