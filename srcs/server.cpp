@@ -3,7 +3,7 @@
 
 #include "includes.hpp"
 
-std::string Server::fileToString(std::string fileName, struct serverInfo serverInfo){
+std::string Server::fileToString(std::string fileName, struct serverInfo serverInfo, bool error){
 	std::ifstream file;
 	std::string	buffer;
 	std::string	fileSTR;
@@ -11,15 +11,20 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 	file.open(fileName);
 	if (!file.is_open())
 	{
-		std::cout << "Fail when opening file" << std::endl;
-		close(serverInfo.serverSocket);
-		exit (EXIT_FAILURE);
+		if (!file.is_open() && error){
+			std::cout << "Fail when opening file" << std::endl;
+			close(serverInfo.serverSocket);
+			exit (EXIT_FAILURE);
+		}
+		else
+			send_404();
 	}
 	while (getline(file, buffer, '\n'))
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
+	file.close();
 
 	return fileSTR;
 }
@@ -56,6 +61,12 @@ void Server::run(int port){
 
 	FD_ZERO(&current_connections);
 	FD_SET(serverInfo.serverSocket, &current_connections);
+
+	parseG.location["/"].root = "html_files/";// tmp attend pour parsing autofill && add setter to add / back if needed
+	parseG.location["error_files/"].root = "html_files/error_files/";// tmp attend pour parsing autofill && add setter to add / back if needed
+	parseG.path_e_400 = fileLocation("error_files/error_400.html");
+	parseG.path_e_404 = fileLocation("error_files/error_404.html");
+	parseG.index.push_back(fileLocation("index.html"));
 
 	while (true){
 		ready_connections = current_connections;

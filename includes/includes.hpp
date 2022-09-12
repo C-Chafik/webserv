@@ -20,6 +20,8 @@
 #include <thread>
 #include <signal.h>
 #include <map>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"

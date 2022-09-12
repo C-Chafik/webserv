@@ -47,5 +47,7 @@ public:
 		}
 	}
 
+	void clear(){ _Info.clear(); _response.clear(); }
+
 	std::string getStr(){ return _response; }
 };
