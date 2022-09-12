@@ -21,12 +21,19 @@
 #include <signal.h>
 #include <map>
 
-struct config{
+struct config {
     std::vector<std::string> server_names; //! DONE
     std::map<std::string, std::vector<std::string> > listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
     int         body_max_size; //! DONE
-    //! NOW NEED TO CHECK FOR ERROR CASE !
+
+    void clear( void )
+    {
+        server_names.clear();
+        listening.clear();
+        errors.clear();
+        body_max_size = 0;
+    }
 };
 
 

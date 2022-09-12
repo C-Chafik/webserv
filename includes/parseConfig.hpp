@@ -5,47 +5,60 @@
 
 class parseConfig
 {
-    public:
+	public:
 
-    //* Contructor - Destructor
+	//* Contructor - Destructor
 
-        parseConfig( std::string path );
-        ~parseConfig( void );
+		parseConfig( std::string path );
+		~parseConfig( void );
 
-        std::pair<std::string, std::vector<std::string> > insert_port( std::string raw_address );
-        std::vector<std::string> insert_server_names( std::string raw_server_name );
-        int                      insert_body_max_size( std::string raw_data );
-        std::pair<std::vector<int>, std::string> insert_error_page( std::string raw_error_page );
-        std::string trim_data( std::string raw_data, std::string data_name );
-        void    print_all_informations( void );
-        bool    fill_file( void );
-        void	parse_file( void );
-        int     exit_on_error( void );
+		bool    											fill_file( void );
 
-        std::list<std::string> ft_split(std::string header, std::string charset );
-        void    remove_tab( std::string & str );
-        std::list<std::string>::iterator remove_empty_line(  std::list<std::string>::iterator it );
+		//? Parser
+		void												parse_file( void );
+		std::pair<std::string, std::vector<std::string> >	insert_port( std::string raw_address );
+		std::pair<std::vector<int>, std::string>			insert_error_page( std::string raw_error_page );
+		std::vector<std::string>							insert_server_names( std::string raw_server_name );
+		std::string 										trim_data( std::string raw_data, std::string data_name );
+		int													insert_body_max_size( std::string raw_data );
+		int													count_server (std::list<std::string>::iterator, std::list<std::string>::iterator );
+		bool												search_informations( std::string line );
+		bool												check_closure( std::string line );
 
-
-
-        //* Getter
-
-        bool state( void );
-
-    private:
-        //! Parsing
-        size_t _closed;
-        bool _inside;
-        std::list<std::string> _file;
-        std::string            _file_path;
-        struct config _config;
-
-        //! Exit Parsing
-        std::string _actual_error;
-        bool _state;
+		//? Exit
+		int													exit_on_error( void );
 
 
-        parseConfig( void );
+		//? Utils
+		std::list<std::string>								ft_split(std::string header, std::string charset );
+		std::list<std::string>::iterator 					remove_empty_line( std::list<std::string>::iterator it );
+		void    											remove_tab( std::string & str );
+		void    											print_all_informations( void );		
+
+
+
+		//* Getter
+
+		bool 												state( void );
+		size_t												get_server_number( void );
+		std::vector< struct config > 						get_config( void );
+
+	private:
+		//! Parsing
+		size_t 					_server_number;
+		size_t					_closed;
+		bool					_inside;
+		std::list<std::string> 	_file;
+		std::string		 		_file_path;
+		struct config _config;
+		std::vector< struct config > 			_configs;
+
+		//! Exit Parsing
+		std::string 			_actual_error;
+		bool 					_state;
+
+
+		parseConfig( void );
 };
 
 #endif
