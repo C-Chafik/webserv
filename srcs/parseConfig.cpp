@@ -21,7 +21,7 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 	_closed = 0;
 	_server_number = 0;
 	_inside = 0;
-	_state = false;
+	_state = true;
 	if ( fill_file() == false )
 		return ;
 
