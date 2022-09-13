@@ -10,7 +10,6 @@ std::string Server::fileLocation(std::string request){
 	if (slash != std::string::npos && request[slash + 1])
 		location = request.substr(0, slash + 1);
 
-	std::cout << "location root : " << parseG.location[location].root << std::endl;
 	//check if config exist
 	if (location.size() && parseG.location.find(location) != parseG.location.end()){//cas de dir/file.html
 		rtn.append(parseG.location[location].root);
@@ -31,7 +30,6 @@ std::string Server::fileLocation(std::string request){
 	else
 		rtn.append(request);
 
-	std::cout << "rtn : " << rtn << std::endl;
 	return rtn;
 }
 

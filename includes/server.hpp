@@ -49,7 +49,8 @@ class Server{
 	void send_404();
 
 public:
-	void run(int port);
+	struct config conf;
+	void run();
 
 };
 

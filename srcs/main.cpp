@@ -11,9 +11,10 @@ void endWell(int num){
 		}
 }
 
-void run_thread(int port){
+void run_thread(struct config conf){
 	Server serv;
-	serv.run(port);
+	serv.conf = conf;
+	serv.run();
 }
 
 int main(){
@@ -21,53 +22,25 @@ int main(){
 	parseConfig parse("conf/default.conf");
 	if ( parse.state() == false )
 		return parse.exit_on_error();
-	return 0;
-
 	
 	Server serv;
+	std::vector< struct config > confs = parse.get_config();
 
 	std::vector< std::thread > threads;
 	global = &threads;
 
 	signal(SIGINT, endWell);
 
-	for (unsigned nb_thread = 0; nb_thread < 5; nb_thread++){
+	unsigned nb_thread = parse.get_config().size();
+
+	for (unsigned i = 0; i < nb_thread; i++){
 		//parse config file (file = open(env[nb_thread + 1]))
 		//give parse struct as parameter to server
-		threads.push_back(std::thread(run_thread, 9995 + nb_thread/*tmp*/));//handle connection
+		threads.push_back(std::thread(run_thread, confs[i]));//handle connection
 	}
 
 	for (std::vector< std::thread >::iterator it = threads.begin(); it != threads.end(); it++)
 		it->join();
 
-	serv.run(9999);	
-
 	return EXIT_SUCCESS;
 }
-
-/*
-	* server config = struct_server
-	* location config = vector de pair (std::string location, struct config_loc)
-	* a faire, fonction qui va check la location du fichier et sa config et envoie comportement a adopter
-*/
-
-/*
-instruction config file:
-- global :
-	* listen
-	* server_name
-	* error_page
-	* client_max_body_size
-
-- global et par location:
-	* limit_except
-	* return 301 (30x / redirection)
-	* root
-	* autoindex on/off
-	* ...
-	* location ~ \.php$
-	* default_type application/octet-stream;
-
-server_name : "Host: "
-
-*/

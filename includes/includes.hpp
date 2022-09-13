@@ -22,10 +22,12 @@
 #include <map>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <cstdlib>
+
 
 struct config {
     std::vector<std::string> server_names; //! DONE
-    std::map<std::string, std::vector<std::string> > listening; //! DONE
+    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
     int         body_max_size; //! DONE
 

@@ -37,6 +37,10 @@ void Server::listenSocketServer(int port){
 		exit (EXIT_FAILURE);
 	}
 
+	int value = 1;
+	if (setsockopt(serverInfo.serverSocket, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) < 0)
+		exit (EXIT_FAILURE);
+
 	serverInfo.serverSocketStruct.sin_family = AF_INET;
 	serverInfo.serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
 	serverInfo.serverSocketStruct.sin_port = htons(port);
@@ -44,7 +48,7 @@ void Server::listenSocketServer(int port){
 	if (bind(serverInfo.serverSocket,
 		reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct),
 		sizeof(serverInfo.serverSocketStruct)) == -1){
-			std::cerr << "Error when binding socket and address!" << std::endl;
+			std::cerr << "Port " << conf.listening.begin()->second[0] << " : " << "Error when binding socket and address!" << std::endl;
 			close (serverInfo.serverSocket);
 			exit (EXIT_FAILURE);
 	}
@@ -56,8 +60,12 @@ void Server::listenSocketServer(int port){
 	}
 }
 
-void Server::run(int port){
-	listenSocketServer(port);
+void Server::run(){
+
+	std::map<std::string, std::vector<std::string> >::iterator listen_it = conf.listening.begin();
+
+
+	listenSocketServer(atoi(listen_it->second[0].c_str()));
 
 	FD_ZERO(&current_connections);
 	FD_SET(serverInfo.serverSocket, &current_connections);

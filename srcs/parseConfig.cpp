@@ -21,7 +21,7 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 	_closed = 0;
 	_server_number = 0;
 	_inside = 0;
-	_state = false;
+	_state = true;
 	if ( fill_file() == false )
 		return ;
 
@@ -216,11 +216,11 @@ std::pair<std::string, std::vector<std::string> > parseConfig::insert_port( std:
 	else if ( address.find(".") != std::string::npos )
 	{
 		ip_address.assign(address);
-		port.assign("80");
+		port.assign("8080");
 	}
 	else if ( address == "localhost" )
 	{
-		port.assign("80");
+		port.assign("8080");
 		ip_address.assign("localhost");
 	}
 	else
@@ -429,7 +429,7 @@ void	parseConfig::parse_file( void )
 				it++;
 			}
 			if ( _config.listening.empty() )
-				_config.listening.insert(insert_port("localhost:80"));
+				_config.listening.insert(insert_port("localhost:8080"));
 		}
 		_configs.push_back(_config);
 		_config.clear();
