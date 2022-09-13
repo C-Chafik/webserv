@@ -348,7 +348,7 @@ int parseConfig::count_server( std::list<std::string>::iterator it, std::list<st
 
 bool	parseConfig::check_closure( std::string line )
 {
-	if ( (line.find(";") == std::string::npos) && _closed == 1 && _inside == 1)
+	if ( (line.find(";") == std::string::npos) && (line.find("location") == std::string::npos) && _closed == 1 && _inside == 1)
 	{
 		_actual_error = "MISSING ; : ";
 		_actual_error.append(line);
@@ -361,6 +361,121 @@ bool	parseConfig::check_closure( std::string line )
 		_inside = 1;
 	}
 	return true;
+}
+
+std::string	 parseConfig::get_location_path( std::string line )
+{
+	std::string new_line;
+
+	line = trim_data(line, "location");
+
+	for ( std::string::size_type i = 0; !isspace(line[i]) && line[i] ; i++ )
+		new_line.append(1, line[i]);
+	
+	if ( new_line.empty() )
+		return "";
+
+	return new_line;
+}
+
+size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+{
+	int 											open = 0;
+	int	 											closed = 0;
+
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->find("{") != std::string::npos )
+			open++;
+		
+		if ( (it->find("}") != std::string::npos) )
+		{
+			it++;
+			if ( it->empty() || it->back() != ';' )
+			{
+				_actual_error = "MISSING A CLOSURE BRACE IN A LOCATION ";
+				_state = false;	
+				return std::string::npos;
+			}
+			closed++;
+			break ;
+		}
+	}
+
+	if ( open == 1 && closed == 1 )
+		return 0;
+
+	_actual_error = "SOMETHING IS WRONG IN A LOCATION BRACES";
+	_state = false;	
+	return std::string::npos;
+}
+
+std::string	parseConfig::L_insert_root( std::string line )
+{
+	std::string new_line;
+
+	line = trim_data(line, "root");
+
+	for ( std::string::size_type i = 0; !isspace(line[i]) && line[i] ; i++ )
+		new_line.append(1, line[i]);
+	
+	return new_line;
+}
+
+std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+{
+	std::string 									path;
+	struct parseLocation 							parseLocation;
+	int 											closed = 0;
+	int	 											inside = 0;
+
+	path = get_location_path(*it);
+	if ( path.empty() )
+	{
+		_actual_error = "MISSING LOCATION PATH : ";
+		_actual_error.append(*it);
+		_state = false;
+		return _file.end();
+	}
+
+	if ( check_location(it, ite) == std::string::npos )
+		return _file.end();
+
+	for ( ; it != ite ; it++ )
+	{
+		if ( (it->find("}") != std::string::npos) && closed == 1)
+		{
+			it++;
+			break ;
+		}
+		if ( it->find(";") == std::string::npos && inside == 1 && closed == 1 )
+		{
+			_actual_error = "MISSING ; : ";
+			_actual_error.append(*it);
+			_state = false;
+			return _file.end();
+		}
+		if ( it->find("{") != std::string::npos )
+		{
+			inside = 1;
+			closed = 1;
+		}
+
+		if ( it->find("root") != std::string::npos )
+			parseLocation.root = L_insert_root(*it);
+
+	}
+
+	std::pair< std::string, struct parseLocation > 	ret(path, parseLocation);
+
+	_config.locations.insert(ret);
+
+	std::map<std::string, struct parseLocation>::iterator rrit = _config.locations.begin();
+
+	std::cout << rrit->second.root << std::endl;
+	std::cout << rrit->first << std::endl;
+
+	return it;
 }
 
 bool parseConfig::search_informations( std::string line )
@@ -410,7 +525,7 @@ void	parseConfig::parse_file( void )
 		{
 			while ( it != ite )
 			{
-				if ( ( it->find("}") != std::string::npos ) && _closed == 1 )
+				if ( ( it->find("}") != std::string::npos ) && _closed == 1 && it->find("location") == std::string::npos )
 				{
 					if ( it->back() != '}' )
 					{
@@ -423,7 +538,15 @@ void	parseConfig::parse_file( void )
 
 				if ( check_closure(*it) == false )
 					return ;
-				if ( search_informations(*it) == false )
+
+				if ( it->find("location") != std::string::npos )
+				{
+					it = parse_location(it, ite);
+					if ( it == _file.end() )
+						return ;
+				}
+
+				else if ( search_informations(*it) == false )
 					return ;
 
 				it++;

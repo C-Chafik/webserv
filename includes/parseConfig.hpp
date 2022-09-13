@@ -19,7 +19,11 @@ class parseConfig
 		std::pair<std::string, std::vector<std::string> >	insert_port( std::string raw_address );
 		std::pair<std::vector<int>, std::string>			insert_error_page( std::string raw_error_page );
 		std::vector<std::string>							insert_server_names( std::string raw_server_name );
+		std::string		 	 		 	 					L_insert_root( std::string line );
 		std::string 										trim_data( std::string raw_data, std::string data_name );
+		std::list<std::string>::iterator		 			parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
+		std::string	 	 		 	 						get_location_path( std::string line );
+		size_t												check_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 		int													insert_body_max_size( std::string raw_data );
 		int													count_server (std::list<std::string>::iterator, std::list<std::string>::iterator );
 		bool												search_informations( std::string line );

@@ -23,10 +23,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+struct parseLocation {
+        std::string root;
+};
+
+
 struct config {
     std::vector<std::string> server_names; //! DONE
     std::map<std::string, std::vector<std::string> > listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
+    std::map< std::string, struct parseLocation > locations; //? Processing....
     int         body_max_size; //! DONE
 
     void clear( void )
