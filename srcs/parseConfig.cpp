@@ -130,6 +130,9 @@ void	parseConfig::print_all_informations( void )
 		std::vector< std::pair<std::vector<int>, std::string> >::iterator eit = conf_it->errors.begin();
 		std::vector< std::pair<std::vector<int>, std::string> >::iterator eite = conf_it->errors.end();
 
+		std::map< std::string, struct parseLocation >::iterator lit = conf_it->locations.begin();
+		std::map< std::string, struct parseLocation >::iterator lite = conf_it->locations.end();
+
 
 		std::cout << "ALL LISTEN PORT AND IP " << std::endl;
 		for ( ; mit != mite ; mit++ )
@@ -158,6 +161,26 @@ void	parseConfig::print_all_informations( void )
 			{
 				std::cout << *it <<": ";
 			}
+			std::cout << std::endl;
+		}
+
+		std::cout << "ALL LOCATIONS INFORMATIONS" << std::endl;
+		for ( ; lit != lite ; lit++)
+		{
+			std::cout << " FOR THE PATH : " << lit->first << std::endl;
+			std::cout << " ROOT -> " << lit->second.root << std::endl;
+			std::cout << " REPOSITORY LISTING -> ";
+			if ( lit->second.autoindex == true )
+				std::cout << "TRUE" << std::endl;
+			else
+				std::cout << "FALSE" << std::endl;
+			std::cout << "ALL HTTP REDIRECTION FOR ERROR CODE -> ";
+			for ( std::vector<int>::iterator it = lit->second.http_redirection.first.begin(); it != lit->second.http_redirection.first.end(); ++it )
+			{
+				std::cout << *it << " : ";
+			}
+			std::cout << "WILL BE REDIRECTED TO -> " << lit->second.http_redirection.second << std::endl;
+
 			std::cout << std::endl;
 		}
 		i++;
@@ -252,7 +275,7 @@ std::vector<std::string> parseConfig::insert_server_names( std::string raw_serve
 
 std::string parseConfig::trim_data( std::string raw_data, std::string data_name ) //! Trim at the begin and at the end every isspace, and transform every isspace that is not in the beginning or at the end, to a space ' ' for parsing purpose
 {
-	if ( raw_data.find(data_name) != std::string::npos )
+ 	if ( raw_data.find(data_name) != std::string::npos )
 		raw_data.erase(raw_data.find(data_name), data_name.size());
 	if ( raw_data.find(";") != std::string::npos )
 		raw_data.erase(raw_data.find(";"));
@@ -264,9 +287,11 @@ std::string parseConfig::trim_data( std::string raw_data, std::string data_name 
 	while ( rit != raw_data.rend() && isspace(*rit) )
 		rit++;
 
-	std::string trimmed_raw_data(it, raw_data.end());
+	std::string::iterator trim_end = rit.base();
 
-	while (trimmed_raw_data.find("\t") != std::string::npos )
+	std::string trimmed_raw_data(it, trim_end);
+
+	while ( trimmed_raw_data.find("\t") != std::string::npos )
 		trimmed_raw_data[trimmed_raw_data.find("\t")] = ' ';
 
 	return trimmed_raw_data;
@@ -348,9 +373,9 @@ int parseConfig::count_server( std::list<std::string>::iterator it, std::list<st
 
 bool	parseConfig::check_closure( std::string line )
 {
-	if ( (line.find(";") == std::string::npos) && (line.find("location") == std::string::npos) && _closed == 1 && _inside == 1)
+	if ( (line.find(";") == std::string::npos) && (exact_match(line, "location") == false) && _closed == 1 && _inside == 1)
 	{
-		_actual_error = "MISSING ; : ";
+		_actual_error = "MISSING ; OR UNKNOWN COMMAND : ";
 		_actual_error.append(line);
 		_state = false;
 		return false ;
@@ -391,7 +416,7 @@ size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::li
 		if ( (it->find("}") != std::string::npos) )
 		{
 			it++;
-			if ( it->empty() || it->back() != ';' )
+			if ( it->empty() || ( it->back() != ';' && it->find("location") == std::string::npos && *it != "}") )
 			{
 				_actual_error = "MISSING A CLOSURE BRACE IN A LOCATION ";
 				_state = false;	
@@ -422,10 +447,52 @@ std::string	parseConfig::L_insert_root( std::string line )
 	return new_line;
 }
 
+bool	parseConfig::exact_match( const std::string & raw_str, const std::string & keyword )
+{
+	std::string str = trim_data(raw_str, "");
+	std::string::size_type pos = str.find(keyword);
+	if ( pos == std::string::npos )
+		return false;
+	if ( pos != 0 || !isspace(str[keyword.size()]) )
+		return false;
+	return true;
+}
+
+std::pair<std::vector<int>, std::string> parseConfig::insert_http_redirection( std::string raw_line )
+{
+	std::string line = trim_data(raw_line, "return");
+	std::vector<int> codes;
+	std::string url;
+	std::string tmp;
+	std::string all_error_code;
+
+	std::string::size_type i = line.find_last_of(" \t\n\v\f\r");
+
+	url = line.substr(i + 1, std::string::npos);
+
+	all_error_code = line.substr(0, i);
+
+	for ( std::string::size_type i = 0; i < all_error_code.size() ; i++ )
+	{
+		if ( isspace(all_error_code[i]) )
+		{
+			if ( !tmp.empty() )
+			{
+				codes.push_back(std::atoi(tmp.c_str()));
+				tmp.clear();
+			}
+		}
+		else
+			tmp.append(1, all_error_code[i]);
+	}
+
+	std::pair<std::vector<int>, std::string> ret(codes, url);
+	return ret;
+}
+
 std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
 	std::string 									path;
-	struct parseLocation 							parseLocation;
 	int 											closed = 0;
 	int	 											inside = 0;
 
@@ -461,52 +528,84 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			closed = 1;
 		}
 
-		if ( it->find("root") != std::string::npos )
-			parseLocation.root = L_insert_root(*it);
+		if ( exact_match(*it, "root") == true )
+			_config.locations[path].root = L_insert_root(*it);
+		
+		else if ( exact_match(*it, "autoindex") == true )
+			_config.locations[path].autoindex = insert_index(*it);
+		
+		else if ( exact_match(*it, "return") == true )
+			_config.locations[path].http_redirection = insert_http_redirection(*it);
 
 	}
 
-	std::pair< std::string, struct parseLocation > 	ret(path, parseLocation);
+	// std::pair< std::string, struct parseLocation > 	ret(path, _parseLocation);
 
-	_config.locations.insert(ret);
-
-	std::map<std::string, struct parseLocation>::iterator rrit = _config.locations.begin();
-
-	std::cout << rrit->second.root << std::endl;
-	std::cout << rrit->first << std::endl;
+	// _config.locations.insert(ret);
 
 	return it;
 }
 
+bool	parseConfig::insert_index( std::string raw_index )
+{
+	std::string index = trim_data(raw_index, "autoindex");
+	std::string raw_state;
+	bool 		state = false;
+
+	for ( std::string::size_type i = 0; !isspace(index[i]) && index[i] ; i++ )
+		raw_state.append(1, index[i]);
+	
+	if ( raw_state == "on" )
+		state = true;
+	else
+		state = false;
+
+	return state;
+}
+
 bool parseConfig::search_informations( std::string line )
 {
-	if ( line.find("listen") != std::string::npos )
-	{
-		std::pair<std::map<std::string, std::vector<std::string> >::iterator, bool > ret;
-		std::pair<std::string, std::vector<std::string> > listen(insert_port(line));
-
-		ret = _config.listening.insert(listen);
-		if ( ret.second == false )
-			ret.first->second.push_back(listen.second.front());
-	}
-
-	else if ( line.find("server_name") != std::string::npos )
-		_config.server_names = insert_server_names(line);
-	
-	else if ( line.find("client_max_body_size") != std::string::npos )
-	{
-		_config.body_max_size = insert_body_max_size(line);
-		if ( _config.body_max_size == -1 )
+		if ( exact_match(line, "listen") == true )
 		{
-			_actual_error = "ERROR AT : ";
+			std::pair<std::map<std::string, std::vector<std::string> >::iterator, bool > ret;
+			std::pair<std::string, std::vector<std::string> > listen(insert_port(line));
+
+			ret = _config.listening.insert(listen);
+			if ( ret.second == false )
+				ret.first->second.push_back(listen.second.front());
+		}
+
+		else if ( exact_match(line, "server_name") == true )
+			_config.server_names = insert_server_names(line);
+
+		else if ( exact_match(line, "client_max_body_size") == true )
+		{
+			_config.body_max_size = insert_body_max_size(line);
+			if ( _config.body_max_size == -1 )
+			{
+				_actual_error = "ERROR AT : ";
+				_actual_error.append(line);
+				_state = false;
+				return false;
+			}
+		}
+
+		else if ( exact_match(line, "error_page") == true )
+			_config.errors.push_back(insert_error_page(line));
+
+		else if ( exact_match(line, "autoindex") == true )
+			_config.locations["/"].autoindex = insert_index(line);
+		
+		else if ( exact_match(line, "return") == true )
+			_config.locations["/"].http_redirection = insert_http_redirection(line);
+	
+		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
+		{
+			_actual_error = "UNKOWN COMMAND : ";
 			_actual_error.append(line);
 			_state = false;
 			return false;
 		}
-	}
-
-	else if ( line.find("error_page") != std::string::npos )
-		_config.errors.push_back(insert_error_page(line));
 	
 	return true;
 }
@@ -539,11 +638,12 @@ void	parseConfig::parse_file( void )
 				if ( check_closure(*it) == false )
 					return ;
 
-				if ( it->find("location") != std::string::npos )
+				if ( exact_match(*it, "location") == true )
 				{
 					it = parse_location(it, ite);
 					if ( it == _file.end() )
 						return ;
+					continue ;
 				}
 
 				else if ( search_informations(*it) == false )

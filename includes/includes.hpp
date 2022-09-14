@@ -24,7 +24,9 @@
 #include <arpa/inet.h>
 
 struct parseLocation {
-        std::string root;
+        std::string root; //! DONE
+        bool autoindex = false;
+        std::pair< std::vector< int >, std::string > http_redirection; //? Processing, (The function is dangerous)
 };
 
 
@@ -33,10 +35,11 @@ struct config {
     std::map<std::string, std::vector<std::string> > listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
     std::map< std::string, struct parseLocation > locations; //? Processing....
-    int         body_max_size; //! DONE
+    int         body_max_size = 0; //! DONE
 
     void clear( void )
     {
+        locations.clear();
         server_names.clear();
         listening.clear();
         errors.clear();
