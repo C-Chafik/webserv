@@ -47,6 +47,8 @@ class Server{
 	void send_index();
 	void send_400();
 	void send_404();
+	bool isIpAddress(std::string addr);
+	bool hostToIp(std::string hostname);
 
 public:
 	struct config conf;

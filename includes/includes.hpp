@@ -23,6 +23,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstdlib>
+#include <netdb.h>
+#include <sys/socket.h>
 
 
 struct config {

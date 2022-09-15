@@ -3,7 +3,7 @@
 std::vector< std::thread > *global = NULL;
 
 void endWell(int num){
-	std::cerr << std::endl << RED << "WebServ #name# shut down!" << WHITE << std::endl;
+	std::cerr << std::endl << RED << "WebServ shut down!" << WHITE << std::endl;
 	if (global != NULL)
 		for (std::vector< std::thread >::iterator it = global->begin(); it != global->end(); it++){
 			// it->detach();
