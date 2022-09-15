@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-
+/*true if string is an ip address format*/
 bool Server::isIpAddress(std::string addr){
 	if (!addr.empty()){
 		size_t nb_bit_serie = 0;
@@ -36,6 +36,7 @@ bool Server::isIpAddress(std::string addr){
 	return false;
 }
 
+/*return true if the string is or is an hostname wich is 127.0.0.1*/
 bool Server::hostToIp(std::string host){
 	if (isIpAddress(host)){
 		hostent* hostname = gethostbyname(host.c_str());
@@ -51,7 +52,20 @@ bool Server::hostToIp(std::string host){
 	}
 }
 
+/*return D_200 if the host paramter of the HTTP request is listen in the config file. Else return D_400*/
+short Server::host(in_addr_t ip_host, std::string name_host){
+	//! change host var when we have the parse request's struct
+	if (ip_host && (parseG.ip_address == ip_host))
+		return D_200;
+	else
+		for (int i = 0; i < parseG.server_names.size(); i++)
+			if (parseG.server_names[i] == name_host)
+				return D_200;
 
+	return D_400;
+}
+
+/*send the file to the client if host is ok else send error 400 file*/
 void Server::check_host(){
 	/* 
 	TODO parse Host in request header and split ip and port if host is an ip
@@ -78,17 +92,3 @@ void Server::check_host(){
 			break;
 	}
 }
-
-
-short Server::host(in_addr_t ip_host, std::string name_host){
-	//! change host var when we have the parse request's struct
-	if (ip_host && (parseG.ip_address == ip_host))
-		return D_200;
-	else
-		for (int i = 0; i < parseG.server_names.size(); i++)
-			if (parseG.server_names[i] == name_host)
-				return D_200;
-
-	return D_400;
-}
-

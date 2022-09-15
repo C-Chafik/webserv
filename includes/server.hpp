@@ -28,8 +28,8 @@ class Server{
 
 	//var
 	serverInfo serverInfo;
-	fd_set current_connections;
-	fd_set ready_connections;
+	fd_set current_connections;//fd waiting to communicate
+	fd_set ready_connections;//fd ready to communicate
 	HeaderGen HGen;
 	struct parseGlobal parseG;
 
