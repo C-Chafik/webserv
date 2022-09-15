@@ -24,9 +24,12 @@
 #include <arpa/inet.h>
 
 struct parseLocation {
+        bool GET;
+        bool POST;
+        bool DELETE;
         std::string root; //! DONE
         bool autoindex = false;
-        std::pair< std::vector< int >, std::string > http_redirection; //? Processing, (The function is dangerous)
+        std::pair< int, std::string > http_redirection; //? Processing, (The function is dangerous)
 };
 
 

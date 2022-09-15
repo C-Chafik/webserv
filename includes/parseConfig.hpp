@@ -18,10 +18,11 @@ class parseConfig
 		//? Parser
 		void												parse_file( void );
 		std::pair<std::string, std::vector<std::string> >	insert_port( std::string raw_address );
-		std::pair<std::vector<int>, std::string >	insert_http_redirection( std::string raw_line );
+		std::pair<int, std::string >						insert_http_redirection( std::string raw_line );
 		std::pair<std::vector<int>, std::string>			insert_error_page( std::string raw_error_page );
 		std::vector<std::string>							insert_server_names( std::string raw_server_name );
 		bool												insert_index( std::string raw_index );
+		void												insert_method( std::string raw_method, std::string location );
 		std::string		 	 		 	 					L_insert_root( std::string line );
 		std::string 										trim_data( std::string raw_data, std::string data_name );
 		std::list<std::string>::iterator		 			parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
@@ -38,7 +39,7 @@ class parseConfig
 
 		//? Utils
 		std::list<std::string>								ft_split(std::string header, std::string charset );
-		std::list<std::string>::iterator 					remove_empty_line( std::list<std::string>::iterator it );
+		std::list<std::string>::iterator 					remove_empty_line( std::list<std::string> & container, std::list<std::string>::iterator it );
 		bool			 								 	exact_match( const  std::string & haystack, const std::string & needle );
 		void    											remove_tab( std::string & str );
 		void    											print_all_informations( void );		

@@ -66,7 +66,7 @@ bool parseConfig::fill_file( void )
 	{
 		if (it->empty())
 		{
-			it = remove_empty_line(it);
+			it = remove_empty_line(_file, it);
 		}
 	}
 
@@ -97,12 +97,12 @@ std::list<std::string> parseConfig::ft_split(std::string header, std::string cha
 	return ret;		
 }
 
-std::list<std::string>::iterator parseConfig::remove_empty_line( std::list<std::string>::iterator it )
+std::list<std::string>::iterator parseConfig::remove_empty_line( std::list<std::string> & container, std::list<std::string>::iterator it )
 {
 	if (it->empty())
-		_file.erase(it);
+		container.erase(it);
 	
-	std::list<std::string>::iterator new_it = _file.begin();
+	std::list<std::string>::iterator new_it = container.begin();
 
 	return new_it;
 }
@@ -174,12 +174,16 @@ void	parseConfig::print_all_informations( void )
 				std::cout << "TRUE" << std::endl;
 			else
 				std::cout << "FALSE" << std::endl;
-			std::cout << "ALL HTTP REDIRECTION FOR ERROR CODE -> ";
-			for ( std::vector<int>::iterator it = lit->second.http_redirection.first.begin(); it != lit->second.http_redirection.first.end(); ++it )
-			{
-				std::cout << *it << " : ";
-			}
+			std::cout << "HTTP REDIRECTION FOR ERROR CODE -> ";
+			std::cout << lit->second.http_redirection.first << " ";
 			std::cout << "WILL BE REDIRECTED TO -> " << lit->second.http_redirection.second << std::endl;
+			std::cout << "EVERY ACCEPTED METHOD - > " << std::endl;
+			if ( lit->second.GET == true )
+				std::cout << "GET" << std::endl;
+			if ( lit->second.POST == true )
+				std::cout << "POST" << std::endl;
+			if ( lit->second.DELETE == true )
+				std::cout << "DELETE" << std::endl;
 
 			std::cout << std::endl;
 		}
@@ -453,41 +457,53 @@ bool	parseConfig::exact_match( const std::string & raw_str, const std::string & 
 	std::string::size_type pos = str.find(keyword);
 	if ( pos == std::string::npos )
 		return false;
-	if ( pos != 0 || !isspace(str[keyword.size()]) )
+	if ( pos != 0 || !isspace(str[keyword.size()]))
 		return false;
+	
 	return true;
 }
 
-std::pair<std::vector<int>, std::string> parseConfig::insert_http_redirection( std::string raw_line )
+std::pair<int, std::string> parseConfig::insert_http_redirection( std::string raw_line )
 {
-	std::string line = trim_data(raw_line, "return");
-	std::vector<int> codes;
-	std::string url;
-	std::string tmp;
-	std::string all_error_code;
+	std::pair<int, std::string> ret;
+	raw_line = trim_data(raw_line, "return");
+	std::list<std::string> http_redir = ft_split(raw_line, " ");
 
-	std::string::size_type i = line.find_last_of(" \t\n\v\f\r");
+	std::list<std::string>::iterator it = http_redir.begin();
+	std::list<std::string>::iterator ite = http_redir.end();
+	for ( ; it != ite ; it++ )
+		if (it->empty())
+			it = remove_empty_line(http_redir, it);
+	
+	if ( http_redir.size() > 1 )
+		ret = std::make_pair(std::atoi(http_redir.front().c_str()), http_redir.back());
+	else
+		ret = std::make_pair(-1, "");
 
-	url = line.substr(i + 1, std::string::npos);
-
-	all_error_code = line.substr(0, i);
-
-	for ( std::string::size_type i = 0; i < all_error_code.size() ; i++ )
-	{
-		if ( isspace(all_error_code[i]) )
-		{
-			if ( !tmp.empty() )
-			{
-				codes.push_back(std::atoi(tmp.c_str()));
-				tmp.clear();
-			}
-		}
-		else
-			tmp.append(1, all_error_code[i]);
-	}
-
-	std::pair<std::vector<int>, std::string> ret(codes, url);
 	return ret;
+}
+
+void	parseConfig::insert_method( std::string raw_method, std::string location )
+{
+	raw_method = trim_data(raw_method, "method_accept");
+
+	std::list<std::string> methods = ft_split(raw_method, " ");
+	std::list<std::string>::iterator it = methods.begin();
+	std::list<std::string>::iterator ite = methods.end();
+	for ( ; it != ite ; it++ )
+		if (it->empty())
+			it = remove_empty_line(methods, it);
+	it = methods.begin();
+	for ( ; it != ite ; it++ )
+	{
+		if ( *it == "GET" )
+			_config.locations[location].GET = true;
+		if ( *it == "POST" )
+			_config.locations[location].POST = true;
+		if ( *it == "DELETE" )
+			_config.locations[location].DELETE = true;
+	}
+	
 }
 
 std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
@@ -536,12 +552,11 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		
 		else if ( exact_match(*it, "return") == true )
 			_config.locations[path].http_redirection = insert_http_redirection(*it);
+		
+		else if ( exact_match(*it, "method_accept") == true )
+			insert_method(*it, path);
 
 	}
-
-	// std::pair< std::string, struct parseLocation > 	ret(path, _parseLocation);
-
-	// _config.locations.insert(ret);
 
 	return it;
 }
@@ -598,6 +613,9 @@ bool parseConfig::search_informations( std::string line )
 		
 		else if ( exact_match(line, "return") == true )
 			_config.locations["/"].http_redirection = insert_http_redirection(line);
+		
+		else if ( exact_match(line, "method_accept") == true )
+			insert_method(line, "/");
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{
