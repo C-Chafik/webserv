@@ -19,18 +19,13 @@ parseConfig::~parseConfig( void )
 parseConfig::parseConfig( std::string path ) : _file_path(path)
 {
 	_closed = 0;
-	_server_number = 0;
 	_inside = 0;
 	_state = true;
+
 	if ( fill_file() == false )
 		return ;
 
-	count_server(_file.begin(), _file.end());
-	config * _config = new config[_server_number];
-
 	parse_file();
-	if (_state == false)
-		return ;
 }
 
 /////////////////////////////////////////////////////
@@ -52,23 +47,21 @@ bool parseConfig::fill_file( void )
 		_actual_error = "ERROR OPENING THE FILE";
 		return false;
 	}
+
 	while (getline(file, buffer, '\n'))
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
+
 	_file = ft_split(fileSTR, "\n");
 
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
 		remove_tab(*it);
 
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
-	{
 		if (it->empty())
-		{
 			it = remove_empty_line(_file, it);
-		}
-	}
 
 	return true;
 }
@@ -80,7 +73,7 @@ bool parseConfig::fill_file( void )
 ///                                               ///
 /////////////////////////////////////////////////////
 
-std::list<std::string> parseConfig::ft_split(std::string header, std::string charset )
+std::list<std::string> parseConfig::ft_split( const std::string & header, const std::string & charset )
 {
 	size_t 					start = 0, end, charset_len = charset.length();
 	std::string				tmp;
@@ -97,7 +90,7 @@ std::list<std::string> parseConfig::ft_split(std::string header, std::string cha
 	return ret;		
 }
 
-std::list<std::string>::iterator parseConfig::remove_empty_line( std::list<std::string> & container, std::list<std::string>::iterator it )
+std::list<std::string>::iterator parseConfig::remove_empty_line( std::list<std::string> & container, std::list<std::string>::iterator & it )
 {
 	if (it->empty())
 		container.erase(it);
@@ -139,17 +132,13 @@ void	parseConfig::print_all_informations( void )
 		{
 			std::cout << mit->first << " ";
 			for ( std::vector<std::string>::iterator it = mit->second.begin() ; it != mit->second.end() ; it++ )
-			{
 				std::cout << *it <<" : ";
-			}
 			std::cout << std::endl;
 		}
 		std::cout << std::endl;
 		std::cout << "ALL SERVER NAMES " << std::endl;
 		for ( ; vit != vite ; vit++ )
-		{
 			std::cout << *vit << " ";
-		}
 		std::cout << std::endl;
 		std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
 		std::cout << conf_it->body_max_size << std::endl;
@@ -158,9 +147,7 @@ void	parseConfig::print_all_informations( void )
 		{
 			std::cout << "ERROR PATH : " << eit->second << " FOR ERROR CODE -> ";
 			for ( std::vector<int>::iterator it = eit->first.begin() ; it != eit->first.end() ; it++ )
-			{
 				std::cout << *it <<": ";
-			}
 			std::cout << std::endl;
 		}
 
@@ -227,7 +214,7 @@ int parseConfig::exit_on_error ( void )
 /////////////////////////////////////////////////////
 
 
-std::pair<std::string, std::vector<std::string> > parseConfig::insert_port( std::string raw_address )
+std::pair<std::string, std::vector<std::string> > parseConfig::insert_port( std::string raw_address ) //! Cannot pass by reference
 {
 	std::string address;
 	std::string port;
@@ -263,7 +250,7 @@ std::pair<std::string, std::vector<std::string> > parseConfig::insert_port( std:
 	return ret;
 }
 
-std::vector<std::string> parseConfig::insert_server_names( std::string raw_server_name )
+std::vector<std::string> parseConfig::insert_server_names( std::string & raw_server_name )
 {
 	raw_server_name = trim_data(raw_server_name, "server_name");
 
@@ -277,16 +264,19 @@ std::vector<std::string> parseConfig::insert_server_names( std::string raw_serve
 	return server_names;
 }
 
-std::string parseConfig::trim_data( std::string raw_data, std::string data_name ) //! Trim at the begin and at the end every isspace, and transform every isspace that is not in the beginning or at the end, to a space ' ' for parsing purpose
+//! Cannot pass by reference in this function (because of its use)
+std::string parseConfig::trim_data( std::string & raw_data, const std::string & data_name ) //! Trim at the begin and at the end every isspace, and transform every isspace that is not in the beginning or at the end, to a space ' ' for parsing purpose
 {
  	if ( raw_data.find(data_name) != std::string::npos )
 		raw_data.erase(raw_data.find(data_name), data_name.size());
+	
 	if ( raw_data.find(";") != std::string::npos )
 		raw_data.erase(raw_data.find(";"));
 	
 	std::string::iterator it = raw_data.begin();
 	while ( it != raw_data.end() && isspace(*it) )
 		it++;
+	
 	std::string::reverse_iterator rit = raw_data.rbegin();
 	while ( rit != raw_data.rend() && isspace(*rit) )
 		rit++;
@@ -301,7 +291,7 @@ std::string parseConfig::trim_data( std::string raw_data, std::string data_name 
 	return trimmed_raw_data;
 }
 
-int	parseConfig::insert_body_max_size( std::string raw_data )
+int	parseConfig::insert_body_max_size( std::string & raw_data )
 {
 	std::string	data = trim_data(raw_data, "client_max_body_size");
 	std::string	first_value;
@@ -315,16 +305,14 @@ int	parseConfig::insert_body_max_size( std::string raw_data )
 	return std::atoi(first_value.c_str());
 }
 
-std::pair<std::vector<int>, std::string> parseConfig::insert_error_page( std::string raw_error_page )
+std::pair<std::vector<int>, std::string> parseConfig::insert_error_page( std::string & raw_error_page )
 {
 	std::vector<int> 		errors;
 	std::string 	 		error_path;
 	std::string		 		error_code;
 	std::string::size_type 	i = 0;
 
-
 	std::string error_page = trim_data(raw_error_page, "error_page");
-
 
 	for ( ; i < error_page.size() ; i++ )
 	{
@@ -360,7 +348,7 @@ int parseConfig::count_server( std::list<std::string>::iterator it, std::list<st
 			{
 				if ( (it->find("}") != std::string::npos) && closed == 1 )
 				{
-					_server_number++;
+					n++;
 					break ;
 				}
 				if ( it->find("{") != std::string::npos )
@@ -375,7 +363,7 @@ int parseConfig::count_server( std::list<std::string>::iterator it, std::list<st
 	return n;
 }
 
-bool	parseConfig::check_closure( std::string line )
+bool	parseConfig::check_closure( std::string & line )
 {
 	if ( (line.find(";") == std::string::npos) && (exact_match(line, "location") == false) && _closed == 1 && _inside == 1)
 	{
@@ -384,15 +372,17 @@ bool	parseConfig::check_closure( std::string line )
 		_state = false;
 		return false ;
 	}
+
 	if ( line.find("{") != std::string::npos )
 	{
 		_closed = 1;
 		_inside = 1;
 	}
+
 	return true;
 }
 
-std::string	 parseConfig::get_location_path( std::string line )
+std::string	 parseConfig::get_location_path( std::string & line )
 {
 	std::string new_line;
 
@@ -407,10 +397,11 @@ std::string	 parseConfig::get_location_path( std::string line )
 	return new_line;
 }
 
+//! IT MUST NOT BE BY REFERENCE, or it will increment the local iterator
 size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
-	int 											open = 0;
-	int	 											closed = 0;
+	int open = 0;
+	int	closed = 0;
 
 	for ( ; it != ite ; it++ )
 	{
@@ -436,10 +427,11 @@ size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::li
 
 	_actual_error = "SOMETHING IS WRONG IN A LOCATION BRACES";
 	_state = false;	
+
 	return std::string::npos;
 }
 
-std::string	parseConfig::L_insert_root( std::string line )
+std::string	parseConfig::L_insert_root( std::string & line )
 {
 	std::string new_line;
 
@@ -451,26 +443,30 @@ std::string	parseConfig::L_insert_root( std::string line )
 	return new_line;
 }
 
-bool	parseConfig::exact_match( const std::string & raw_str, const std::string & keyword )
+bool	parseConfig::exact_match( std::string & raw_str, const std::string & keyword )
 {
-	std::string str = trim_data(raw_str, "");
-	std::string::size_type pos = str.find(keyword);
+	std::string 			str = trim_data(raw_str, "");
+	std::string::size_type 	pos = str.find(keyword);
+
 	if ( pos == std::string::npos )
 		return false;
+
 	if ( pos != 0 || !isspace(str[keyword.size()]))
 		return false;
 	
 	return true;
 }
 
-std::pair<int, std::string> parseConfig::insert_http_redirection( std::string raw_line )
+std::pair<int, std::string> parseConfig::insert_http_redirection( std::string & raw_line )
 {
-	std::pair<int, std::string> ret;
 	raw_line = trim_data(raw_line, "return");
-	std::list<std::string> http_redir = ft_split(raw_line, " ");
+
+	std::pair<int, std::string> ret;
+	std::list<std::string>		http_redir = ft_split(raw_line, " ");
 
 	std::list<std::string>::iterator it = http_redir.begin();
 	std::list<std::string>::iterator ite = http_redir.end();
+
 	for ( ; it != ite ; it++ )
 		if (it->empty())
 			it = remove_empty_line(http_redir, it);
@@ -483,17 +479,20 @@ std::pair<int, std::string> parseConfig::insert_http_redirection( std::string ra
 	return ret;
 }
 
-void	parseConfig::insert_method( std::string raw_method, std::string location )
+void	parseConfig::insert_method( std::string & raw_method, const std::string & location )
 {
 	raw_method = trim_data(raw_method, "method_accept");
 
-	std::list<std::string> methods = ft_split(raw_method, " ");
-	std::list<std::string>::iterator it = methods.begin();
-	std::list<std::string>::iterator ite = methods.end();
+	std::list<std::string> 				methods = ft_split(raw_method, " ");
+	std::list<std::string>::iterator 	it = methods.begin();
+	std::list<std::string>::iterator 	ite = methods.end();
+
 	for ( ; it != ite ; it++ )
 		if (it->empty())
 			it = remove_empty_line(methods, it);
+	
 	it = methods.begin();
+
 	for ( ; it != ite ; it++ )
 	{
 		if ( *it == "GET" )
@@ -506,11 +505,12 @@ void	parseConfig::insert_method( std::string raw_method, std::string location )
 	
 }
 
+//! Must be a copy, not a value (Can change it later)
 std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
-	std::string 									path;
-	int 											closed = 0;
-	int	 											inside = 0;
+	std::string 	path;
+	int 			closed = 0;
+	int	 			inside = 0;
 
 	path = get_location_path(*it);
 	if ( path.empty() )
@@ -555,13 +555,12 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		
 		else if ( exact_match(*it, "method_accept") == true )
 			insert_method(*it, path);
-
 	}
 
 	return it;
 }
 
-bool	parseConfig::insert_index( std::string raw_index )
+bool	parseConfig::insert_index( std::string & raw_index )
 {
 	std::string index = trim_data(raw_index, "autoindex");
 	std::string raw_state;
@@ -578,7 +577,7 @@ bool	parseConfig::insert_index( std::string raw_index )
 	return state;
 }
 
-bool parseConfig::search_informations( std::string line )
+bool parseConfig::search_informations( std::string & line )
 {
 		if ( exact_match(line, "listen") == true )
 		{
@@ -676,6 +675,7 @@ void	parseConfig::parse_file( void )
 		_config.clear();
 		_inside = 0;
 		_closed = 0;
+		
 		if ( it == ite )
 			break ;
 	}
@@ -703,7 +703,7 @@ bool	parseConfig::state( void )
 
 size_t parseConfig::get_server_number( void )
 {
-	return _server_number;
+	return count_server(_file.begin(), _file.end());
 }
 
 std::vector< struct config > parseConfig::get_config( void )
