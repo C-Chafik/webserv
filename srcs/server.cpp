@@ -3,7 +3,7 @@
 
 #include "includes.hpp"
 
-std::string Server::fileToString(std::string fileName, struct serverInfo serverInfo, bool error){
+std::string Server::fileToString(std::string fileName, bool error){
 	std::ifstream file;
 	std::string	buffer;
 	std::string	fileSTR;
@@ -13,7 +13,7 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 	{
 		if (!file.is_open() && error){
 			std::cout << "Fail when opening file" << std::endl;
-			close(serverInfo.serverSocket);
+			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
 		else
@@ -29,35 +29,51 @@ std::string Server::fileToString(std::string fileName, struct serverInfo serverI
 	return fileSTR;
 }
 
-void Server::listenSocketServer(int port){
-	/*listen multiple ports : https://stackoverflow.com/questions/15560336/listen-to-multiple-ports-from-one-server*/
-	serverInfo.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+void Server::listenSocketServer(){
+	std::map<std::string,std::vector<std::string>>::iterator it = conf.listening.begin();
 
-	if (serverInfo.serverSocket == -1){
-		std::cerr << "Error when creating server's socket!" << std::endl;
-		exit (EXIT_FAILURE);
-	}
+	while (it != conf.listening.end()){//for all addresses
+		for (int i = 0; i < it->second.size(); i++){//for all port of address
+			sockaddr_in	serverSocketStruct;
 
-	int value = 1;
-	if (setsockopt(serverInfo.serverSocket, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) < 0)
-		exit (EXIT_FAILURE);
+			server_sockets.push_back( socket(AF_INET, SOCK_STREAM, 0) );
 
-	serverInfo.serverSocketStruct.sin_family = AF_INET;
-	serverInfo.serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
-	serverInfo.serverSocketStruct.sin_port = htons(port);
+			if (server_sockets.at(server_sockets.size() - 1) == -1){
+				for (int j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
+					close(server_sockets[j]);
+				std::cerr << "Error when creating server's socket!" << std::endl;
+				exit (EXIT_FAILURE);
+			}
 
-	if (bind(serverInfo.serverSocket,
-		reinterpret_cast<struct sockaddr *>(&serverInfo.serverSocketStruct),
-		sizeof(serverInfo.serverSocketStruct)) == -1){
-			std::cerr << "Port " << conf.listening.begin()->second[0] << " : " << "Error when binding socket and address!" << std::endl;
-			close (serverInfo.serverSocket);
-			exit (EXIT_FAILURE);
-	}
+			int value = 1;
+			if (setsockopt(server_sockets.at(server_sockets.size() - 1), SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) < 0)
+				exit (EXIT_FAILURE);
 
-	if (listen(serverInfo.serverSocket, BACKLOG) == -1){
-			std::cerr << "Error when server started listening!" << std::endl;
-			close (serverInfo.serverSocket);
-			exit (EXIT_FAILURE);
+			serverSocketStruct.sin_family = AF_INET;
+			serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
+			serverSocketStruct.sin_port = htons(atoi(it->second[i].c_str()));
+
+			server_sockets_struct.push_back( serverSocketStruct );
+
+
+			std::cout << it->second[i] << std::endl;
+
+			if (bind(server_sockets.at(server_sockets.size() - 1),
+				reinterpret_cast<struct sockaddr *>(&serverSocketStruct),
+				sizeof(serverSocketStruct)) == -1){
+					std::cerr << "Error when binding socket and address!" << std::endl;
+					for (int j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
+						close(server_sockets[j]);
+					exit (EXIT_FAILURE);
+			}
+
+			if (listen(server_sockets.at(server_sockets.size() - 1), BACKLOG) == -1){
+					std::cerr << "Error when server started listening!" << std::endl;
+					exitCloseSock();
+					exit (EXIT_FAILURE);
+			}
+		}
+		++it;
 	}
 }
 
@@ -66,10 +82,12 @@ void Server::run(){
 	std::map<std::string, std::vector<std::string> >::iterator listen_it = conf.listening.begin();
 
 
-	listenSocketServer(atoi(listen_it->second[0].c_str()));
+	listenSocketServer();
 
 	FD_ZERO(&current_connections);//init struct to 0
-	FD_SET(serverInfo.serverSocket, &current_connections);//set the server socket fd in current connection struct
+	for (int i = 0; i < server_sockets.size(); i++)
+		FD_SET(server_sockets[i], &current_connections);//set the server socket fd in current connection struct
+
 
 	/*raw data while waiting parsing*/
 	parseG.location["/"].root = "html_files/";// tmp attend pour parsing autofill && add setter to add / back if needed
@@ -85,18 +103,20 @@ void Server::run(){
 		/*get ready for connection fd in ready connection struct*/
 		if (select(FD_SETSIZE, &ready_connections, NULL, NULL, NULL) == -1){
 			std::cerr << "Error when select ready sockets!" << std::endl;
-			close (serverInfo.serverSocket);
+			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
 
 		for (int i = 0; i < FD_SETSIZE; i++){//check all fd possible in ready_connection struct
 			if (FD_ISSET(i, &ready_connections)){
-				if (i == serverInfo.serverSocket){//new connection wait to be taken at the server.socket ip
-					int clientSocket = accept_connection(serverInfo);
+				if (wantToBeAccepted(i)){//new connection wait to be taken at the server.socket ip
+					std::cout << "test accept\n";
+					int clientSocket = accept_connection(i);
 					FD_SET(clientSocket,  &current_connections);//set new connection established in the current_connection struct
 				}
 				else{
-					handle_connection(i, serverInfo);
+					std::cout << "test handle\n";
+					handle_connection(i);
 					FD_CLR(i, &current_connections);//remove the connection after everything done
 				}
 			}
