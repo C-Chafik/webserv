@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-void Server::handle_connection(int clientSocket, struct serverInfo serverInfo){
+void Server::handle_connection(int clientSocket){
 	treat_request(clientSocket);
 
 	check_host();

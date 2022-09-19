@@ -8,11 +8,6 @@
 
 class Server{
 	//struct
-	struct serverInfo{
-		int			serverSocket;
-		sockaddr_in	serverSocketStruct;
-	};
-
 	struct parseLocation{
 		std::string root;
 	};
@@ -27,29 +22,38 @@ class Server{
 	};
 
 	//var
-	serverInfo serverInfo;
-	fd_set current_connections;
-	fd_set ready_connections;
+	std::vector<int> server_sockets;
+	std::vector<sockaddr_in> server_sockets_struct;
+	fd_set current_connections;//fd waiting to communicate
+	fd_set ready_connections;//fd ready to communicate
 	HeaderGen HGen;
 	struct parseGlobal parseG;
 
 
 	//func
-	int accept_connection(struct serverInfo serverInfo);
+	int accept_connection(int fdServer);
 	int treat_request( int requestFd );
-	void handle_connection(int clientSocket, struct serverInfo serverInfo);
+	void handle_connection(int clientSocket);
 	std::string fileLocation(std::string request);
-	std::string fileToString(std::string fileName, struct serverInfo serverInfo, bool error = false);
-	void listenSocketServer(int port);
+	std::string fileToString(std::string fileName, bool error = false);
+	void listenSocketServer();
 	void check_host();
 	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
 	void send_200(std::string file);
 	void send_index();
 	void send_400();
 	void send_404();
+	bool isIpAddress(std::string addr);
+	bool hostToIp(std::string hostname);
+	int findServerIndex(int fdServer);
+	void exitCloseSock();
+	bool wantToBeAccepted(int fd);
+
+
 
 public:
-	void run(int port);
+	struct config conf;
+	void run();
 
 };
 
