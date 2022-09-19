@@ -38,6 +38,9 @@ struct parseLocation {
         std::string upload_path;
         bool autoindex;
         std::pair< int, std::string > http_redirection; //? Processing, (The function is dangerous)
+
+        parseLocation( void ) { autoindex = false; }
+        ~parseLocation ( void ) {}
 };
 
 
@@ -48,13 +51,17 @@ struct config {
     std::map< std::string, struct parseLocation > locations; //? Processing....
     int         body_max_size; //! DONE
 
+    config( void ) { body_max_size = 100000; }
+    ~config ( void ) {}
+
     void clear( void )
     {
+
         locations.clear();
         server_names.clear();
         listening.clear();
         errors.clear();
-        body_max_size = 0;
+        body_max_size = 100000;
     }
 };
 

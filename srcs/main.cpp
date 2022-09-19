@@ -5,6 +5,7 @@ int main(){
 	parseConfig parse("conf/default.conf");
 	if ( parse.state() == false )
 		return parse.exit_on_error();
+	return 0;
 	
 	Server serv;
 	std::vector< struct config > confs = parse.get_config();
