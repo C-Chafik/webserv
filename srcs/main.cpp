@@ -2,7 +2,7 @@
 
 int main(){
 
-	parseConfig parse("conf/default.conf");
+	parseConfig parse("conf/default.conf");//do a dynamic search and go to default location if nothig
 	if ( parse.state() == false )
 		return parse.exit_on_error();
 	
@@ -10,7 +10,7 @@ int main(){
 	std::vector< struct config > confs = parse.get_config();
 
 	serv.conf = confs[0];
-	serv.run();
+	serv.run(confs);
 
 	return EXIT_SUCCESS;
 }

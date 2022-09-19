@@ -77,7 +77,11 @@ void Server::listenSocketServer(){
 	}
 }
 
-void Server::run(){
+
+void Server::run(std::vector< struct config > &confs){
+
+	this->confs = confs;
+
 
 	listenSocketServer();
 

@@ -22,6 +22,7 @@ class Server{
 	};
 
 	//var
+	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
 	std::vector<sockaddr_in> server_sockets_struct;
 	fd_set current_connections;//fd waiting to communicate
@@ -53,7 +54,7 @@ class Server{
 
 public:
 	struct config conf;
-	void run();
+	void run(std::vector< struct config > &confs);
 
 };
 
