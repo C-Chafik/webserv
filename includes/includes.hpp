@@ -17,7 +17,6 @@
 #include <fstream>
 #include <cstring>
 #include <utility>
-#include <thread>
 #include <signal.h>
 #include <map>
 #include <netinet/in.h>
@@ -25,6 +24,10 @@
 #include <cstdlib>
 #include <netdb.h>
 #include <sys/socket.h>
+#include <sstream>
+
+#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
+
 
 
 struct parseLocation {

@@ -89,7 +89,7 @@ int Server::treat_request( int requestFd )
 			break ;
 		memset(header, 0, 4096);
 	}
-	if ( end == -1 )
+	if ( end == static_cast<size_t>(-1) )
 	{
 		std::cout << "ERROR RECEIVING THE HEADER " << std::endl;
 		exit(0);

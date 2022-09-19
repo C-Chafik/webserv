@@ -8,7 +8,7 @@ std::string Server::fileToString(std::string fileName, bool error){
 	std::string	buffer;
 	std::string	fileSTR;
 
-	file.open(fileName);
+	file.open(fileName.c_str());
 	if (!file.is_open())
 	{
 		if (!file.is_open() && error){
@@ -30,16 +30,16 @@ std::string Server::fileToString(std::string fileName, bool error){
 }
 
 void Server::listenSocketServer(){
-	std::map<std::string,std::vector<std::string>>::iterator it = conf.listening.begin();
+	std::map< std::string, std::vector<std::string> >::iterator it = conf.listening.begin();
 
 	while (it != conf.listening.end()){//for all addresses
-		for (int i = 0; i < it->second.size(); i++){//for all port of address
+		for (std::map< std::string, std::vector<std::string> >::size_type i = 0; i < it->second.size(); i++){//for all port of address
 			sockaddr_in	serverSocketStruct;
 
 			server_sockets.push_back( socket(AF_INET, SOCK_STREAM, 0) );
 
 			if (server_sockets.at(server_sockets.size() - 1) == -1){
-				for (int j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
+				for (std::string::size_type j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
 					close(server_sockets[j]);
 				std::cerr << "Error when creating server's socket!" << std::endl;
 				exit (EXIT_FAILURE);
@@ -62,7 +62,7 @@ void Server::listenSocketServer(){
 				reinterpret_cast<struct sockaddr *>(&serverSocketStruct),
 				sizeof(serverSocketStruct)) == -1){
 					std::cerr << "Error when binding socket and address!" << std::endl;
-					for (int j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
+					for (std::vector<int>::size_type j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
 						close(server_sockets[j]);
 					exit (EXIT_FAILURE);
 			}
@@ -85,7 +85,7 @@ void Server::run(){
 	listenSocketServer();
 
 	FD_ZERO(&current_connections);//init struct to 0
-	for (int i = 0; i < server_sockets.size(); i++)
+	for (std::vector<int>::size_type i = 0; i < server_sockets.size(); i++)
 		FD_SET(server_sockets[i], &current_connections);//set the server socket fd in current connection struct
 
 

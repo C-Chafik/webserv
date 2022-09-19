@@ -34,7 +34,7 @@ public:
 
 	void setContentString(std::string str){
 		_Info[LENGTH].append("Content-Length: ");
-		_Info[LENGTH].append(std::to_string(str.length()));
+		_Info[LENGTH].append(SSTR(str.length()));
 		_Info[LENGTH].append("\n\n");
 		_Info[CONTENT].append(str);
 		_Info[CONTENT].append("\n");

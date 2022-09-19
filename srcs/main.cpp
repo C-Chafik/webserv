@@ -1,7 +1,5 @@
 #include "includes.hpp"
 
-// std::vector< std::thread > *global = NULL;
-
 int main(){
 
 	parseConfig parse("conf/default.conf");
@@ -10,8 +8,6 @@ int main(){
 	
 	Server serv;
 	std::vector< struct config > confs = parse.get_config();
-
-	std::vector< std::thread > threads;
 
 	serv.conf = confs[0];
 	serv.run();
