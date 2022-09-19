@@ -27,14 +27,27 @@
 #include <sys/socket.h>
 
 
+struct parseLocation {
+        bool GET;
+        bool POST;
+        bool DELETE;
+        std::string root; //! DONE
+        std::string upload_path;
+        bool autoindex = false;
+        std::pair< int, std::string > http_redirection; //? Processing, (The function is dangerous)
+};
+
+
 struct config {
     std::vector<std::string> server_names; //! DONE
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
-    int         body_max_size; //! DONE
+    std::map< std::string, struct parseLocation > locations; //? Processing....
+    int         body_max_size = 0; //! DONE
 
     void clear( void )
     {
+        locations.clear();
         server_names.clear();
         listening.clear();
         errors.clear();
