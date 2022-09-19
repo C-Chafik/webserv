@@ -13,7 +13,7 @@ $(NAME): $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
 
 $(OBJS): $(SRCS)
-	$(CC)  -I$(INC_DIR) $(SRCS) -c
+	$(CC) -I$(INC_DIR) $(SRCS) -c
 
 clean:
 	rm -f $(OBJS)

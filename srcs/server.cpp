@@ -77,10 +77,10 @@ void Server::listenSocketServer(){
 	}
 }
 
-void Server::run(){
+void Server::run(std::vector< struct config > &confs){
 
-	std::map<std::string, std::vector<std::string> >::iterator listen_it = conf.listening.begin();
-
+	this->confs = confs;
+	// std::map<std::string, std::vector<std::string> >::iterator listen_it = conf.listening.begin();
 
 	listenSocketServer();
 
