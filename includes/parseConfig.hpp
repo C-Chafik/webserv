@@ -55,7 +55,6 @@ class parseConfig
 
 	private:
 		//! Parsing
-		size_t 					_server_number;
 		size_t					_closed;
 		bool					_inside;
 		std::list<std::string> 	_file;

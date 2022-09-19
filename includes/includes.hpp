@@ -36,7 +36,7 @@ struct parseLocation {
         bool DELETE;
         std::string root; //! DONE
         std::string upload_path;
-        bool autoindex = false;
+        bool autoindex;
         std::pair< int, std::string > http_redirection; //? Processing, (The function is dangerous)
 };
 
@@ -46,7 +46,7 @@ struct config {
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening; //! DONE
     std::vector< std::pair<std::vector<int>, std::string> > errors; //! DONE
     std::map< std::string, struct parseLocation > locations; //? Processing....
-    int         body_max_size = 0; //! DONE
+    int         body_max_size; //! DONE
 
     void clear( void )
     {

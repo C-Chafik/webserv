@@ -41,7 +41,7 @@ bool parseConfig::fill_file( void )
 	std::string buffer;
 	std::string	fileSTR;
 
-	file.open(_file_path);
+	file.open(_file_path.c_str());
 	if (!file.is_open())
 	{
 		_actual_error = "ERROR OPENING THE FILE";
@@ -413,7 +413,7 @@ size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::li
 		if ( (it->find("}") != std::string::npos) )
 		{
 			it++;
-			if ( it->empty() || ( it->back() != ';' && it->find("location") == std::string::npos && *it != "}") )
+			if ( it->empty() || ( it->at(it->length() - 1) != ';' && it->find("location") == std::string::npos && *it != "}") )
 			{
 				_actual_error = "MISSING A CLOSURE BRACE IN A LOCATION ";
 				_state = false;	
@@ -662,7 +662,7 @@ void	parseConfig::parse_file( void )
 			{
 				if ( ( it->find("}") != std::string::npos ) && _closed == 1 && it->find("location") == std::string::npos )
 				{
-					if ( it->back() != '}' )
+					if ( it->at(it->length() - 1) != '}' )
 					{
 						_actual_error = "INVALID CLOSURE ";
 						_state = false;
