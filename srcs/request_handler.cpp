@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/02 17:07:56 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/19 18:08:47 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ request_handler::request_handler( void ) : state(true), _data()
 
 }
 
-request_handler::request_handler( char * raw_header ) : _header(raw_header), state(true), _data()
+request_handler::request_handler( char * raw_header ) : state(true), _data(), _header(raw_header)
 {
 	
 }
