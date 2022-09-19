@@ -41,7 +41,6 @@ bool Server::hostToIp(std::string host){
 	if (isIpAddress(host)){
 		hostent* hostname = gethostbyname(host.c_str());
 		std::string hostname_str = std::string(inet_ntoa(**(in_addr**)hostname->h_addr_list));
-		std::cout << "HERE => " << hostname_str << std::endl;
 		if(hostname_str == "127.0.0.1")
 			return true;
 		return false;

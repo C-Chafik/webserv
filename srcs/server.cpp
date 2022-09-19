@@ -110,12 +110,10 @@ void Server::run(){
 		for (int i = 0; i < FD_SETSIZE; i++){//check all fd possible in ready_connection struct
 			if (FD_ISSET(i, &ready_connections)){
 				if (wantToBeAccepted(i)){//new connection wait to be taken at the server.socket ip
-					std::cout << "test accept\n";
 					int clientSocket = accept_connection(i);
 					FD_SET(clientSocket,  &current_connections);//set new connection established in the current_connection struct
 				}
 				else{
-					std::cout << "test handle\n";
 					handle_connection(i);
 					FD_CLR(i, &current_connections);//remove the connection after everything done
 				}
