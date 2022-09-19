@@ -171,6 +171,8 @@ void	parseConfig::print_all_informations( void )
 				std::cout << "POST" << std::endl;
 			if ( lit->second.DELETE == true )
 				std::cout << "DELETE" << std::endl;
+			std::cout << "UPLOADED FILES WILL BE STORED IN -> ";
+			std::cout << lit->second.upload_path << std::endl;
 
 			std::cout << std::endl;
 		}
@@ -505,6 +507,18 @@ void	parseConfig::insert_method( std::string & raw_method, const std::string & l
 	
 }
 
+std::string parseConfig::insert_upload_path( std::string & line )
+{
+	std::string new_line;
+
+	line = trim_data(line, "set_upload");
+
+	for ( std::string::size_type i = 0; !isspace(line[i]) && line[i] ; i++ )
+		new_line.append(1, line[i]);
+	
+	return new_line;
+}
+
 //! Must be a copy, not a value (Can change it later)
 std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
@@ -555,6 +569,8 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		
 		else if ( exact_match(*it, "method_accept") == true )
 			insert_method(*it, path);
+		else if ( exact_match(*it, "set_upload") == true )
+			_config.locations[path].upload_path = insert_upload_path(*it);
 	}
 
 	return it;
@@ -615,6 +631,9 @@ bool parseConfig::search_informations( std::string & line )
 		
 		else if ( exact_match(line, "method_accept") == true )
 			insert_method(line, "/");
+		
+		else if ( exact_match(line, "set_upload") == true )
+			_config.locations["/"].upload_path = insert_upload_path(line);
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{

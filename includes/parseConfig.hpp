@@ -17,6 +17,7 @@ class parseConfig
 
 		//? Parser
 		void												parse_file( void );
+		std::string 										insert_upload_path( std::string & line );
 		std::pair<std::string, std::vector<std::string> >	insert_port( std::string raw_address );
 		std::pair<int, std::string >						insert_http_redirection( std::string & raw_line );
 		std::pair<std::vector<int>, std::string>			insert_error_page( std::string & raw_error_page );

@@ -28,6 +28,7 @@ struct parseLocation {
         bool POST;
         bool DELETE;
         std::string root; //! DONE
+        std::string upload_path;
         bool autoindex = false;
         std::pair< int, std::string > http_redirection; //? Processing, (The function is dangerous)
 };
