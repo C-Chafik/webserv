@@ -7,10 +7,8 @@ int main(){
 		return parse.exit_on_error();
 	
 	Server serv;
-	std::vector< struct config > confs = parse.get_config();
 
-	serv.conf = confs[0];
-	serv.run(confs);
+	serv.run( parse.get_config() );
 
 	return EXIT_SUCCESS;
 }

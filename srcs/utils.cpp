@@ -18,3 +18,29 @@ bool Server::wantToBeAccepted(int fd){
 			return true;
 	return false;
 }
+
+std::string Server::fileToString(std::string fileName, bool error){
+	std::ifstream file;
+	std::string	buffer;
+	std::string	fileSTR;
+
+	file.open(fileName.c_str());
+	if (!file.is_open())
+	{
+		if (!file.is_open() && error){
+			std::cout << "Fail when opening file" << std::endl;
+			exitCloseSock();
+			exit (EXIT_FAILURE);
+		}
+		else
+			send_404();
+	}
+	while (getline(file, buffer, '\n'))
+	{
+		fileSTR += buffer;
+		fileSTR += "\n";
+	}
+	file.close();
+
+	return fileSTR;
+}

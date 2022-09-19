@@ -1,84 +1,8 @@
 #define PORT 9999
-#define BACKLOG 10
 
 #include "includes.hpp"
 
-std::string Server::fileToString(std::string fileName, bool error){
-	std::ifstream file;
-	std::string	buffer;
-	std::string	fileSTR;
-
-	file.open(fileName.c_str());
-	if (!file.is_open())
-	{
-		if (!file.is_open() && error){
-			std::cout << "Fail when opening file" << std::endl;
-			exitCloseSock();
-			exit (EXIT_FAILURE);
-		}
-		else
-			send_404();
-	}
-	while (getline(file, buffer, '\n'))
-	{
-		fileSTR += buffer;
-		fileSTR += "\n";
-	}
-	file.close();
-
-	return fileSTR;
-}
-
-void Server::listenSocketServer(){
-	std::map< std::string, std::vector<std::string> >::iterator it = conf.listening.begin();
-
-	while (it != conf.listening.end()){//for all addresses
-		for (std::map< std::string, std::vector<std::string> >::size_type i = 0; i < it->second.size(); i++){//for all port of address
-			sockaddr_in	serverSocketStruct;
-
-			server_sockets.push_back( socket(AF_INET, SOCK_STREAM, 0) );
-
-			if (server_sockets.at(server_sockets.size() - 1) == -1){
-				for (std::string::size_type j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
-					close(server_sockets[j]);
-				std::cerr << "Error when creating server's socket!" << std::endl;
-				exit (EXIT_FAILURE);
-			}
-
-			int value = 1;
-			if (setsockopt(server_sockets.at(server_sockets.size() - 1), SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) < 0)
-				exit (EXIT_FAILURE);
-
-			serverSocketStruct.sin_family = AF_INET;
-			serverSocketStruct.sin_addr.s_addr = INADDR_ANY;
-			serverSocketStruct.sin_port = htons(atoi(it->second[i].c_str()));
-
-			server_sockets_struct.push_back( serverSocketStruct );
-
-
-			std::cout << it->second[i] << std::endl;
-
-			if (bind(server_sockets.at(server_sockets.size() - 1),
-				reinterpret_cast<struct sockaddr *>(&serverSocketStruct),
-				sizeof(serverSocketStruct)) == -1){
-					std::cerr << "Error when binding socket and address!" << std::endl;
-					for (std::vector<int>::size_type j = 0; j < server_sockets.size() && server_sockets[j] != -1; j++)
-						close(server_sockets[j]);
-					exit (EXIT_FAILURE);
-			}
-
-			if (listen(server_sockets.at(server_sockets.size() - 1), BACKLOG) == -1){
-					std::cerr << "Error when server started listening!" << std::endl;
-					exitCloseSock();
-					exit (EXIT_FAILURE);
-			}
-		}
-		++it;
-	}
-}
-
-
-void Server::run(std::vector< struct config > &confs){
+void Server::run(std::vector< struct config > confs){
 
 	this->confs = confs;
 
