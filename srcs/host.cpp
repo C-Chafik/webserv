@@ -11,7 +11,7 @@ bool Server::isIpAddress(std::string addr){
 			return false;
 		}
 
-		int count = 0;
+		std::string::size_type count = 0;
 		while (count < addr.size() && nb_bit_serie < 3){
 			if (addr[count] == '.'){
 				++nb_bit_serie;
@@ -57,7 +57,7 @@ short Server::host(in_addr_t ip_host, std::string name_host){
 	if (ip_host && (parseG.ip_address == ip_host))
 		return D_200;
 	else
-		for (int i = 0; i < parseG.server_names.size(); i++)
+		for (std::string::size_type i = 0; i < parseG.server_names.size(); i++)
 			if (parseG.server_names[i] == name_host)
 				return D_200;
 
