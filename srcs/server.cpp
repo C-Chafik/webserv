@@ -79,9 +79,6 @@ void Server::listenSocketServer(){
 
 void Server::run(){
 
-	std::map<std::string, std::vector<std::string> >::iterator listen_it = conf.listening.begin();
-
-
 	listenSocketServer();
 
 	FD_ZERO(&current_connections);//init struct to 0
