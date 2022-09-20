@@ -152,9 +152,7 @@ bool	parseConfig::check_closure( std::string & line )
 {
 	if ( (line.find(";") == std::string::npos) && (exact_match(line, "location") == false) && _closed == 1 && _inside == 1)
 	{
-		_actual_error = "MISSING ; OR UNKNOWN COMMAND : ";
-		_actual_error.append(line);
-		_state = false;
+		parsing_error( "MISSING ; OR UNKNOWN COMMAND : ", line);
 		return false ;
 	}
 
@@ -196,10 +194,9 @@ size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::li
 		if ( (it->find("}") != std::string::npos) )
 		{
 			it++;
-			if ( it->empty() || ( it->at(it->length() - 1) != ';' && it->find("location") == std::string::npos && *it != "}") )
+			if ( it == ite || it->empty() || ( it->at(it->length() - 1) != ';' && it->find("location") == std::string::npos && *it != "}") )
 			{
-				_actual_error = "MISSING A CLOSURE BRACE IN A LOCATION ";
-				_state = false;	
+				parsing_error("MISSING A CLOSURE BRACE IN A LOCATION ");
 				return std::string::npos;
 			}
 			closed++;
@@ -210,8 +207,7 @@ size_t	parseConfig::check_location( std::list<std::string>::iterator it, std::li
 	if ( open == 1 && closed == 1 )
 		return 0;
 
-	_actual_error = "SOMETHING IS WRONG IN A LOCATION BRACES";
-	_state = false;	
+	parsing_error("SOMETHING IS WRONG IN A LOCATION BRACES");
 
 	return std::string::npos;
 }
@@ -228,4 +224,13 @@ bool	parseConfig::exact_match( std::string & raw_str, const std::string & keywor
 		return false;
 	
 	return true;
+}
+
+void	parseConfig::parsing_error( const std::string & error, const std::string & where )
+{
+	if ( !error.empty() )
+		_actual_error = error;
+	if ( !where.empty() )
+		_actual_error.append(where);
+	_state = false;
 }

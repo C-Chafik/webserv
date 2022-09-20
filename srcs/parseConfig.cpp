@@ -36,18 +36,18 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 
 bool parseConfig::fill_file( void )
 {
-	std::ifstream file;
-	std::string buffer;
-	std::string	fileSTR;
+	std::ifstream 	file;
+	std::string 	buffer;
+	std::string		fileSTR;
 
 	file.open(_file_path.c_str());
 	if (!file.is_open())
 	{
-		_actual_error = "ERROR OPENING THE FILE";
+		parsing_error("ERROR OPENING THE FILE");
 		return false;
 	}
 
-	while (getline(file, buffer, '\n'))
+	while ( getline(file, buffer, '\n') )
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
@@ -102,9 +102,7 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 	path = get_location_path(*it);
 	if ( path.empty() )
 	{
-		_actual_error = "MISSING LOCATION PATH : ";
-		_actual_error.append(*it);
-		_state = false;
+		parsing_error("MISSING LOCATION PATH : ", *it);
 		return _file.end();
 	}
 
@@ -120,9 +118,7 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		}
 		if ( it->find(";") == std::string::npos && inside == 1 && closed == 1 )
 		{
-			_actual_error = "MISSING ; : ";
-			_actual_error.append(*it);
-			_state = false;
+			parsing_error("MISSING ; : ", *it);
 			return _file.end();
 		}
 		if ( it->find("{") != std::string::npos )
@@ -133,15 +129,16 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 
 		if ( exact_match(*it, "root") == true )
 			_config.locations[path].root = insert_root(*it);
-		
+
 		else if ( exact_match(*it, "autoindex") == true )
 			_config.locations[path].autoindex = insert_index(*it);
-		
+
 		else if ( exact_match(*it, "return") == true )
 			_config.locations[path].http_redirection = insert_http_redirection(*it);
-		
+
 		else if ( exact_match(*it, "method_accept") == true )
 			insert_method(*it, path);
+
 		else if ( exact_match(*it, "set_upload") == true )
 			_config.locations[path].upload_path = insert_upload_path(*it);
 	}
@@ -169,9 +166,7 @@ bool parseConfig::search_informations( std::string & line )
 			_config.body_max_size = insert_body_max_size(line);
 			if ( _config.body_max_size == -1 )
 			{
-				_actual_error = "ERROR AT : ";
-				_actual_error.append(line);
-				_state = false;
+				parsing_error("ERROR AT : ", line);
 				return false;
 			}
 		}
@@ -197,9 +192,7 @@ bool parseConfig::search_informations( std::string & line )
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{
-			_actual_error = "UNKOWN COMMAND : ";
-			_actual_error.append(line);
-			_state = false;
+			parsing_error("UNKNOWN COMMAND : ", line);
 			return false;
 		}
 	
@@ -223,16 +216,15 @@ void	parseConfig::parse_file( void )
 				if ( ( it->find("}") != std::string::npos ) && _closed == 1 && it->find("location") == std::string::npos )
 				{
 					if ( it->at(it->length() - 1) != '}' )
-					{
-						_actual_error = "INVALID CLOSURE ";
-						_state = false;
-						return ;
-					}
+						return parsing_error("INVALID CLOSURE ");
 					break ;
 				}
 
 				if ( check_closure(*it) == false )
 					return ;
+
+				if ( _closed == 0 )
+					return parsing_error("MISSING OPENING BRACE");
 
 				if ( exact_match(*it, "location") == true )
 				{
@@ -247,9 +239,9 @@ void	parseConfig::parse_file( void )
 
 				it++;
 			}
-			if ( _config.listening.empty() )
-				_config.listening.insert(insert_port("localhost:8080"));
 		}
+		if ( _config.listening.empty() )
+				_config.listening.insert(insert_port("localhost:8080"));
 		_configs.push_back(_config);
 		_config.clear();
 		_inside = 0;

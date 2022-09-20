@@ -75,19 +75,26 @@ std::pair<std::vector<int>, std::string> parseConfig::insert_error_page( std::st
 
 	for ( ; i < error_page.size() ; i++ )
 	{
-		if ( error_page[i] == '/' )
+		if ( !isdigit(error_page[i]) && !isspace(error_page[i]) )
+		{
+			while (!isspace(error_page[i]))
+				i--;
+			if (isspace(error_page[i]))
+				i++;
 			break ;
+		}
 		
 		for ( ; isdigit(error_page[i]) ; i++ )
 			error_code.append(1, error_page[i]);
 
-		if ( !error_code.empty() )
+		if ( !error_code.empty() && (isspace(error_page[i]) || !error_page[i]) )
 		{
 			errors.push_back(std::atoi(error_code.c_str()));
 			error_code.clear();
 		}
 	}
-	error_path.append(error_page, i, std::string::npos);
+	if ( i <= error_page.size() )
+		error_path.append(error_page, i, std::string::npos);
 
 	std::pair<std::vector<int>, std::string> ret(errors, error_path);
 

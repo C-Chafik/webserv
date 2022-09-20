@@ -41,9 +41,6 @@ class parseConfig
 		bool 					_state;
 
 
-		//! Private Function
-
-
 		//? Main
 		bool    											fill_file( void );
 		void												parse_file( void );
@@ -72,6 +69,7 @@ class parseConfig
 		std::list<std::string>::iterator 					remove_empty_line( std::list<std::string> & container, std::list<std::string>::iterator & it );
 		bool			 								 	exact_match( std::string & raw_str, const std::string & keyword );
 		void    											remove_tab( std::string & str );
+		void												parsing_error( const std::string & error, const std::string & where = std::string() );
 		void    											print_all_informations( void );	
 
 
