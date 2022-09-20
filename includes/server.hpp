@@ -21,6 +21,8 @@ class Server{
 			std::vector<std::string> index;
 	};
 
+	typedef std::vector< struct config >::size_type id_server_type;
+
 	//var
 	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
@@ -35,16 +37,16 @@ class Server{
 	//func
 	int accept_connection(int fdServer);
 	int treat_request( int requestFd );
-	void handle_connection(int clientSocket);
-	std::string fileLocation(std::string request);
-	std::string fileToString(std::string fileName, bool error = false);
+	void handle_connection(int clientSocket, id_server_type server_id);
+	std::string findPathError(id_server_type id_server, int errorCode);
+	std::string fileLocation(std::string request, id_server_type serverNb);
+	std::string fileToString(id_server_type server_id, std::string fileName, bool error = false);
 	void listenSocketServer();
-	void check_host();
+	void check_host(id_server_type server_id);
 	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
-	void send_200(std::string file);
-	void send_index();
-	void send_400();
-	void send_404();
+	void send_200(std::string file, id_server_type serverNb);
+	void send_400(id_server_type serverNb);
+	void send_404(id_server_type serverNb);
 	bool isIpAddress(std::string addr);
 	bool hostToIp(std::string hostname);
 	int findServerIndex(int fdServer);
@@ -54,7 +56,6 @@ class Server{
 
 
 public:
-	// struct config conf;
 	void run(std::vector< struct config > confs);
 
 };
