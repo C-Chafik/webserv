@@ -1,8 +1,11 @@
 NAME=WebServer
 CC=c++
-FLAGS= -Wall -Werror -Wextra -std=c++98 -g -O0
+FLAGS= -Wall -Werror -Wextra -std=c++98
 
-SRC=main.cpp server.cpp request_handler.cpp accept_connection.cpp handle_request.cpp fileLocation.cpp parseConfig.cpp host.cpp send.cpp utils.cpp parseConfig_insert.cpp parseConfig_utils.cpp parseConfig_common.cpp
+SRC= main.cpp server.cpp request_handler.cpp accept_connection.cpp \
+	handle_request.cpp fileLocation.cpp parseConfig.cpp host.cpp \
+	send.cpp utils.cpp listen.cpp parseConfig_insert.cpp \
+  parseConfig_utils.cpp parseConfig_common.cpp
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes
 OBJS=${SRC:.cpp=.o}

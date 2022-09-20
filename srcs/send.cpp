@@ -1,7 +1,7 @@
 #include "includes.hpp"
 
-void Server::send_200(std::string file){
-	std::string fileSTR = fileToString(fileLocation(file));
+void Server::send_200(std::string file, id_server_type serverNb){
+	std::string fileSTR = fileToString(serverNb, fileLocation(file, serverNb));
 
 	HGen.setStatus("200 OK");
 	HGen.setType("text/html");
@@ -9,8 +9,8 @@ void Server::send_200(std::string file){
 	HGen.processResponse();
 }
 
-void Server::send_400(){
-	std::string fileSTR = fileToString(parseG.path_e_400, true);//!raw until parsing done (path of error 400)
+void Server::send_400(id_server_type serverNb){
+	std::string fileSTR = fileToString(serverNb, findPathError(serverNb, 400), true);//!raw until parsing done (path of error 400)
 
 	HGen.setStatus("400 Bad Request");
 	HGen.setType("text/html");
@@ -18,8 +18,8 @@ void Server::send_400(){
 	HGen.processResponse();
 }
 
-void Server::send_404(){
-	std::string fileSTR = fileToString(parseG.path_e_404, true);//!raw until parsing done (path of error 404)
+void Server::send_404(id_server_type serverNb){
+	std::string fileSTR = fileToString(serverNb, findPathError(serverNb, 404), true);//!raw until parsing done (path of error 404)
 
 	HGen.setStatus("404 Not Found");
 	HGen.setType("text/html");

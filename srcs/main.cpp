@@ -2,16 +2,14 @@
 
 int main(){
 
-	parseConfig parse("conf/default.conf");
+	parseConfig parse("conf/default.conf");//do a dynamic search and go to default location if nothig
 	if ( parse.state() == false )
 		return parse.exit_on_error();
 	return 0;
 	
 	Server serv;
-	std::vector< struct config > confs = parse.get_config();
 
-	serv.conf = confs[0];
-	serv.run();
+	serv.run( parse.get_config() );
 
 	return EXIT_SUCCESS;
 }
