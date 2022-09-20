@@ -11,6 +11,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		location = request.substr(0, slash + 1);
 
 	//check if config exist
+
 	if (location.size() && confs[serverNb].locations.find(location) != confs[serverNb].locations.end()){//cas de dir/file.html
 		rtn.append(confs[serverNb].locations[location].root);
 		rtn.append(request.substr(slash + 1, request.size()));
