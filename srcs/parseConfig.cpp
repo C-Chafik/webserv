@@ -189,6 +189,9 @@ bool parseConfig::search_informations( std::string & line )
 		
 		else if ( exact_match(line, "set_upload") == true )
 			_config.locations["/"].upload_path = insert_upload_path(line);
+		
+		else if ( exact_match(line, "root") == true )
+			_config.locations["/"].root = insert_root(line);
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{
