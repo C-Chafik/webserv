@@ -26,7 +26,8 @@ class Server{
 	//var
 	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
-	std::vector< std::vector< struct config >::size_type > wich_server;
+	std::vector< std::vector< struct config >::size_type > socket_to_server;
+	std::map<int/*client fd*/, int/*server_id*/> confs_index;
 	std::vector<sockaddr_in> server_sockets_struct;
 	fd_set current_connections;//fd waiting to communicate
 	fd_set ready_connections;//fd ready to communicate

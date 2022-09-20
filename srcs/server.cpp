@@ -39,7 +39,7 @@ void Server::run(std::vector< struct config > confs){
 					FD_SET(clientSocket,  &current_connections);//set new connection established in the current_connection struct
 				}
 				else{
-					handle_connection(i, wich_server[findServerIndex(i)]);
+					handle_connection(i, confs_index.at(i));
 					FD_CLR(i, &current_connections);//remove the connection after everything done
 				}
 			}

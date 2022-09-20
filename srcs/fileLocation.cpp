@@ -30,6 +30,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		rtn.append(request);
 
+	std::cout << rtn << std::endl;
 	return rtn;
 }
 

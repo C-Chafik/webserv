@@ -27,7 +27,7 @@ void Server::listenSocketServer(){
 				serverSocketStruct.sin_port = htons(atoi(it->second[i].c_str()));
 
 				server_sockets_struct.push_back( serverSocketStruct );
-				wich_server.push_back(k);
+				socket_to_server.push_back(k);
 
 
 				std::cout << it->second[i] << std::endl;
