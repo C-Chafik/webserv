@@ -7,6 +7,7 @@ int Server::accept_connection(int fdServer){
 
 	clientFd = accept(server_sockets[serverIndex], reinterpret_cast<struct sockaddr *>(&server_sockets_struct[serverIndex])
 		, &serverInfoSize);
+	confs_index[clientFd] = socket_to_server[serverIndex];
 	if (clientFd == -1){
 		std::cerr << "Error when accept new connection!" << std::endl;
 		exitCloseSock();
