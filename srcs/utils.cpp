@@ -18,3 +18,40 @@ bool Server::wantToBeAccepted(int fd){
 			return true;
 	return false;
 }
+
+std::string Server::fileToString(id_server_type server_id, std::string fileName, bool error){
+	std::ifstream file;
+	std::string	buffer;
+	std::string	fileSTR;
+
+	file.open(fileName.c_str());
+	if (!file.is_open())
+	{
+		if (!file.is_open() && error){
+			std::cout << "Fail when opening file" << std::endl;
+			exitCloseSock();
+			exit (EXIT_FAILURE);
+		}
+		else
+			send_404(server_id);
+	}
+	while (getline(file, buffer, '\n'))
+	{
+		fileSTR += buffer;
+		fileSTR += "\n";
+	}
+	file.close();
+
+	return fileSTR;
+}
+
+std::string Server::findPathError(id_server_type id_server, int error_code){
+	std::vector< std::pair<std::vector<int>, std::string> >::iterator big_it = confs[id_server].errors.begin();
+	for (; big_it != confs[id_server].errors.end(); big_it++){
+		std::vector<int>::iterator lil_it = big_it->first.begin();
+		for (; lil_it != big_it->first.end(); lil_it++)
+			if (*lil_it == error_code)
+				return big_it->second;
+	}
+	return "";
+}

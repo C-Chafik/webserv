@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-std::string Server::fileLocation(std::string request){
+std::string Server::fileLocation(std::string request, std::vector< struct config >::size_type serverNb){
 	std::string::size_type slash;
 	std::string location;
 	std::string rtn;
@@ -11,25 +11,26 @@ std::string Server::fileLocation(std::string request){
 		location = request.substr(0, slash + 1);
 
 	//check if config exist
-	if (location.size() && parseG.location.find(location) != parseG.location.end()){//cas de dir/file.html
-		rtn.append(parseG.location[location].root);
+	if (location.size() && confs[serverNb].locations.find(location) != confs[serverNb].locations.end()){//cas de dir/file.html
+		rtn.append(confs[serverNb].locations[location].root);
 		rtn.append(request.substr(slash + 1, request.size()));
 	}
-	else if (location.size() && parseG.location.find("/") != parseG.location.end()){//check if / config exist
-		rtn.append(parseG.location["/"].root);
+	else if (location.size() && confs[serverNb].locations.find("/") != confs[serverNb].locations.end()){//check if / config exist
+		rtn.append(confs[serverNb].locations["/"].root);
 		rtn.append(request.substr(slash + 1, request.size()));
 	}
-	else if (parseG.location.find(request) != parseG.location.end()){//only file.html with config
-		rtn.append(parseG.location[request].root);
+	else if (confs[serverNb].locations.find(request) != confs[serverNb].locations.end()){//only file.html with config
+		rtn.append(confs[serverNb].locations[request].root);
 		rtn.append(request.substr(0, request.size()));
 	}
-	else if (parseG.location.find("/") != parseG.location.end()){//only file.html with "/" config
-		rtn.append(parseG.location["/"].root);
+	else if (confs[serverNb].locations.find("/") != confs[serverNb].locations.end()){//only file.html with "/" config
+		rtn.append(confs[serverNb].locations["/"].root);
 		rtn.append(request.substr(0, request.size()));
 	}
 	else
 		rtn.append(request);
 
+	std::cout << rtn << std::endl;
 	return rtn;
 }
 

@@ -65,7 +65,7 @@ short Server::host(in_addr_t ip_host, std::string name_host){
 }
 
 /*send the file to the client if host is ok else send error 400 file*/
-void Server::check_host(){
+void Server::check_host(id_server_type server_id){
 	/* 
 	TODO parse Host in request header and split ip and port if host is an ip
 	*/
@@ -78,13 +78,13 @@ void Server::check_host(){
 	switch (send_type)
 	{
 		case D_200:
-			send_200("index.html");//!raw until parsing done (GET /file)
+			send_200("index.html", server_id);//!raw until parsing done (GET /file)
 			// send_200("html_files/other.html");//print error
 			// send_index();
 			break;
 		
 		case D_400:
-			send_400();
+			send_400(server_id);
 			break;
 
 		default:
