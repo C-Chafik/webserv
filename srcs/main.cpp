@@ -6,8 +6,6 @@ int main(){
 	if ( parse.state() == false )
 		return parse.exit_on_error();
 	
-	return 0;
-	
 	Server serv;
 
 	serv.run( parse.get_config() );
