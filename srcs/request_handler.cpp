@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/19 18:08:47 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/21 18:31:21 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,17 @@
 //*? La connection, doit etre keep-alive pour l'instant.
 //*? sec-ch-ua (Le navigateur utiliser), doit etre Google Chrome
 
-request_handler::request_handler( void ) : state(true), _data()
+request_handler::request_handler( void ) : _state(false)
 {
 
 }
 
-request_handler::request_handler( char * raw_header ) : state(true), _data(), _header(raw_header)
+request_handler::request_handler( char * raw_header ) : _state(false), _header(raw_header)
 {
+	_state = true;
 	
+	if ( _header.empty() == false )
+		parse_header();
 }
 
 request_handler::~request_handler( void )
@@ -34,48 +37,68 @@ request_handler::~request_handler( void )
 
 }
 
-std::list<std::string> request_handler::ft_split(std::string header, std::string charset )
+std::string & request_handler::get_header( void )
 {
-	size_t start = 0, end, charset_len = charset.length();
-	std::string tmp;
-	std::list<std::string> ret;
-	while ((end = header.find(charset, start)) != std::string::npos)
-	{
-		tmp = header.substr(start, 	end - start);
-		start = end + charset_len;
-		ret.push_back(tmp);
-	}
-	ret.push_back(header.substr(start));
-	return ret;
+	return _header;
+}
+
+int		request_handler::which_method( void )
+{
+	return _method;
+}
+
+bool	request_handler::state( void )
+{
+	return _state;
 }
 
 void request_handler::parse_header( void )
 {
-	std::list<std::string> s_header = ft_split(_header, "\n");
-	std::string tmp;
-	std::string first = s_header.front();
-
-	//! First line is very specific since there is 3 crucial informations in one line
-	// std::cout << BLUE << first << WHITE << std::endl;
-	for ( size_t i = 0 ; first[i] != '\0' ; i++ )
+	try
 	{
-		if ( first[i] == ' ' )
-		{
-			i++;
-			_data.push_back(tmp);
-			tmp.clear();
-		}
-		tmp.append(1, first[i]);
+		std::list<std::string>	s_header = ft_split(_header, "\n");
+		retrieve_method(s_header.begin(), s_header.end());
 	}
-	_data.push_back(tmp);
-	
-	// std::vector<std::string>::iterator it = _data.begin();
-	// for ( ; it != _data.end(); it++ )
-	// {
-	// 	std::cout << *it << std::endl;
-	// }
-	return ;
+	catch ( std::bad_alloc & ba )
+	{
+    	std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+	}
 }
+
+void	request_handler::assign_method( const std::string & method_name )
+{
+	if ( method_name == "GET" )
+		_method = GET;
+	else if ( method_name == "POST" )
+		_method = POST;
+	else if ( method_name == "DELETE" )
+		_method = DELETE;
+	else
+		_method = UNKNOWN;
+}
+
+void	request_handler::retrieve_method( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+{
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->find("GET") != std::string::npos )
+			return assign_method("GET");
+		else if ( it->find("POST") != std::string::npos )
+			return assign_method("POST");
+		else if ( it->find("DELETE") != std::string::npos )
+			return assign_method("DELETE");
+	}
+	return assign_method("UNKOWN");
+}
+
+
+
+
+
+
+
+
+
 
 int Server::treat_request( int requestFd )
 {
@@ -97,8 +120,13 @@ int Server::treat_request( int requestFd )
 	std::cout << YELLOW << header << WHITE << std::endl;
 
     request_handler request(header);
-    
-    request.parse_header();
+	if ( request.state() == false )
+	{
+		std::cout << RED << "SOMETHING WENT WRONG IN THE REQUEST HEADER " << std::endl;
+		exit(0);
+	}
 
-    return request.state;
+	_header = request.get_header();
+
+    return request.which_method();
 }

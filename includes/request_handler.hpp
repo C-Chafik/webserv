@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/02 15:55:59 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/21 18:31:12 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,27 @@
 
 class request_handler
 {
-    public:
-        request_handler( void );
-        request_handler( char * raw_header );
-        ~request_handler( void );
-        bool                     state;
+	public:
+		request_handler( char * raw_header );
+		~request_handler( void );
 
-        std::list<std::string> ft_split(std::string header, std::string charset );
-        void parse_header( void );
+		bool state( void );
+		std::string & get_header( void );
+		int	 which_method( void );
 
-    private:
-        std::vector<std::string> _data;
-        std::string              _header;
+	private:
+		int							_method;
+		bool 						_state;
+		std::vector<std::string> 	_data;
+		std::string              	_header;
+
+		void 	parse_header( void );
+		void	retrieve_method( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
+		void	assign_method( const std::string & method_name );
+
+
+		
+		request_handler( void );
 };
 
 #endif

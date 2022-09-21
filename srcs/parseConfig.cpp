@@ -253,7 +253,7 @@ void	parseConfig::parse_file( void )
 		if ( it == ite )
 			break ;
 	}
-	print_all_informations();
+	// print_all_informations();
 }
 
 /////////////////////////////////////////////////////

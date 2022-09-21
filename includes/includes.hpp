@@ -25,6 +25,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sstream>
+#include "common.hpp"
 
 #define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
@@ -73,7 +74,8 @@ struct config {
 enum    METHOD{
     GET,
     POST,
-    DELETE
+    DELETE,
+    UNKNOWN
 };
 
 #endif
