@@ -3,13 +3,14 @@
 void Server::handle_connection(int clientSocket, id_server_type server_id){
 	std::cout << "server id : " << server_id << std::endl;
 
+	int method;
+	method = treat_request(clientSocket);
+	
 	if (check_host() == D_400){
 		send_400(server_id);
 	}
 	else{
-		int method;
 
-		method = treat_request(clientSocket);
 
 		if ( method == GET ){
 			std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;

@@ -80,6 +80,11 @@ struct config {
     }
 };
 
+struct request{
+    std::string host;
+    std::string port_host;
+};
+
 
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
