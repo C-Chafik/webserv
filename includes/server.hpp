@@ -59,7 +59,7 @@ class Server{
 	std::string fileLocation(std::string request, id_server_type serverNb);
 	std::string fileToString(id_server_type server_id, std::string fileName, bool error = false);
 	void listenSocketServer();
-	void check_host(id_server_type server_id);
+	short check_host();
 	short host(in_addr_t ip_host, std::string name_host);// return if send 200 300 400 ...
 	void send_200(std::string file, id_server_type serverNb);
 	void send_400(id_server_type serverNb);
