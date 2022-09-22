@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/21 18:31:12 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/22 15:05:36 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <list>
 # include <iostream>
 # include <string>
+# include "../includes/includes.hpp"
 
 class request_handler
 {
@@ -44,8 +45,9 @@ class request_handler
 		std::string              	_header;
 
 		void 	parse_header( void );
-		void	retrieve_method( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
+		void	retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 		void	assign_method( const std::string & method_name );
+		void	assign_host( std::string & line );
 
 
 		

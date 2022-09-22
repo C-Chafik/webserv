@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/21 18:31:21 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/22 15:07:13 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void request_handler::parse_header( void )
 	try
 	{
 		std::list<std::string>	s_header = ft_split(_header, "\n");
-		retrieve_method(s_header.begin(), s_header.end());
+		retrieve_info(s_header.begin(), s_header.end());
 	}
 	catch ( std::bad_alloc & ba )
 	{
@@ -77,7 +77,40 @@ void	request_handler::assign_method( const std::string & method_name )
 		_method = UNKNOWN;
 }
 
-void	request_handler::retrieve_method( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+void	request_handler::assign_host( std::string & line )
+{
+	std::string address;
+	std::string port;
+	std::string ip_address;
+
+	address.assign(trim_data(line, "Host:"));
+
+	if ( address.find(":") != std::string::npos )
+	{
+		ip_address = address.substr(0, address.find(":"));
+		port = address.substr(address.find(":") + 1, std::string::npos );
+	}
+	else if ( address.find(".") != std::string::npos )
+	{
+		ip_address.assign(address);
+		port.assign("8080");
+	}
+	else if ( address == "localhost" )
+	{
+		port.assign("8080");
+		ip_address.assign("localhost");
+	}
+	else
+	{
+		port.assign(address);
+		ip_address.assign("localhost");
+	}
+
+	// request.port_host = port;
+	// request.host = ip_address;
+}
+
+void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
 	for ( ; it != ite ; it++ )
 	{
@@ -87,6 +120,8 @@ void	request_handler::retrieve_method( std::list<std::string>::iterator it, std:
 			return assign_method("POST");
 		else if ( it->find("DELETE") != std::string::npos )
 			return assign_method("DELETE");
+		else if ( it->find("Host:") != std::string::npos )
+			assign_host(*it);
 	}
 	return assign_method("UNKOWN");
 }

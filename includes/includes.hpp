@@ -80,7 +80,7 @@ struct config {
     }
 };
 
-struct request{
+struct request_info{
     std::string host;
     std::string port_host;
 };
@@ -88,7 +88,6 @@ struct request{
 
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
-#include "request_handler.hpp"
 #include "server.hpp"
 
 enum    METHOD{
