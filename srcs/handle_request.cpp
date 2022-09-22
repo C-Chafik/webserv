@@ -6,11 +6,9 @@ void Server::handle_connection(int clientSocket, id_server_type server_id){
 	int method;
 	method = treat_request(clientSocket);
 	
-	if (check_host() == D_400){
+	if (check_host() == D_400)
 		send_400(server_id);
-	}
-	else{
-
+	else {
 
 		if ( method == GET ){
 			std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
@@ -18,13 +16,16 @@ void Server::handle_connection(int clientSocket, id_server_type server_id){
 			send_200("index.html", server_id);//! do the file dynamic
 		}
 		else if ( method == POST )
+		{
+			std::cout << CYAN << "METHOD POST RECEIVED ! " << WHITE << std::endl;
 			treat_POST_request(_header);
+		}
 		else if ( method == DELETE )
 			std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
 		else
 		{
 			std::cout << CYAN << "SOMETHING WENT WRONG WITH THE REQUEST " << WHITE << std::endl;
-			exit(0);
+			// exit(0);
 		}
 	}
 

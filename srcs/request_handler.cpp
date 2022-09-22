@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/22 20:15:13 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/22 22:55:22 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,14 @@ request_handler::request_handler( void ) : _state(false)
 
 }
 
-request_handler::request_handler( char * raw_header ) : _state(false), _header(raw_header)
+request_handler::request_handler( char * raw_header ) : _header(raw_header)
 {
 	_state = true;
+	_method = GET;
 	
 	if ( _header.empty() == false )
 		parse_header();
-	print_all_informations();
+	// print_all_informations();
 }
 
 request_handler::~request_handler( void )
@@ -134,17 +135,7 @@ void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::l
 		else if ( it->find("Host:") != std::string::npos )
 			assign_host(*it);
 	}
-	return assign_method("UNKOWN");
 }
-
-
-
-
-
-
-
-
-
 
 int Server::treat_request( int requestFd )
 {
@@ -154,10 +145,11 @@ int Server::treat_request( int requestFd )
 	memset(header, 0, 4096);
 	while ( (end = recv(requestFd, header, 4096 - 1, 0)) > 0 )
 	{
+		std::cout << "receving..." << std::endl;
 		if ( header[end - 1] == '\n' )
 			break ;
-		memset(header, 0, 4096);
 	}
+	std::cout << "done !" << std::endl;
 	if ( end == static_cast<size_t>(-1) )
 	{
 		std::cout << "ERROR RECEIVING THE HEADER " << std::endl;
