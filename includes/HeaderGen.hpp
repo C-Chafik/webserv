@@ -47,7 +47,11 @@ public:
 		}
 	}
 
-	void clear(){ _Info.clear(); _response.clear(); }
+	void clear(){ 
+		_Info.clear(); 
+		_response.clear(); 
+		_Info.assign(NB_INFOS, "");
+	}
 
 	std::string getStr(){ return _response; }
 };
