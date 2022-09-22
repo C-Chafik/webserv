@@ -38,7 +38,7 @@ bool Server::isIpAddress(std::string addr){
 
 /*return true if the string is or is an hostname wich is 127.0.0.1*/
 bool Server::hostToIp(std::string host){
-	if (isIpAddress(host)){
+	if (!isIpAddress(host)){
 		hostent* hostname = gethostbyname(host.c_str());
 		std::string hostname_str = std::string(inet_ntoa(**(in_addr**)hostname->h_addr_list));
 		if(hostname_str == "127.0.0.1")
@@ -73,7 +73,7 @@ short Server::check_host(){
 	parseG.server_names.push_back("localhost");//*if no server names just leave empty
 	short send_type = host(inet_addr("127.0.0.1"), "localhost");
 
-	if (hostToIp("localhost"))
+	if (!hostToIp("localhost"))
 		return D_400; 
 
 	return send_type;
