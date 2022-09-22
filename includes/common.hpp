@@ -1,0 +1,1 @@
+std::list<std::string> ft_split( const std::string & header, const std::string & charset );
