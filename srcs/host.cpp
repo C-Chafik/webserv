@@ -38,7 +38,7 @@ bool Server::isIpAddress(std::string addr){
 
 /*return true if the string is or is an hostname wich is 127.0.0.1*/
 bool Server::hostToIp(std::string host){
-	if (isIpAddress(host)){
+	if (!isIpAddress(host)){
 		hostent* hostname = gethostbyname(host.c_str());
 		std::string hostname_str = std::string(inet_ntoa(**(in_addr**)hostname->h_addr_list));
 		if(hostname_str == "127.0.0.1")
@@ -65,7 +65,7 @@ short Server::host(in_addr_t ip_host, std::string name_host){
 }
 
 /*send the file to the client if host is ok else send error 400 file*/
-void Server::check_host(id_server_type server_id){
+short Server::check_host(){
 	/* 
 	TODO parse Host in request header and split ip and port if host is an ip
 	*/
@@ -73,21 +73,8 @@ void Server::check_host(id_server_type server_id){
 	parseG.server_names.push_back("localhost");//*if no server names just leave empty
 	short send_type = host(inet_addr("127.0.0.1"), "localhost");
 
-	hostToIp("localhost");
+	if (!hostToIp("localhost"))
+		return D_400; 
 
-	switch (send_type)
-	{
-		case D_200:
-			send_200("index.html", server_id);//!raw until parsing done (GET /file)
-			// send_200("html_files/other.html");//print error
-			// send_index();
-			break;
-		
-		case D_400:
-			send_400(server_id);
-			break;
-
-		default:
-			break;
-	}
+	return send_type;
 }
