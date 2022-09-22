@@ -29,8 +29,6 @@
 
 #define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
-
-
 struct parseLocation {
         bool GET;
         bool POST;
@@ -78,11 +76,6 @@ struct config {
         errors.clear();
         body_max_size = 100000;
     }
-};
-
-struct request_info{
-    std::string host;
-    std::string port_host;
 };
 
 

@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/22 15:07:13 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/22 20:15:13 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ request_handler::request_handler( char * raw_header ) : _state(false), _header(r
 	
 	if ( _header.empty() == false )
 		parse_header();
+	print_all_informations();
 }
 
 request_handler::~request_handler( void )
@@ -50,6 +51,17 @@ int		request_handler::which_method( void )
 bool	request_handler::state( void )
 {
 	return _state;
+}
+
+struct request & request_handler::get_request( void )
+{
+	return _request;
+}
+
+void	request_handler::print_all_informations( void )
+{
+	std::cout << GREEN << "REQUEST IP ADRESS : " << _request.host << std::endl;
+	std::cout << GREEN << "REQUEST PORT : " << _request.port_host << std::endl;
 }
 
 void request_handler::parse_header( void )
@@ -84,7 +96,6 @@ void	request_handler::assign_host( std::string & line )
 	std::string ip_address;
 
 	address.assign(trim_data(line, "Host:"));
-
 	if ( address.find(":") != std::string::npos )
 	{
 		ip_address = address.substr(0, address.find(":"));
@@ -106,8 +117,8 @@ void	request_handler::assign_host( std::string & line )
 		ip_address.assign("localhost");
 	}
 
-	// request.port_host = port;
-	// request.host = ip_address;
+	_request.port_host = port;
+	_request.host = ip_address;
 }
 
 void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
@@ -115,11 +126,11 @@ void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::l
 	for ( ; it != ite ; it++ )
 	{
 		if ( it->find("GET") != std::string::npos )
-			return assign_method("GET");
+			assign_method("GET");
 		else if ( it->find("POST") != std::string::npos )
-			return assign_method("POST");
+			assign_method("POST");
 		else if ( it->find("DELETE") != std::string::npos )
-			return assign_method("DELETE");
+			assign_method("DELETE");
 		else if ( it->find("Host:") != std::string::npos )
 			assign_host(*it);
 	}

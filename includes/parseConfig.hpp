@@ -3,7 +3,6 @@
 
 #include "../includes/includes.hpp"
 
-
 class parseConfig
 {
 	public:
