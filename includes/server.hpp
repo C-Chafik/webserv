@@ -6,20 +6,6 @@
 #define D_200 0
 #define D_400 1
 
-struct parsePOST {
-		size_t content_length;
-		std::string content_type;
-		std::string content;
-
-		parsePOST( void ) { content_length = 0; }
-		void clear( void )
-		{
-			content_length = 0;
-			content_type.clear();
-			content.clear();
-		}
-	};
-
 class Server{
 	//struct
 	struct parseLocation{

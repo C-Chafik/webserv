@@ -44,6 +44,21 @@ struct parseLocation {
         ~parseLocation ( void ) {}
 };
 
+struct parsePOST {
+		size_t content_length;
+		std::string content_type;
+		std::string content;
+
+		parsePOST( void ) { content_length = 0; }
+        ~parsePOST( void ) {}
+		void clear( void )
+		{
+			content_length = 0;
+			content_type.clear();
+			content.clear();
+		}
+};
+
 
 struct config {
     std::vector<std::string> server_names;
