@@ -8,6 +8,18 @@
  * return error file path if needed
  * 
  */
-std::string Server::treat_GET_request(std::string filePath){
-	return filePath;
+std::string Server::treat_GET_request(std::string file, id_server_type serverNb){
+	
+	std::string rtnFile;
+
+	/**
+	 *	- checkhostname
+	 *	- routing
+	 *	- check de la methode HTTP dans le path
+	 *	- redirection
+	 *	- check de repertoire
+	 */
+	rtnFile = fileLocation(file, serverNb);//routing
+	
+	return rtnFile;
 }

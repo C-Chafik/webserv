@@ -59,7 +59,7 @@ class Server{
 
 
 	//* GET
-	std::string treat_GET_request(std::string fileName);
+	std::string treat_GET_request(std::string fileName, id_server_type serverNb);
 
 
 	//* POST

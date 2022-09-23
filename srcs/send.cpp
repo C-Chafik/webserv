@@ -7,7 +7,7 @@
  */
 void Server::send_200(std::string file, id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(serverNb, fileLocation(file, serverNb));
+	std::string fileSTR = fileToString(serverNb, file);
 
 	HGen.setStatus("200 OK");
 	HGen.setType("text/html");
