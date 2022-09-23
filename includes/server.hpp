@@ -58,10 +58,11 @@ class Server{
 
 
 
-	//! POST
+	//* GET
+	std::string treat_GET_request(std::string fileName);
 
-	
 
+	//* POST
 	bool treat_POST_request( const std::string & header );
 	bool parse_POST_request( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 

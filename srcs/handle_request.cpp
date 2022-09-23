@@ -13,9 +13,10 @@ void Server::handle_connection(int clientSocket, id_server_type server_id){
 
 
 		if ( method == GET ){
+			std::string to_send;
 			std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
-			/*treat all the config stuuf in a function here*/
-			send_200("index.html", server_id);//! do the file dynamic
+			to_send = treat_GET_request("index.html"/*wait parsing*/);
+			send_200(to_send, server_id);//! do the file dynamic
 		}
 		else if ( method == POST )
 			treat_POST_request(_header);
