@@ -9,9 +9,9 @@
  * 
  */
 std::string Server::treat_GET_request(std::string file, id_server_type serverNb){
-	
 	std::string rtnFile;
-
+	
+	check_host();
 	/**
 	 *	- checkhostname
 	 *	- routing

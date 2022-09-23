@@ -7,6 +7,21 @@
 #define D_400 1
 
 class Server{
+	//exceptions
+	class Error_page : public std::exception{
+		public:
+		explicit Error_page(const char* error_msg) : msg(error_msg) {}
+		explicit Error_page(const std::string& error_msg) : msg(error_msg) {}
+		virtual ~Error_page() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW {}
+
+		virtual const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW{
+			return msg.c_str();
+		}
+
+		protected:
+		std::string msg;
+	};
+
 	//struct
 	struct parseLocation{
 		std::string root;

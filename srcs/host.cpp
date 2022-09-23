@@ -61,7 +61,7 @@ short Server::host(in_addr_t ip_host, std::string name_host){
 			if (parseG.server_names[i] == name_host)
 				return D_200;
 
-	return D_400;
+	throw(Error_page("400"));
 }
 
 /*send the file to the client if host is ok else send error 400 file*/
@@ -74,7 +74,7 @@ short Server::check_host(){
 	short send_type = host(inet_addr("127.0.0.1"), "localhost");
 
 	if (!hostToIp("localhost"))
-		return D_400; 
+		throw(Error_page("400")); 
 
 	return send_type;
 }
