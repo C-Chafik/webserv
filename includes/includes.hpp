@@ -45,6 +45,9 @@ struct parseLocation {
 struct parsePOST {
 		size_t content_length;
 		std::string content_type;
+        std::string connection;
+        std::string referer;
+
 		std::string content;
 
 		parsePOST( void ) { content_length = 0; }
