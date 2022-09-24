@@ -79,9 +79,11 @@ struct config {
 };
 
 
+
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
 #include "server.hpp"
+#include "T_POST.hpp"
 
 enum    METHOD{
     GET,

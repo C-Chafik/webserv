@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/22 22:55:22 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/24 15:34:29 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	request_handler::print_all_informations( void )
 {
 	std::cout << GREEN << "REQUEST IP ADRESS : " << _request.host << std::endl;
 	std::cout << GREEN << "REQUEST PORT : " << _request.port_host << std::endl;
+	std::cout << GREEN << "REQUEST PATH" << "[" << _request.path << "]" << WHITE << std::endl;
 }
 
 void request_handler::parse_header( void )
@@ -71,6 +72,44 @@ void request_handler::parse_header( void )
 	{
 		std::list<std::string>	s_header = ft_split(_header, "\n");
 		retrieve_info(s_header.begin(), s_header.end());
+	}
+	catch ( std::bad_alloc & ba )
+	{
+    	std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+	}
+}
+
+void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+{
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->find("GET") != std::string::npos )
+		{
+			assign_method("GET");
+			assign_path(*it);
+		}
+		else if ( it->find("POST") != std::string::npos )
+		{
+			assign_method("POST");
+			assign_path(*it);
+		}
+		else if ( it->find("DELETE") != std::string::npos )
+		{
+			assign_method("DELETE");
+			assign_path(*it);
+		}
+		else if ( it->find("Host:") != std::string::npos )
+			assign_host(*it);
+	}
+}
+
+void	request_handler::assign_path( std::string & line )
+{
+	try
+	{
+		std::list<std::string> ret = ft_split(line, " ");
+		ret.pop_back();
+		_request.path.assign(ret.back());
 	}
 	catch ( std::bad_alloc & ba )
 	{
@@ -89,6 +128,7 @@ void	request_handler::assign_method( const std::string & method_name )
 	else
 		_method = UNKNOWN;
 }
+
 
 void	request_handler::assign_host( std::string & line )
 {
@@ -120,21 +160,6 @@ void	request_handler::assign_host( std::string & line )
 
 	_request.port_host = port;
 	_request.host = ip_address;
-}
-
-void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
-{
-	for ( ; it != ite ; it++ )
-	{
-		if ( it->find("GET") != std::string::npos )
-			assign_method("GET");
-		else if ( it->find("POST") != std::string::npos )
-			assign_method("POST");
-		else if ( it->find("DELETE") != std::string::npos )
-			assign_method("DELETE");
-		else if ( it->find("Host:") != std::string::npos )
-			assign_host(*it);
-	}
 }
 
 int Server::treat_request( int requestFd )

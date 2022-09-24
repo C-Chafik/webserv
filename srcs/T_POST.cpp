@@ -1,6 +1,22 @@
 #include "../includes/includes.hpp"
 
-bool    Server::parse_POST_request( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
+T_POST::T_POST( void )
+{
+
+}
+
+T_POST::~T_POST( void )
+{
+
+}
+
+T_POST::T_POST( const std::string & header ) : _header(header)
+{
+	std::list<std::string> s_header = ft_split(_header, "\n");
+	parse_POST_request(s_header.begin(), s_header.end());
+}
+
+bool    T_POST::parse_POST_request( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
 	for ( ; it != ite ; it++ )
 	{
@@ -23,12 +39,7 @@ bool    Server::parse_POST_request( std::list<std::string>::iterator it, std::li
 
 bool    Server::treat_POST_request( const std::string & header )
 {
-	std::list<std::string> s_header = ft_split(header, "\n");
-	parse_POST_request(s_header.begin(), s_header.end());
-
-	std::cout << p_POST.content_length << std::endl;
-	std::cout << p_POST.content_type << std::endl;
-	std::cout << p_POST.content << std::endl;
+	T_POST post(header);
 
 	return true;
 }

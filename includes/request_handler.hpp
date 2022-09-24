@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/22 20:15:46 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/24 14:47:18 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 struct request{
     std::string host;
     std::string port_host;
+	std::string path;
 };
 
 class request_handler
@@ -54,6 +55,7 @@ class request_handler
 		void 	parse_header( void );
 		void	retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 		void	assign_method( const std::string & method_name );
+		void	assign_path( std::string & line );
 		void	assign_host( std::string & line );
 
 		void	print_all_informations( void );
