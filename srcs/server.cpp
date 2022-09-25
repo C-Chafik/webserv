@@ -26,10 +26,10 @@ void Server::run(std::vector< struct config > confs){
 
 		for (int i = 0; i < FD_SETSIZE; i++){//check all fd possible in ready_connection struct
 			if (FD_ISSET(i, &error_ready_connections)){
-				// std::cerr << RED << "Kill connection (fd nb : "<< i << ")" << RED << std::endl;
+				std::cerr << RED << "Kill connection (fd nb : "<< i << ")" << RED << std::endl;
 				FD_CLR(i, &current_connections);
 			}
-			else if (FD_ISSET(i, &ready_connections) && FD_ISSET(i, &write_ready_connections)){
+			else if (FD_ISSET(i, &ready_connections)){
 				if (wantToBeAccepted(i)){//new connection wait to be taken at the server.socket ip
 					int clientSocket = accept_connection(i);
 					FD_SET(clientSocket,  &current_connections);//set new connection established in the current_connection struct
