@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/24 15:34:29 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/25 15:03:05 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ request_handler::request_handler( char * raw_header ) : _header(raw_header)
 	
 	if ( _header.empty() == false )
 		parse_header();
-	// print_all_informations();
+	_request.method = _method;// print_all_informations();
 }
 
 request_handler::~request_handler( void )
