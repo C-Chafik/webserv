@@ -162,7 +162,7 @@ void	request_handler::assign_host( std::string & line )
 	_request.host = ip_address;
 }
 
-int Server::treat_request( int requestFd )
+struct request Server::treat_request( int requestFd )
 {
     char header[4096 + 1];
 	size_t end;
@@ -191,5 +191,5 @@ int Server::treat_request( int requestFd )
 
 	_header = request.get_header();
 
-    return request.which_method();
+    return request.get_request();
 }

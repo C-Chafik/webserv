@@ -19,6 +19,8 @@ std::string Server::treat_GET_request(std::string file, id_server_type serverNb)
 	 *	- redirection
 	 *	- check de repertoire
 	 */
+	if (file == "/")
+		file = "index.html";
 	rtnFile = fileLocation(file, serverNb);//routing
 	
 	return rtnFile;
