@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/24 14:47:18 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/25 15:01:58 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ struct request{
     std::string host;
     std::string port_host;
 	std::string path;
+	int			method;
 };
 
 class request_handler
