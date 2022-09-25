@@ -93,33 +93,6 @@ void	parseConfig::print_all_informations( void )
 	std::cout << WHITE << std::endl;
 }
 
-//! Cannot pass by reference in this function (because of its use)
-std::string parseConfig::trim_data( std::string & raw_data, const std::string & data_name ) //! Trim at the begin and at the end every isspace, and transform every isspace that is not in the beginning or at the end, to a space ' ' for parsing purpose
-{
- 	if ( raw_data.find(data_name) != std::string::npos )
-		raw_data.erase(raw_data.find(data_name), data_name.size());
-	
-	if ( raw_data.find(";") != std::string::npos )
-		raw_data.erase(raw_data.find(";"));
-	
-	std::string::iterator it = raw_data.begin();
-	while ( it != raw_data.end() && isspace(*it) )
-		it++;
-	
-	std::string::reverse_iterator rit = raw_data.rbegin();
-	while ( rit != raw_data.rend() && isspace(*rit) )
-		rit++;
-
-	std::string::iterator trim_end = rit.base();
-
-	std::string trimmed_raw_data(it, trim_end);
-
-	while ( trimmed_raw_data.find("\t") != std::string::npos )
-		trimmed_raw_data[trimmed_raw_data.find("\t")] = ' ';
-
-	return trimmed_raw_data;
-}
-
 int parseConfig::count_server( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 {
 	int n = 0;

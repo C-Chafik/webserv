@@ -29,8 +29,6 @@
 
 #define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
-
-
 struct parseLocation {
         bool GET;
         bool POST;
@@ -47,6 +45,9 @@ struct parseLocation {
 struct parsePOST {
 		size_t content_length;
 		std::string content_type;
+        std::string connection;
+        std::string referer;
+
 		std::string content;
 
 		parsePOST( void ) { content_length = 0; }
@@ -80,16 +81,12 @@ struct config {
     }
 };
 
-struct request{
-    std::string host;
-    std::string port_host;
-};
 
 
 #include "parseConfig.hpp"
 #include "HeaderGen.hpp"
-#include "request_handler.hpp"
 #include "server.hpp"
+#include "T_POST.hpp"
 
 enum    METHOD{
     GET,
