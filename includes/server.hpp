@@ -53,7 +53,6 @@ class Server{
 	fd_set error_ready_connections;
 	HeaderGen HGen;
 	struct parseGlobal parseG;
-	struct parsePOST p_POST;
 
 
 	//func
@@ -82,8 +81,8 @@ class Server{
 
 
 	//* POST
+	//* It create the POST Object
 	bool treat_POST_request( const std::string & header );
-	bool parse_POST_request( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 
 
 

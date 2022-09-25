@@ -3,7 +3,6 @@
 
 #include "../includes/includes.hpp"
 
-
 class parseConfig
 {
 	public:
@@ -59,7 +58,6 @@ class parseConfig
 
 
 		//? Utils
-		std::string 										trim_data( std::string & raw_data, const std::string & data_name );
 		std::list<std::string>::iterator		 			parse_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 		std::string	 	 		 	 						get_location_path( std::string & line );
 		size_t												check_location( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );

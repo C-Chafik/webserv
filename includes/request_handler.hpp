@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/21 18:31:12 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/24 14:47:18 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@
 # include <list>
 # include <iostream>
 # include <string>
+# include "../includes/includes.hpp"
+
+struct request{
+    std::string host;
+    std::string port_host;
+	std::string path;
+};
 
 class request_handler
 {
@@ -33,19 +40,25 @@ class request_handler
 		request_handler( char * raw_header );
 		~request_handler( void );
 
-		bool state( void );
-		std::string & get_header( void );
-		int	 which_method( void );
-
+		bool 				state( void );
+		std::string & 		get_header( void );
+		struct request & 	get_request( void );
+		int	 				which_method( void );
+		
 	private:
+		struct	request				_request;
 		int							_method;
 		bool 						_state;
 		std::vector<std::string> 	_data;
 		std::string              	_header;
 
 		void 	parse_header( void );
-		void	retrieve_method( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
+		void	retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
 		void	assign_method( const std::string & method_name );
+		void	assign_path( std::string & line );
+		void	assign_host( std::string & line );
+
+		void	print_all_informations( void );
 
 
 		
