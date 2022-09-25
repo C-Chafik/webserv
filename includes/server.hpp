@@ -33,7 +33,7 @@ class Server{
 		std::vector<std::string> server_names;
 		std::string path_e_404;//init default path or parsed value
 		std::string path_e_400;//init default path or parsed value
-			std::vector<std::string> index;
+		std::vector<std::string> index;
 	};
 
 	typedef std::vector< struct config >::size_type id_server_type;
@@ -47,6 +47,8 @@ class Server{
 	std::vector<sockaddr_in> server_sockets_struct;
 	fd_set current_connections;//fd waiting to communicate
 	fd_set ready_connections;//fd ready to communicate
+	fd_set error_current_connections;
+	fd_set error_ready_connections;
 	HeaderGen HGen;
 	struct parseGlobal parseG;
 	struct parsePOST p_POST;
@@ -55,7 +57,7 @@ class Server{
 	//func
 	int accept_connection(int fdServer);
 	int treat_request( int requestFd );
-	void handle_connection(int clientSocket, id_server_type server_id);
+	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);
 	std::string fileToString(id_server_type server_id, std::string fileName, bool error = false);
