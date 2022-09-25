@@ -47,6 +47,8 @@ class Server{
 	std::vector<sockaddr_in> server_sockets_struct;
 	fd_set current_connections;//fd waiting to communicate
 	fd_set ready_connections;//fd ready to communicate
+	fd_set write_current_connections;
+	fd_set write_ready_connections;
 	fd_set error_current_connections;
 	fd_set error_ready_connections;
 	HeaderGen HGen;
