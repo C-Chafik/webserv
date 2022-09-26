@@ -35,16 +35,6 @@ void	T_POST::print_all_informations( void )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string	 T_POST::insertion( std::string & line, const std::string & name )
-{
-	return trim_data(line, name);
-}
-
-std::string 	T_POST::insertion_semicolon( std::string & line, const std::string & name )
-{
-	return trim_data_semicolon(line, name);
-}
-
 // bool	T_POST::e_retrieve_content( std::list<std::string>::iterator it, std::list<std::string>::iterator ite )
 // {
 
