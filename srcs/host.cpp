@@ -51,30 +51,26 @@ bool Server::hostToIp(std::string host){
 	}
 }
 
-/*return D_200 if the host paramter of the HTTP request is listen in the config file. Else return D_400*/
-short Server::host(in_addr_t ip_host, std::string name_host){
-	//! change host var when we have the parse request's struct
-	if (ip_host && (parseG.ip_address == ip_host))
-		return D_200;
-	else
-		for (std::string::size_type i = 0; i < parseG.server_names.size(); i++)
-			if (parseG.server_names[i] == name_host)
-				return D_200;
-
-	return D_400;
+std::string Server::ipToHost(std::string host){
+	hostent* hostname = gethostbyname(host.c_str());
+	std::string hostname_str = std::string(inet_ntoa(**(in_addr**)hostname->h_addr_list));
+	return hostname_str;
 }
 
-/*send the file to the client if host is ok else send error 400 file*/
-short Server::check_host(){
-	/* 
-	TODO parse Host in request header and split ip and port if host is an ip
-	*/
-	parseG.ip_address = inet_addr("127.0.0.1");//*if no ip address for listen = 0
-	parseG.server_names.push_back("localhost");//*if no server names just leave empty
-	short send_type = host(inet_addr("127.0.0.1"), "localhost");
-
-	if (!hostToIp("localhost"))
-		return D_400; 
-
-	return send_type;
+void Server::check_server_name(struct request &req, id_server_type &id){
+	if (isIpAddress(req.host)){//if host is an ip
+		if ((ipToHost(req.host) == ipToHost("localhost")))//check if the ip is the hostname
+			if (id > 0)
+				id = 0;//take first server config
+		return;
+	}
+	else{//if host is an hostname
+		std::vector<std::string>::iterator it = confs[id].server_names.begin();
+		for (; it != confs[id].server_names.end(); it++)
+			if (*it == req.host)
+				return;
+		if (id > 0)
+			id = 0;//take first server config
+		return;
+	}
 }

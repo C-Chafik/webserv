@@ -32,6 +32,9 @@ request_handler::request_handler( std::string & raw_header ) : _header(raw_heade
 	if ( _header.empty() == false )
 		parse_header();
 	_request.method = _method;// print_all_informations();
+	_request.header = _header;
+
+	std::cout << RED << "CONTENT-LENGTH IS " << _request.content_length << std::endl;
 }
 
 request_handler::~request_handler( void )
@@ -100,6 +103,8 @@ void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::l
 		}
 		else if ( it->find("Host:") != std::string::npos )
 			assign_host(*it);
+		else if (it->find("Content-Length:") != std::string::npos)
+			_request.content_length = std::atoi(insertion(*it, "Content-Length:").c_str());
 	}
 }
 
@@ -162,18 +167,42 @@ void	request_handler::assign_host( std::string & line )
 	_request.host = ip_address;
 }
 
-int Server::treat_request( int requestFd )
+void	Server::treat_request( struct request & req, int requestFd )
+{
+	char buffer[1024 + 1];
+	std::string header;
+	size_t end;
+
+	memset(buffer, 0, 1024);
+	std::cout << "FILLING REQUEST FOR SOCKET : " << requestFd << std::endl;
+	if ( (end = recv(requestFd, buffer, 4096 - 1, 0)) > 0 )
+	{
+		std::cout << "\"" << end << "\"" << std::endl;
+		header.append(buffer, end);
+		req.header.append(header, end);
+		req.read_content_length += 1024;
+	}
+	std::cout << "\"done !\"" << std::endl;
+	if (req.read_content_length > req.content_length)
+	{
+		std::cout << "REQUEST SUCCESSFULLY FILED " << std::endl;
+		req.full = true;
+	}
+}
+
+struct request Server::create_request( int requestFd )
 {
     char buffer[1024 + 1];
 	std::string header;
 	size_t end;
 
-	memset(buffer, 0, 1024);	
-	while ( (end = recv(requestFd, buffer, 1024 - 1, 0)) > 0 )
+	std::cout << "CREATING REQUEST FOR SOCKET : " << requestFd << std::endl;
+	memset(buffer, 0, 1024);
+	while ( (end = recv(requestFd, buffer, 4096 - 1, 0)) > 0 )
 	{
-		std::cout << "receving..." << std::endl;
+		std::cout << end << std::endl;
 		header.append(buffer, end);
-		if ( buffer[end - 1] == '\n' ) //! This line make impossible to receive any request body
+		if ( buffer[end - 1] == '\n' )
 			break ;
 	}
 	std::cout << "done !" << std::endl;
@@ -193,5 +222,5 @@ int Server::treat_request( int requestFd )
 
 	_header = request.get_header();
 
-    return request.which_method();
+    return request.get_request();
 }

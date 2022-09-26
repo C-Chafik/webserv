@@ -63,3 +63,13 @@ std::string trim_data_semicolon( std::string & raw_data, const std::string & dat
 
 	return trimmed_raw_data;
 }
+
+std::string	 insertion( std::string & line, const std::string & name )
+{
+	return trim_data(line, name);
+}
+
+std::string 	insertion_semicolon( std::string & line, const std::string & name )
+{
+	return trim_data_semicolon(line, name);
+}
