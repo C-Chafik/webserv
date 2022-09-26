@@ -58,8 +58,8 @@ class Server{
 
 	//func
 	int accept_connection(int fdServer);
-	struct request create_request( int requestFd );
-	void			treat_request( struct request & req, int requestFd );
+	struct request 	receive_request( int requestFd );
+	void			receive_request_body( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);

@@ -6,11 +6,11 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/26 13:55:50 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/26 20:21:01 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes.hpp"
+#include "../includes/includes.hpp"
 
 //*? Ce qui nous interesse dans le header :
 //*? Quel fichier est demander, donc verifier si ce fichier existe, OU est a executer avec la CGI
@@ -19,22 +19,10 @@
 //*? La connection, doit etre keep-alive pour l'instant.
 //*? sec-ch-ua (Le navigateur utiliser), doit etre Google Chrome
 
-request_handler::request_handler( void ) : _state(false)
+request_handler::request_handler( void )
 {
-
-}
-
-request_handler::request_handler( std::string & raw_header ) : _header(raw_header)
-{
-	_state = true;
 	_method = GET;
-	
-	if ( _header.empty() == false )
-		parse_header();
-	_request.method = _method;// print_all_informations();
-	_request.header = _header;
-
-	std::cout << RED << "CONTENT-LENGTH IS " << _request.content_length << std::endl;
+	_state = true;
 }
 
 request_handler::~request_handler( void )
@@ -104,7 +92,7 @@ void	request_handler::retrieve_info( std::list<std::string>::iterator it, std::l
 		else if ( it->find("Host:") != std::string::npos )
 			assign_host(*it);
 		else if (it->find("Content-Length:") != std::string::npos)
-			_request.content_length = std::atoi(insertion(*it, "Content-Length:").c_str());
+			_content_length = std::atoi(insertion(*it, "Content-Length:").c_str());
 	}
 }
 
@@ -114,7 +102,7 @@ void	request_handler::assign_path( std::string & line )
 	{
 		std::list<std::string> ret = ft_split(line, " ");
 		ret.pop_back();
-		_request.path.assign(ret.back());
+		_path.assign(ret.back());
 	}
 	catch ( std::bad_alloc & ba )
 	{
@@ -163,64 +151,67 @@ void	request_handler::assign_host( std::string & line )
 		ip_address.assign("localhost");
 	}
 
-	_request.port_host = port;
-	_request.host = ip_address;
+	_port_host = port;
+	_host = ip_address;
 }
 
-void	Server::treat_request( struct request & req, int requestFd )
+void 		request_handler::append( char * buffer, size_t len )
 {
-	char buffer[1024 + 1];
-	std::string header;
-	size_t end;
+	_header.append(buffer, len);
+}
 
-	memset(buffer, 0, 1024);
-	std::cout << "FILLING REQUEST FOR SOCKET : " << requestFd << std::endl;
-	if ( (end = recv(requestFd, buffer, 4096 - 1, 0)) > 0 )
+bool request_handler::check_if_header_is_received( void )
+{
+	if ( _header.find("\r\n\r\n") != std::string::npos )
+		return true;
+	return false;
+}
+
+struct request request_handler::gather_request_informations( void )
+{
+	struct request request;
+	parse_header();
+
+	request.host = _host;
+	request.port_host = _port_host;
+	request.path = _path;
+	request.method = _method;
+	request.content_length = _content_length;
+	request.header = _header;
+
+	return request;
+}
+
+void	Server::receive_request_body( struct request & req, int requestFd )
+{
+	char 		buffer[1024 + 1];
+	size_t 		end;
+
+	memset( buffer, 0, 1024 );
+	if ( ( end = recv( requestFd, buffer, 1024 - 1, 0)) > 0 )
 	{
-		std::cout << "\"" << end << "\"" << std::endl;
-		header.append(buffer, end);
-		req.header.append(header, end);
-		req.read_content_length += 1024;
+		req.header.append(buffer, end);
+		req.read_content_length += end;
 	}
-	std::cout << "\"done !\"" << std::endl;
-	if (req.read_content_length > req.content_length)
-	{
-		std::cout << "REQUEST SUCCESSFULLY FILED " << std::endl;
+	if ( req.read_content_length >= req.content_length )
 		req.full = true;
-	}
 }
 
-struct request Server::create_request( int requestFd )
+struct request Server::receive_request( int requestFd )
 {
-    char buffer[1024 + 1];
-	std::string header;
-	size_t end;
+	request_handler header;
+	struct request 	request;
+    char 			buffer[1024 + 1];
+	size_t 			end;
 
-	std::cout << "CREATING REQUEST FOR SOCKET : " << requestFd << std::endl;
-	memset(buffer, 0, 1024);
-	while ( (end = recv(requestFd, buffer, 4096 - 1, 0)) > 0 )
+	memset( buffer, 0, 1024 );
+	while ( ( end = recv(requestFd, buffer, 1024 - 1, 0)) > 0 )
 	{
-		std::cout << end << std::endl;
 		header.append(buffer, end);
-		if ( buffer[end - 1] == '\n' )
+		if ( header.check_if_header_is_received() == true )
 			break ;
 	}
-	std::cout << "done !" << std::endl;
-	if ( end == static_cast<size_t>(-1) )
-	{
-		std::cout << "ERROR RECEIVING THE HEADER " << std::endl;
-		exit(0);
-	}
-	std::cout << YELLOW << header << WHITE << std::endl;
-
-    request_handler request(header);
-	if ( request.state() == false )
-	{
-		std::cout << RED << "SOMETHING WENT WRONG IN THE REQUEST HEADER " << std::endl;
-		exit(0);
-	}
-
-	_header = request.get_header();
-
-    return request.get_request();
+	request = header.gather_request_informations();
+	
+    return request;
 }

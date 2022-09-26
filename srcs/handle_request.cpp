@@ -1,27 +1,24 @@
 #include "includes.hpp"
 
-bool Server::handle_connection(int clientSocket, id_server_type server_id){
+bool Server::handle_connection(int clientSocket, id_server_type server_id)
+{
 	std::cout << "server id : " << server_id << std::endl;
 
 	if (request.find(server_id) == request.end())
+		request.insert(std::make_pair(server_id, receive_request(clientSocket)));
+
+	if ( request[server_id].method == POST )
 	{
-		std::cout << "GETTING THE HEADER" << std::endl;
-		request.insert(std::make_pair(server_id, create_request(clientSocket)));
-	} 
-	else if ( request[server_id].full == false && request[server_id].method != GET )
-	{
-		std::cout << "TREATING THIS HEADER " << std::endl;
-		treat_request(request[server_id], clientSocket);
-	}
-	
-	if ( request[server_id].full == false && request[server_id].method != GET )
-	{
-		std::cout << "HEADER ISNT FULL, RETURNING FALSE" << std::endl;
-		return false;
+		if ( request[server_id].full == false )
+		{
+			receive_request_body(request[server_id], clientSocket);
+			if ( request[server_id].full == false )
+				return true;
+		}
 	}
 
 	int method = request[server_id].method;
-	
+
 	if ( method == GET ){
 		std::string to_send;
 		std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
@@ -37,9 +34,14 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id){
 			else if (err == "404")
 				send_404(server_id);
 		}
+		request.erase(server_id);
 	}
 	else if ( method == POST )
-		treat_POST_request(_header);
+	{
+		std::cout << "TREATING POST HEADER" << std::endl;
+		treat_POST_request(request[server_id].header);
+		request.erase(server_id);
+	}
 	else if ( method == DELETE )
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
 	else
