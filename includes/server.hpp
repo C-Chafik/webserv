@@ -52,12 +52,14 @@ class Server{
 	fd_set error_current_connections;
 	fd_set error_ready_connections;
 	HeaderGen HGen;
+	std::map<id_server_type/*socket id*/, struct request> request;
 	struct parseGlobal parseG;
 
 
 	//func
 	int accept_connection(int fdServer);
-	struct request treat_request( int requestFd );
+	struct request create_request( int requestFd );
+	void			treat_request( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);
