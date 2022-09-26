@@ -45,7 +45,7 @@ struct request{
 class request_handler
 {
 	public:
-		request_handler( std::string &  raw_header );
+		request_handler( std::string & raw_header );
 		~request_handler( void );
 
 		bool 				state( void );
