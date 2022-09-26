@@ -11,7 +11,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id){
 		std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
 
 		try{
-			to_send = treat_GET_request(req.path, server_id);
+			to_send = treat_GET_request(req, server_id);
 			send_200(to_send, server_id);//! do the file dynamic
 		}
 		catch (const Error_page& page){
