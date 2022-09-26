@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/25 15:01:58 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/26 13:34:49 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ struct request{
 class request_handler
 {
 	public:
-		request_handler( char * raw_header );
+		request_handler( std::string & raw_header );
 		~request_handler( void );
 
 		bool 				state( void );

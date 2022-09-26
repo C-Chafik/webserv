@@ -6,9 +6,17 @@
 		<h2>Index</h2>
 		<center>
 			<h2>Post</h2>
-			<form method="post" enctype="multipart/form-data">
+			<form method="post" enctype="application/x-www-form-urlencoded">
+				<text> Envoi ici un formulaire textuel </text>
 				<input type="text" id="name" name="name">
 				<input type="email" id="email" name="email">
+				<input type="submit" value="Submit">
+			</form>
+
+			<h3>Post</h3>
+			<form method="post" enctype="multipart/form-data">
+				<text> Envoi ici un fichier binaire</text>
+				<input type="file" id="file" name="myFile">
 				<input type="submit" value="Submit">
 			</form>
 		</center>

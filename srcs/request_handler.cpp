@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_handler.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/25 15:03:05 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/26 13:55:50 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ request_handler::request_handler( void ) : _state(false)
 
 }
 
-request_handler::request_handler( char * raw_header ) : _header(raw_header)
+request_handler::request_handler( std::string & raw_header ) : _header(raw_header)
 {
 	_state = true;
 	_method = GET;
@@ -164,14 +164,16 @@ void	request_handler::assign_host( std::string & line )
 
 int Server::treat_request( int requestFd )
 {
-    char header[4096 + 1];
+    char buffer[1024 + 1];
+	std::string header;
 	size_t end;
 
-	memset(header, 0, 4096);
-	while ( (end = recv(requestFd, header, 4096 - 1, 0)) > 0 )
+	memset(buffer, 0, 1024);	
+	while ( (end = recv(requestFd, buffer, 1024 - 1, 0)) > 0 )
 	{
 		std::cout << "receving..." << std::endl;
-		if ( header[end - 1] == '\n' )
+		header.append(buffer, end);
+		if ( buffer[end - 1] == '\n' ) //! This line make impossible to receive any request body
 			break ;
 	}
 	std::cout << "done !" << std::endl;
