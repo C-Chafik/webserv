@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/26 16:47:59 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/26 19:39:53 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,12 @@ struct request{
 class request_handler
 {
 	public:
-		request_handler( std::string & raw_header );
+		request_handler( void );
 		~request_handler( void );
 
+		struct request 		gather_request_informations( void );
+		bool 				check_if_header_is_received( void );
+		void 				append( char * buffer, size_t len );
 		bool 				state( void );
 		std::string & 		get_header( void );
 		struct request & 	get_request( void );
@@ -55,10 +58,14 @@ class request_handler
 		
 	private:
 		struct	request				_request;
+		std::string					_host;
+		std::string					_port_host;
+		std::string					_path;
 		int							_method;
-		bool 						_state;
-		std::vector<std::string> 	_data;
+		int							_content_length;
 		std::string              	_header;
+
+		bool 						_state;
 
 		void 	parse_header( void );
 		void	retrieve_info( std::list<std::string>::iterator it, std::list<std::string>::iterator ite );
@@ -67,10 +74,6 @@ class request_handler
 		void	assign_host( std::string & line );
 
 		void	print_all_informations( void );
-
-
-		
-		request_handler( void );
 };
 
 #endif
