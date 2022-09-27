@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/26 19:39:53 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/09/27 13:54:53 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ struct request{
     std::string port_host;
 	std::string path;
 	std::string header;
+	std::string body;
 	int			method;
 	int			content_length;
 	int			read_content_length;

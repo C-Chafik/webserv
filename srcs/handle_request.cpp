@@ -5,7 +5,11 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	std::cout << "server id : " << server_id << std::endl;
 
 	if (request.find(server_id) == request.end())
+	{
 		request.insert(std::make_pair(server_id, receive_request(clientSocket)));
+		std::cout << YELLOW << " == HEADER == " << std::endl;
+		std::cout << request[server_id].header << WHITE;
+	}
 
 	if ( request[server_id].method == POST )
 	{
@@ -38,8 +42,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == POST )
 	{
-		std::cout << "TREATING POST HEADER" << std::endl;
-		treat_POST_request(request[server_id].header);
+		treat_POST_request(request[server_id].header, request[server_id].path);
 		request.erase(server_id);
 	}
 	else if ( method == DELETE )

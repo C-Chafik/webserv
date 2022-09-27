@@ -84,7 +84,7 @@ class Server{
 
 	//* POST
 	//* It create the POST Object
-	bool treat_POST_request( const std::string & header );
+	bool treat_POST_request( const std::string & req, const std::string & path );
 
 
 

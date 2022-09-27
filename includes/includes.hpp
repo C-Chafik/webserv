@@ -26,6 +26,8 @@
 #include <sys/socket.h>
 #include <sstream>
 #include <exception>
+#include <iostream>
+#include <fstream>
 
 #include "common.hpp"
 
@@ -42,24 +44,6 @@ struct parseLocation {
 
         parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
         ~parseLocation ( void ) {}
-};
-
-struct parsePOST {
-		size_t content_length;
-		std::string content_type;
-        std::string connection;
-        std::string referer;
-
-		std::string content;
-
-		parsePOST( void ) { content_length = 0; }
-        ~parsePOST( void ) {}
-		void clear( void )
-		{
-			content_length = 0;
-			content_type.clear();
-			content.clear();
-		}
 };
 
 
