@@ -10,10 +10,11 @@
  */
 std::string Server::treat_GET_request(struct request &req, id_server_type serverNb){
 	std::string rtnFile;
-	std::string file = req.path;
 	
 	/*have to be the first check because can change the serverNb*/
 	check_server_name(req, serverNb);
+
+	std::string file = parse_uri(req);
 
 	if (file == "/")
 		file = "index.html";

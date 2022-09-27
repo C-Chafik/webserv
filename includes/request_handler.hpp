@@ -63,7 +63,7 @@ class request_handler
 		std::string					_path;
 		int							_method;
 		int							_content_length;
-		std::string              	_header;
+		std::string				_header;
 
 		bool 						_state;
 

@@ -67,6 +67,7 @@ class Server{
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
 	void check_server_name(struct request &req, id_server_type &id);
+	std::string parse_uri(struct request &req);
 	void send_200(std::string file, id_server_type serverNb);
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);

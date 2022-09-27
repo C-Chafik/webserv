@@ -13,7 +13,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		{
 			receive_request_body(request[server_id], clientSocket);
 			if ( request[server_id].full == false )
-				return true;
+				return true;//keep alive
 		}
 	}
 
@@ -55,5 +55,5 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
-	return false;//keep alive
+	return false;//add function to keep alive
 }
