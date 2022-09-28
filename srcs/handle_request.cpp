@@ -33,6 +33,10 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 				send_400(server_id);
 			else if (err == "404")
 				send_404(server_id);
+			else if (err == "302")
+				send_302();
+			else
+				send_301(server_id, err);
 		}
 		request.erase(server_id);
 	}
@@ -49,8 +53,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		std::cout << CYAN << "SOMETHING WENT WRONG WITH THE REQUEST " << WHITE << std::endl;
 		exit(0);
 	}
-
-
 
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);

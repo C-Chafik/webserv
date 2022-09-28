@@ -14,12 +14,14 @@ std::string Server::treat_GET_request(struct request &req, id_server_type server
 	/*have to be the first check because can change the server_id*/
 	check_server_name(req, server_id);
 
-	std::string file = parse_uri(req, server_id);
+	std::string file = parse_uri(req, server_id);//get key/value
 
 	if (file == "/")
 		file = "index.html";
 
 	rtnFile = fileLocation(file, server_id);//routing
+
+	redirect(rtnFile, server_id);
 	
 	return rtnFile;
 }
