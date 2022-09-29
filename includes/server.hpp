@@ -1,10 +1,10 @@
 #ifndef SERVER_HPP
-#define SERVER_HPP
+# define SERVER_HPP
 
-#include "includes.hpp"
+# define D_200 0
+# define D_400 1
 
-#define D_200 0
-#define D_400 1
+# include "includes.hpp"
 
 class Server{
 	//exceptions
@@ -52,13 +52,12 @@ class Server{
 	fd_set error_current_connections;
 	fd_set error_ready_connections;
 	HeaderGen HGen;
-	std::map<id_server_type/*socket id*/, struct request> request;
+	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
 	struct parseGlobal parseG;
 
 
 	//func
 	int accept_connection(int fdServer);
-	struct request 	receive_request( int requestFd );
 	void			receive_request_body( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
@@ -66,7 +65,7 @@ class Server{
 	std::string fileToString(id_server_type server_id, std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
-	void check_server_name(struct request &req, id_server_type &id);
+	void check_server_name(struct header & header, id_server_type &id);
 	void send_200(std::string file, id_server_type serverNb);
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
@@ -79,12 +78,13 @@ class Server{
 
 
 	//* GET
-	std::string treat_GET_request(struct request &req, id_server_type serverNb);
+	std::string treat_GET_request(struct header & header, id_server_type serverNb);
 
 
 	//* POST
 	//* It create the POST Object
-	bool treat_POST_request( const std::string & header );
+	std::string get_file_name( const std::string & line );
+	void treat_POST_request( struct header & head, struct body & bod );
 
 
 

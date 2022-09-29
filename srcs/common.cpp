@@ -15,6 +15,31 @@ std::list<std::string> ft_split( const std::string & header, const std::string &
 	return ret;
 }
 
+std::list<std::string> ft_split_no_r( const std::string & header, const std::string & charset )
+{
+	size_t i = 0;
+
+	std::list<std::string> ret;
+
+	size_t cursor = header.find_first_of(charset);
+	
+	while ( cursor != std::string::npos )
+	{
+		if ( cursor == i )
+			i = ++cursor;
+		else
+		{
+			ret.push_back(header.substr(i, cursor - i));
+			i = ++cursor;
+		}
+		cursor = header.find_first_of(charset, cursor);
+	}
+	if ( i != header.length() )
+		ret.push_back(header.substr(i, header.length()));
+	return ret;
+}
+
+
 std::string trim_data( std::string & raw_data, const std::string & data_name )
 {
  	if ( raw_data.find(data_name) != std::string::npos )
