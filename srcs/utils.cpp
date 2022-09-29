@@ -24,7 +24,6 @@ std::string Server::fileToString(id_server_type server_id, std::string fileName,
 	std::string	buffer;
 	std::string	fileSTR;
 
-	(void)server_id;
 	file.open(fileName.c_str());
 	if (!file.is_open())
 	{
@@ -34,7 +33,7 @@ std::string Server::fileToString(id_server_type server_id, std::string fileName,
 			exit (EXIT_FAILURE);
 		}
 		else
-			throw (Error_page("404"));
+			send_404(server_id);
 	}
 	while (getline(file, buffer, '\n'))
 	{

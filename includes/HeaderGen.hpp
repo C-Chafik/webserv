@@ -32,12 +32,6 @@ public:
 		_Info[TYPE].append("\n");
 	}
 
-	void setLocation(std::string str){
-		_Info[TYPE].append("Location: ");
-		_Info[TYPE].append(str);
-		_Info[TYPE].append("\n");
-	}
-
 	void setContentString(std::string str){
 		_Info[LENGTH].append("Content-Length: ");
 		_Info[LENGTH].append(SSTR(str.length()));

@@ -33,7 +33,6 @@ struct request{
     std::string port_host;
 	std::string path;
 	std::string header;
-	std::string file;
 	int			method;
 	int			content_length;
 	int			read_content_length;

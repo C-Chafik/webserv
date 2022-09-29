@@ -40,7 +40,7 @@ struct parseLocation {
         bool autoindex;
         std::pair< int, std::string > http_redirection;
 
-        parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; http_redirection.first = 0; }
+        parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
         ~parseLocation ( void ) {}
 };
 
