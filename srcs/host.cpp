@@ -57,9 +57,9 @@ std::string Server::ipToHost(std::string host){
 	return hostname_str;
 }
 
-void Server::check_server_name(struct request &req, id_server_type &id){
-	if (isIpAddress(req.host)){//if host is an ip
-		if ((ipToHost(req.host) == ipToHost("localhost")))//check if the ip is the hostname
+void Server::check_server_name(struct header & header, id_server_type &id){
+	if (isIpAddress(header.host)){//if host is an ip
+		if ((ipToHost(header.host) == ipToHost("localhost")))//check if the ip is the hostname
 			if (id > 0)
 				id = 0;//take first server config
 		return;
@@ -67,7 +67,7 @@ void Server::check_server_name(struct request &req, id_server_type &id){
 	else{//if host is an hostname
 		std::vector<std::string>::iterator it = confs[id].server_names.begin();
 		for (; it != confs[id].server_names.end(); it++)
-			if (*it == req.host)
+			if (*it == header.host)
 				return;
 		if (id > 0)
 			id = 0;//take first server config
