@@ -46,6 +46,14 @@
 # include "HeaderGen.hpp"
 # include "server.hpp"
 
+#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
+
+
+
+#include "parseConfig.hpp"
+#include "HeaderGen.hpp"
+#include "server.hpp"
+
 enum    METHOD{
     GET,
     POST,

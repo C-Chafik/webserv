@@ -8,6 +8,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	{
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
+
 	}
 
 	all_request[server_id].receive_request(clientSocket);
@@ -53,5 +54,5 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
-	return false;//keep alive
+	return false;//add function to keep alive
 }

@@ -1,3 +1,6 @@
+#ifndef HEADERGEN_HPP
+#define HEADERGEN_HPP
+
 #include <string>
 #include <vector>
 
@@ -55,3 +58,5 @@ public:
 
 	std::string getStr(){ return _response; }
 };
+
+#endif
