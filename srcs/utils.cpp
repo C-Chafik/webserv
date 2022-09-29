@@ -19,7 +19,7 @@ bool Server::wantToBeAccepted(int fd){
 	return false;
 }
 
-std::string Server::fileToString(id_server_type server_id, std::string fileName, bool error){
+std::string Server::fileToString(std::string fileName, bool error){
 	std::ifstream file;
 	std::string	buffer;
 	std::string	fileSTR;
@@ -33,7 +33,7 @@ std::string Server::fileToString(id_server_type server_id, std::string fileName,
 			exit (EXIT_FAILURE);
 		}
 		else
-			send_404(server_id);
+			throw Error_page("404");
 	}
 	while (getline(file, buffer, '\n'))
 	{

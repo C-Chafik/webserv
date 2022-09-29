@@ -22,10 +22,11 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id);
-			send_200(to_send, server_id);//! do the file dynamic
+			send_200(to_send);//! do the file dynamic
 		}
 		catch (const Error_page& page){
 			std::string err = page.what();
+			std::cout << err << std::endl;
 			if (err == "400")
 				send_400(server_id);
 			else if (err == "404")

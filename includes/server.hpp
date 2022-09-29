@@ -62,12 +62,12 @@ class Server{
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);
-	std::string fileToString(id_server_type server_id, std::string fileName, bool error = false);
+	std::string fileToString(std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
 	void check_server_name(struct header & header, id_server_type &id);
 	std::string parse_uri(struct header & header, id_server_type server_id);
-	void send_200(std::string file, id_server_type serverNb);
+	void send_200(std::string file);
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
 	bool isIpAddress(std::string addr);
