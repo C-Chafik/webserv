@@ -29,3 +29,11 @@ void Server::send_404(id_server_type serverNb){
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
 }
+
+void Server::send_301(std::string location){
+	HGen.clear();
+
+	HGen.setStatus("301 Moved Permanently");
+	HGen.setLocation(location);
+	HGen.processResponse();
+}

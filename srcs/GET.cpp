@@ -21,6 +21,8 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 		file = "index.html";
 
 	rtnFile = fileLocation(file, server_id);//routing
+
+	redirect(rtnFile, server_id);
 	
 	return rtnFile;
 }

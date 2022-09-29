@@ -26,11 +26,14 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		}
 		catch (const Error_page& page){
 			std::string err = page.what();
-			std::cout << err << std::endl;
 			if (err == "400")
 				send_400(server_id);
 			else if (err == "404")
 				send_404(server_id);
+			else{
+				std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;
+				send_301(confs[server_id].locations[err].http_redirection.second);
+			}
 		}
 		all_request.erase(server_id);
 	}
