@@ -65,28 +65,31 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 		return;
 	}
 	else{//if host is an hostname
-			   // std::vector<std::string>::iterator it = confs[id].server_names.begin();
-			   // for (; it != confs[id].server_names.end(); it++)
-			   //      if (*it == header.host)
-			   //              return;
-			   // if (id > 0)
-			   //      id = 0;//take first server config
-			   // return;
-			   /**
-				* find header.port dans tous confs
-				* si le port est le meme check tous les server_names de tous les servers qui on le meme port
-				* si trouve le server name, changer le server_id avec le bon 
-				*/
+			for (std::vector<std::string>::size_type i = 0; i < confs[id].server_names.size(); i++){//check si le serv actuel a le bon host
+				if (confs[id].server_names[i] == header.host){
+					// std::cout << confs[id].server_names[i] << std::endl;//*log
+					return ;
+				}
+			}
 
-				for (std::vector< struct config >::size_type k = 0; k < confs.size(); k++){
-					   std::map< std::string, std::vector<std::string> >::iterator it = confs[k].listening.begin();
-					   while (it != confs[k].listening.end()){
-							   std::vector<std::string>::iterator it_port = std::find(it->second.begin(), it->second.end(), header.port_host);
-							   if (it_port != it->second.end()){
-									   std::cout <<  confs[k].server_names[0] << std::endl;
-							   }
-							   it++;
-					   }
-			   }
-		}
+			//check pour tous les servers le qui ecoute de meme port pour le bon host
+			for (std::vector< struct config >::size_type k = 0; k < confs.size(); k++){//for all servers configs
+					std::map< std::string, std::vector<std::string> >::iterator it = confs[k].listening.begin();
+					while (it != confs[k].listening.end()){//for all their ips
+							std::vector<std::string>::iterator it_port = std::find(it->second.begin(), it->second.end(), header.port_host);//find the first config with the port requested
+							if (it_port != it->second.end()){
+									//search for server_name == Host
+									for (std::vector<std::string>::size_type i = 0; i < confs[k].server_names.size(); i++){
+										if (confs[k].server_names[i] == header.host){
+											// std::cout << confs[k].server_names[i] << std::endl;//*log
+											id = k;
+											return ;
+										}
+									}
+							}
+							it++;
+					}
+			}
+			id = 0;
+	}
 }
