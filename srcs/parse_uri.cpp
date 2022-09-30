@@ -37,11 +37,11 @@ std::string Server::parse_uri(struct header & header, id_server_type server_id){
 	confs[server_id].get_vars[exp.substr(0, exp.find("="))] = exp.substr(exp.find("=") + 1, exp.size() - 1);
 
 
-	for (std::map<std::string, std::string>::iterator it = confs[server_id].get_vars.begin(); it != confs[server_id].get_vars.end(); it++)//*log for debug
-	{
-		std::cout << "key = " << it->first << std::endl;
-		std::cout << "value = " << it->second << std::endl;
-	}
+	// for (std::map<std::string, std::string>::iterator it = confs[server_id].get_vars.begin(); it != confs[server_id].get_vars.end(); it++)//*log for debug
+	// {
+	// 	std::cout << "key = " << it->first << std::endl;
+	// 	std::cout << "value = " << it->second << std::endl;
+	// }
 
 
 	std::cout << rtn << std::endl;

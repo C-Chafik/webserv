@@ -31,7 +31,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			else if (err == "404")
 				send_404(server_id);
 			else{
-				std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;
+				check_server_name(all_request[server_id].get_header(), server_id);
+				// std::cout << "err : " << err << " | server_id : " << server_id << std::endl;//*log
+				// std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;//*log
 				send_301(confs[server_id].locations[err].http_redirection.second);
 			}
 		}
@@ -51,7 +53,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
+	// std::cout << "Sending reponse : \"" << response << "\"\n";//*log
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+	// std::cout << "Has been sent\n";//*log
 
 	return false;//add function to keep alive
 }
