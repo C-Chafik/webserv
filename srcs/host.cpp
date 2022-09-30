@@ -65,12 +65,28 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 		return;
 	}
 	else{//if host is an hostname
-		std::vector<std::string>::iterator it = confs[id].server_names.begin();
-		for (; it != confs[id].server_names.end(); it++)
-			if (*it == header.host)
-				return;
-		if (id > 0)
-			id = 0;//take first server config
-		return;
-	}
+			   // std::vector<std::string>::iterator it = confs[id].server_names.begin();
+			   // for (; it != confs[id].server_names.end(); it++)
+			   //      if (*it == header.host)
+			   //              return;
+			   // if (id > 0)
+			   //      id = 0;//take first server config
+			   // return;
+			   /**
+				* find header.port dans tous confs
+				* si le port est le meme check tous les server_names de tous les servers qui on le meme port
+				* si trouve le server name, changer le server_id avec le bon 
+				*/
+
+				for (std::vector< struct config >::size_type k = 0; k < confs.size(); k++){
+					   std::map< std::string, std::vector<std::string> >::iterator it = confs[k].listening.begin();
+					   while (it != confs[k].listening.end()){
+							   std::vector<std::string>::iterator it_port = std::find(it->second.begin(), it->second.end(), header.port_host);
+							   if (it_port != it->second.end()){
+									   std::cout <<  confs[k].server_names[0] << std::endl;
+							   }
+							   it++;
+					   }
+			   }
+		}
 }

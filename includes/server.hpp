@@ -39,7 +39,7 @@ class Server{
 	typedef std::vector< struct config >::size_type id_server_type;
 
 	//var
-	std::string _header;
+	std::string _header;std::map<std::string/*port*/, std::vector<std::string>/*server_names*/> mutiple_server_port;
 	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
 	std::vector< std::vector< struct config >::size_type > socket_to_server;

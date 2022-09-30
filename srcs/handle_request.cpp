@@ -47,11 +47,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == DELETE )
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
-	else
-	{
-		std::cout << CYAN << "SOMETHING WENT WRONG WITH THE REQUEST " << WHITE << std::endl;
-		exit(0);
-	}
 
 
 
