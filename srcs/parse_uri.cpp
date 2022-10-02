@@ -16,25 +16,27 @@ std::string Server::parse_uri(struct header & header, id_server_type server_id){
 
 	rtn = header.path.substr(0, pos_i);
 
-	s_t pos_end;
+	confs[server_id].query_string = header.path.substr(pos_i + 1, header.path.size() - 1);
 
-	/**
-	 * @brief quoi faire si
-	 * ?value=
-	 * ?=key
-	 * ?=
-	 * ?value
-	 */
-	while ((pos_end = header.path.find("&", pos_i + 1)) != std::string::npos){
-		std::string exp = header.path.substr(pos_i + 1, pos_end - (pos_i + 1));
+	// s_t pos_end;
 
-		confs[server_id].get_vars[exp.substr(0, exp.find("="))] = exp.substr(exp.find("=") + 1, exp.size() - 1);
+	// /**
+	//  * @brief quoi faire si
+	//  * ?value=
+	//  * ?=key
+	//  * ?=
+	//  * ?value
+	//  */
+	// while ((pos_end = header.path.find("&", pos_i + 1)) != std::string::npos){
+	// 	std::string exp = header.path.substr(pos_i + 1, pos_end - (pos_i + 1));
 
-		pos_i = pos_end;
-	}
+	// 	confs[server_id].get_vars[exp.substr(0, exp.find("="))] = exp.substr(exp.find("=") + 1, exp.size() - 1);
 
-	std::string exp = header.path.substr(pos_i + 1, header.path.size() - 1);
-	confs[server_id].get_vars[exp.substr(0, exp.find("="))] = exp.substr(exp.find("=") + 1, exp.size() - 1);
+	// 	pos_i = pos_end;
+	// }
+
+	// std::string exp = header.path.substr(pos_i + 1, header.path.size() - 1);
+	// confs[server_id].get_vars[exp.substr(0, exp.find("="))] = exp.substr(exp.find("=") + 1, exp.size() - 1);
 
 
 	// for (std::map<std::string, std::string>::iterator it = confs[server_id].get_vars.begin(); it != confs[server_id].get_vars.end(); it++)//*log for debug
@@ -44,7 +46,7 @@ std::string Server::parse_uri(struct header & header, id_server_type server_id){
 	// }
 
 
-	std::cout << rtn << std::endl;
+	// std::cout << rtn << std::endl;//*log
 
 	return rtn;
 }
