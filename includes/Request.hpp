@@ -20,13 +20,15 @@ struct header
     std::string host;
     std::string port_host;
 	std::string path;
-	std::string header;
+	std::string header_str;
 	std::string boundary;
 	std::string content_type;
 	std::string connection;
 	int			method;
 	int			content_length;
 	bool	 	keep_alive;
+
+	header(): content_type("text"), content_length(0) {}
 };
 
 struct body

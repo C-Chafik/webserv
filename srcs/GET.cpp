@@ -23,7 +23,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	rtnFile = fileLocation(file, server_id);//routing
 
-	php_cgi(server_id);
+	php_cgi(header, server_id, rtnFile);
 
 	redirect(rtnFile, server_id);
 	
