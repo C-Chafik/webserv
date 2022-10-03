@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/29 02:07:33 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/03 13:15:34 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Request::Request( void ) :  _read_content_length(0), _is_full(false), _start(false)
 {
-	
+
 }
 
 Request::~Request( void )
@@ -22,13 +22,44 @@ Request::~Request( void )
 
 }
 
+Request::Request( Request const & src )
+{
+	*this = src;
+}
+
+Request & Request::operator=( Request const & src )
+{
+	_read_content_length = src._read_content_length;	
+	_is_full = src._is_full;
+	_start = src._start;
+
+	_request = src._request;
+
+	_header.host = src._header.host;
+	_header.port_host = src._header.port_host;
+	_header.path = src._header.path;
+	_header.header = src._header.header;
+	_header.boundary = src._header.boundary;
+	_header.content_type = src._header.content_type;
+	_header.connection = src._header.connection;
+	_header.method = src._header.method;
+	_header.content_length = src._header.content_length;
+	_header.keep_alive = src._header.keep_alive;
+
+	_body.content = src._body.content;
+	_body.type = src._body.type;
+	_body.length = src._body.length;
+
+	return *this;
+}
+
 void Request::receive_request( int requestFd )
 {
-    char 			buffer[1024 + 1];
+    char 			buffer[10024 + 1];
 	size_t 			end;
 
-	memset( buffer, 0, 1024 );
-	if ( ( end = recv(requestFd, buffer, 1024 - 1, 0)) > 0 )
+	memset( buffer, 0, 10024 );
+	if ( ( end = recv(requestFd, buffer, 10024 - 1, 0)) > 0 )
 		insert(buffer, end);
 
 	if ( check_if_header_is_received() == true )
@@ -58,7 +89,11 @@ void	Request::insert( char * buffer, size_t len )
 	_request.insert(_request.size(), buffer, len);
 
 	if ( _start == true )
+	{
 		_read_content_length += len;
+		std::cout << RED << _header.content_length << WHITE << std::endl;
+		std::cout << _read_content_length << std::endl;
+	}
 
 	if ( _start == true )
 		if ( _read_content_length >= _header.content_length )

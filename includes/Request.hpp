@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/09/29 01:56:36 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/03 13:15:53 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ class Request
 {
 	public:
 		Request( void );
+		Request( Request const & src );
 		~Request( void );
-
+		Request & operator=( Request const & src );
+		
 		void 				receive_request( int requestFd );
 		void		 		start_treating( void );
 

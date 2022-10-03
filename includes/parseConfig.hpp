@@ -5,13 +5,13 @@
 
 struct parseLocation 
 {
-	bool GET;
-	bool POST;
-	bool DELETE;
-	std::string root;
-	std::string upload_path;
-	bool autoindex;
-	std::pair< int, std::string > http_redirection;
+	bool 								GET;
+	bool 								POST;
+	bool 								DELETE;
+	std::string 						root;
+	std::string 						upload_path;
+	bool 								autoindex;
+	std::pair< int, std::string >		http_redirection;
 
 	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
 	~parseLocation ( void ) {}
@@ -19,11 +19,11 @@ struct parseLocation
 
 struct config 
 {
-    std::vector<std::string> server_names;
-    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
-    std::vector< std::pair<std::vector<int>, std::string> > errors;
-    std::map< std::string, struct parseLocation > locations;
-    int         body_max_size;
+    std::vector<std::string> 												server_names;
+    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
+    std::vector< std::pair<std::vector<int>, std::string> > 				errors;
+    std::map< std::string, struct parseLocation > 							locations;
+    int         															body_max_size;
 
     config( void ) { body_max_size = 100000; }
     ~config ( void ) {}
@@ -43,12 +43,11 @@ class parseConfig
 {
 	public:
 
-		//? Contructor - Destructor
+
 		parseConfig( std::string path = std::string("conf/default.conf") );
 		~parseConfig( void );
 
 
-		//? Exit
 		int													exit_on_error( void );
 
 		//? Getter
@@ -60,20 +59,20 @@ class parseConfig
 
 
 	private:
-		//! Parsing
-		size_t					_closed;
-		bool					_inside;
-		std::list<std::string> 	_file;
-		std::string		 		_file_path;
 
-		//! Data
-		struct parseLocation _parseLocation;
-		struct config _config;
+		size_t									_closed;
+		bool									_inside;
+		std::list<std::string> 					_file;
+		std::string		 						_file_path;
+
+
+		struct parseLocation 					_parseLocation;
+		struct config 							_config;
 		std::vector< struct config > 			_configs;
 
-		//! Exit Parsing
-		std::string 			_actual_error;
-		bool 					_state;
+
+		std::string 							_actual_error;
+		bool 									_state;
 
 
 		//? Main

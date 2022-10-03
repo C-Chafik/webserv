@@ -1,6 +1,7 @@
 #include "includes.hpp"
 
-int main(){
+int main( void )
+{
 
 	parseConfig parse("conf/default.conf");//do a dynamic search and go to default location if nothig
 	if ( parse.state() == false )
