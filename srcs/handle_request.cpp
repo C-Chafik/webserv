@@ -30,6 +30,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			else if (err == "404")
 				send_404(server_id);
 		}
+		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
 		all_request.erase(server_id);
 	}
 	else if ( method == POST )
@@ -37,8 +38,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		std::cout << CYAN << "METHOD = POST " << WHITE << std::endl;
 		if ( all_request[server_id].is_full() == false )
 			return true;
-		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body());
+		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path());
 		all_request.erase(server_id);
+		std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;
 	}
 	else if ( method == DELETE )
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;

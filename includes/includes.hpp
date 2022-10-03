@@ -9,7 +9,7 @@
 # define MAGENTA "\033[1m\033[35m"
 # define CYAN    "\033[1m\033[36m"
 # define WHITE   "\033[1m\033[37m"
-# define BUFF_SIZE 
+# define TMP_FILE_NAME "tmp_filex"
 
 # define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
@@ -28,6 +28,8 @@
 # include <unistd.h>
 # include <string>
 # include <fstream>
+# include <istream>
+# include <sys/stat.h>
 # include <cstring>
 # include <utility>
 # include <signal.h>

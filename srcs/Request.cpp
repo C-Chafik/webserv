@@ -6,20 +6,20 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/03 13:15:34 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/03 21:46:54 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Request.hpp"
 
-Request::Request( void ) :  _read_content_length(0), _is_full(false), _start(false)
+Request::Request( void ) :  _read_content_length(0), _is_full(false), _with_body(false), _header_found(false)
 {
-
+	search_tmp_name();
 }
 
 Request::~Request( void )
 {
-
+	
 }
 
 Request::Request( Request const & src )
@@ -27,13 +27,14 @@ Request::Request( Request const & src )
 	*this = src;
 }
 
+
 Request & Request::operator=( Request const & src )
 {
+	_tmp_filename = src._tmp_filename;
+
 	_read_content_length = src._read_content_length;	
 	_is_full = src._is_full;
-	_start = src._start;
-
-	_request = src._request;
+	_with_body = src._with_body;
 
 	_header.host = src._header.host;
 	_header.port_host = src._header.port_host;
@@ -53,78 +54,91 @@ Request & Request::operator=( Request const & src )
 	return *this;
 }
 
+void	Request::search_tmp_name( void )
+{
+	std::stringstream out;
+	std::string name = TMP_FILE_NAME;
+	std::string s_id;
+	size_t id = 174;
+	
+	while ( 1 )
+	{
+		out << id;
+
+		s_id = out.str();
+		if ( file_already_exist(name + s_id) == false )
+		{
+			_tmp_filename = name + s_id;
+			return ;
+		}
+		s_id.clear();
+		out.str("");
+		id++;
+	}
+}
+
 void Request::receive_request( int requestFd )
 {
-    char 			buffer[10024 + 1];
+    char 			buffer[8192 + 1];
+	std::fstream	file( _tmp_filename.c_str(), std::fstream::app | std::fstream::binary );
 	size_t 			end;
 
-	memset( buffer, 0, 10024 );
-	if ( ( end = recv(requestFd, buffer, 10024 - 1, 0)) > 0 )
-		insert(buffer, end);
-
+	memset( buffer, 0, 8192 );
+	if ( ( end = recv(requestFd, buffer, 8192 - 1, 0)) > 0 )
+		insert(buffer, end, file);
 	if ( check_if_header_is_received() == true )
-		get_header_information();
+		read_header();
+	file.close();
+}
+
+void	Request::insert( char * buffer, size_t len, std::fstream & file )
+{
+	file.write(buffer, len);
 	
-	if ( is_full() == true )
-		start_treating();
-}
-
-void		 		Request::start_treating( void )
-{
-	if ( _header.method == POST )
-		get_body_information();
-	else 
-		return ;
-}
-
-bool	Request::check_if_header_is_received( void )
-{
-	if (_request.find("\r\n\r\n") != std::string::npos )
-		return true;
-	return false;
-}
-
-void	Request::insert( char * buffer, size_t len )
-{
-	_request.insert(_request.size(), buffer, len);
-
-	if ( _start == true )
+	if ( _with_body == true )
 	{
 		_read_content_length += len;
 		std::cout << RED << _header.content_length << WHITE << std::endl;
 		std::cout << _read_content_length << std::endl;
 	}
 
-	if ( _start == true )
+	if ( _with_body == true )
 		if ( _read_content_length >= _header.content_length )
 			_is_full = true;
+	file.close();
 }
 
-void	Request::get_body_information( void )
+bool	Request::check_if_header_is_received( void )
 {
-	size_t cursor = _request.find("\r\n\r\n");
-	if ( cursor == std::string::npos )
-	{
-		_body.content = "";
-		_body.length = 0;
-		return ;
-	}
-	_body.content.insert(0, _request, cursor + 4, std::string::npos);
-	_body.length = _body.content.size();
-}
-
-void	Request::get_header_information( void )
-{
-	std::string raw_header(_request);
+	std::string	 	buffer;
+	std::string		full_buffer;
+	std::ifstream 	tmp(_tmp_filename.c_str(), std::ifstream::binary );
 	
-	raw_header.resize(_request.find("\r\n\r\n"));
+	while ( std::getline(tmp, buffer) )
+	{
+		full_buffer += buffer;
+		full_buffer += '\n';
+		
+		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
+			return true;
+	}
+	return false;
+}
 
-	std::stringstream header(raw_header);
+void	Request::read_body( void )
+{
+	
+}
+
+void	Request::read_header( void )
+{
+	std::ifstream tmp(_tmp_filename.c_str(), std::ifstream::binary );
+	
 	std::string buff;
 
 	bool first = false;
 
-	while ( std::getline(header, buff) )
+	while ( std::getline(tmp, buff) )
 	{
 		std::list<std::string> infos = ft_split_no_r(buff, " \r");
 
@@ -146,7 +160,9 @@ void	Request::get_header_information( void )
 			assign_host(infos.back());
 
 		if ( infos.size() == 2 && infos.front() == "Content-Length:" )
+		{
 			_header.content_length = std::atoi(infos.back().c_str());
+		}
 		
 		if ( infos.size() == 2 && infos.front() == "Connection:" )
 		{
@@ -161,11 +177,10 @@ void	Request::get_header_information( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.boundary = "--" + infos.back().substr(9);		
-
 			_header.content_type.erase(_header.content_type.size() - 1);
 		}
 	}
-	_start = true;
+	_with_body = true;
 }
 
 struct header & Request::get_header( void )
@@ -178,14 +193,14 @@ struct body & Request::get_body( void )
 	return _body;
 }
 
-std::string & 	Request::get_request( void )
-{
-	return _request;
-}
-
 bool		 		Request::is_full( void )
 {
 	return _is_full;
+}
+
+std::string &	 	Request::get_file_path( void )
+{
+	return _tmp_filename;
 }
 
 int	Request::assign_method( const std::string & method_name )

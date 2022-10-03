@@ -84,7 +84,7 @@ class Server{
 	//* POST
 	//* It create the POST Object
 	std::string get_file_name( const std::string & line );
-	void treat_POST_request( struct header & head, struct body & bod );
+	void treat_POST_request( struct header & head, struct body & bod, const std::string & file );
 
 
 

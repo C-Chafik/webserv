@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/03 13:15:53 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/03 19:28:02 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,30 +44,35 @@ class Request
 		~Request( void );
 		Request & operator=( Request const & src );
 		
+		void				search_tmp_name( void );
+
 		void 				receive_request( int requestFd );
 		void		 		start_treating( void );
 
 
 		bool				check_if_header_is_received( void );
-		void 				insert( char * buffer, size_t len );
+		void 				insert( char * buffer, size_t len, std::fstream & file );
 
-		void		 		get_header_information( void );
-		void		 		get_body_information( void );
+		void		 		read_header( void );
+		void		 		read_body( void );
 
+		std::string &	 	get_file_path( void );
 		struct header & 	get_header( void );
 		std::string & 		get_request( void );
 		struct body & 		get_body( void );
 		bool		 		is_full( void );
 		
 	private:
-		std::string					_request;
+		std::string		 			_tmp_filename;
+		std::fstream			 	_request_fd;
 		struct	header				_header;
 		struct	body		 		_body;
 
 		int							_read_content_length;
 
 		bool			 			_is_full;
-		bool						_start;
+		bool						_with_body;
+		bool						_header_found;
 
 		int		assign_method( const std::string & method_name );
 		void	assign_host( std::string & line );
