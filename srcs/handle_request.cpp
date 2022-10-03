@@ -8,7 +8,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	{
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
-
 	}
 
 	all_request[server_id].receive_request(clientSocket);
@@ -21,7 +20,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
 
 		try{
-			to_send = treat_GET_request(all_request[server_id].get_header(), server_id);
+			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
+			if (to_send.empty())
+				return all_request[server_id].get_header().keep_alive;
 			send_200(to_send);//! do the file dynamic
 		}
 		catch (const Error_page& page){
@@ -57,5 +58,5 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 	// std::cout << "Has been sent\n";//*log
 
-	return false;//add function to keep alive
+	return all_request[server_id].get_header().keep_alive;//add function to keep alive
 }

@@ -22,19 +22,6 @@ class Server{
 		std::string msg;
 	};
 
-	//struct
-	struct parseLocation{
-		std::string root;
-	};
-
-	struct parseGlobal{
-		std::map<std::string/*location*/, struct parseLocation> location;
-		in_addr_t ip_address;
-		std::vector<std::string> server_names;
-		std::string path_e_404;//init default path or parsed value
-		std::string path_e_400;//init default path or parsed value
-		std::vector<std::string> index;
-	};
 
 	typedef std::vector< struct config >::size_type id_server_type;
 
@@ -53,7 +40,6 @@ class Server{
 	fd_set error_ready_connections;
 	HeaderGen HGen;
 	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
-	struct parseGlobal parseG;
 
 
 	//func
@@ -82,7 +68,7 @@ class Server{
 
 
 	//* GET
-	std::string treat_GET_request(struct header & header, id_server_type serverNb);
+	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 
 
 	//* POST

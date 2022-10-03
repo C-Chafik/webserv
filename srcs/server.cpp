@@ -1,5 +1,3 @@
-#define PORT 9999
-
 #include "includes.hpp"
 
 void Server::run(std::vector< struct config > confs){

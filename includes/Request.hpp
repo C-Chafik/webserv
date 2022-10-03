@@ -27,6 +27,7 @@ struct header
 	int			method;
 	int			content_length;
 	bool	 	keep_alive;
+	int			clientFd;
 
 	header(): content_type("text"), content_length(0) {}
 };
