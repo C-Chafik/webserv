@@ -24,8 +24,8 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 	// line.append(script_name);
 	(void)script_name;
 
-	// line.append(" PATH_INFO=");
-	// line.append("/usr/bin/php-cgi");//! change by value of .conf
+	line.append(" PATH_INFO=");
+	line.append(confs[server_id].cgi_path);
 	
 
 	line.append(" SERVER_NAME=");

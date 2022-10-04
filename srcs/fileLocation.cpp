@@ -10,6 +10,11 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 
 	//find 1st location
 	slash = request.find("/");
+	if (!slash){
+		request = request.substr(1, request.size());
+		slash = request.find("/");
+	} 
+
 	if (slash != std::string::npos && request[slash + 1])
 		location = request.substr(0, slash + 1);
 

@@ -1,9 +1,7 @@
 #include "includes.hpp"
 
 void Server::run(std::vector< struct config > confs){
-
 	this->confs = confs;
-
 	listenSocketServer();
 
 	FD_ZERO(&current_connections);//init struct to 0
