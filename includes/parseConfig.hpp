@@ -19,6 +19,8 @@ struct parseLocation
 
 struct config 
 {
+	std::string					cgi_extension;
+	std::string					cgi_path;
     std::vector<std::string> server_names;
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
     std::vector< std::pair<std::vector<int>, std::string> > errors;
@@ -92,6 +94,8 @@ class parseConfig
 		void												insert_method( std::string & raw_method, const std::string & location );
 		int													insert_body_max_size( std::string & raw_data );
 		std::string		 	 		 	 					insert_root( std::string & line );
+		bool												insert_cgi( std::string & raw_line );
+
 
 
 		//? Utils
