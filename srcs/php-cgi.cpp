@@ -42,7 +42,7 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 		line.append(SSTR(header.content_length));
 
 	
-	line.append(" php-cgi php-files/test.php > output_webserv.tmp");
+	line.append(" php-cgi -q php-files/test.php > output_webserv.tmp");
 	
 
 	system(line.c_str());
@@ -51,7 +51,5 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 	
 	std::cout.rdbuf(old);
 
-	std::cout << "Command cgi : " << line << std::endl;//*log
-	std::cout << "[" << buffer.str().c_str() << "]"  << std::endl;
-	send(header.clientFd, buffer.str().c_str(), buffer.str().size(), SOCK_DGRAM);
+	send_cgi(buffer.str());
 }

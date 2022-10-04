@@ -67,7 +67,6 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 	else{//if host is an hostname
 			for (std::vector<std::string>::size_type i = 0; i < confs[id].server_names.size(); i++){//check si le serv actuel a le bon host
 				if (confs[id].server_names[i] == header.host){
-					// std::cout << confs[id].server_names[i] << std::endl;//*log
 					return ;
 				}
 			}
@@ -81,7 +80,6 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 									//search for server_name == Host
 									for (std::vector<std::string>::size_type i = 0; i < confs[k].server_names.size(); i++){
 										if (confs[k].server_names[i] == header.host){
-											// std::cout << confs[k].server_names[i] << std::endl;//*log
 											id = k;
 											return ;
 										}

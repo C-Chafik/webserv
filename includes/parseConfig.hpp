@@ -46,7 +46,7 @@ class parseConfig
 	public:
 
 		//? Contructor - Destructor
-		parseConfig( std::string path = std::string("conf/default.conf") );
+		parseConfig( std::string path = std::string("/home/user1/webserv/conf/default.conf") );
 		~parseConfig( void );
 
 

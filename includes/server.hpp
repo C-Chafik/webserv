@@ -39,6 +39,7 @@ class Server{
 	fd_set error_current_connections;
 	fd_set error_ready_connections;
 	HeaderGen HGen;
+	bool cgi_on;
 	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
 
 
@@ -58,6 +59,7 @@ class Server{
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
 	void send_301(std::string location);
+	void send_cgi(std::string data);
 	bool isIpAddress(std::string addr);
 	bool hostToIp(std::string hostname);
 	int findServerIndex(int fdServer);
@@ -79,6 +81,7 @@ class Server{
 
 
 public:
+	Server() : cgi_on(false){}
 	void run(std::vector< struct config > confs);
 
 };

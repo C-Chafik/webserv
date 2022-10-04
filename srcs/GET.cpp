@@ -1,13 +1,5 @@
 #include "includes.hpp"
 
-/**
- * take request file by client
- * return path of file to return
- *
- * return another path if redirection
- * return error file path if needed
- * 
- */
 std::string Server::treat_GET_request(struct header & header, id_server_type server_id, int clientFd){
 	std::string rtnFile;
 	std::string file = header.path;

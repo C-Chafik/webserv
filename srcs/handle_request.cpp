@@ -21,9 +21,8 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
-			if (to_send.empty())
-				return all_request[server_id].get_header().keep_alive;
-			send_200(to_send);//! do the file dynamic
+			if (!to_send.empty())
+				send_200(to_send);
 		}
 		catch (const Error_page& page){
 			std::string err = page.what();
@@ -33,8 +32,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 				send_404(server_id);
 			else{
 				check_server_name(all_request[server_id].get_header(), server_id);
-				// std::cout << "err : " << err << " | server_id : " << server_id << std::endl;//*log
-				// std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;//*log
 				send_301(confs[server_id].locations[err].http_redirection.second);
 			}
 		}
@@ -52,11 +49,8 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
 
 
-
 	std::string response = HGen.getStr();
-	// std::cout << "Sending reponse : \"" << response << "\"\n";//*log
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
-	// std::cout << "Has been sent\n";//*log
 
 	return all_request[server_id].get_header().keep_alive;//add function to keep alive
 }
