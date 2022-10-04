@@ -206,7 +206,12 @@ bool	parseConfig::insert_cgi( std::string & raw_line )
 		{
 			parsing_error("FIRST ARGUMENT IS THE CGI EXTENSION, AND MUST START WITH A DOT: ", line);
 			return false;
-		}	
+		}
+		if ( s_line.front() != ".php" )
+		{
+			parsing_error("ONLY PHP IS SUPPORTED: ", line);
+			return false;
+		}
 	}
 	catch ( const std::out_of_range & e )
 	{
