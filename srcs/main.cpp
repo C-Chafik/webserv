@@ -2,7 +2,7 @@
 
 int main(){
 
-	parseConfig parse("/home/user1/webserv/conf/default.conf");//do a dynamic search and go to default location if nothig
+	parseConfig parse("conf/default.conf");//do a dynamic search and go to default location if nothig
 	if ( parse.state() == false )
 		return parse.exit_on_error();
 	

@@ -1,31 +1,33 @@
 #include "includes.hpp"
 
-void Server::php_cgi(struct header & header, id_server_type server_id, std::string script_name){
+void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path){
 	std::string line;
 	std::stringstream buffer;
 	std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-	// line.append("CONTENT_TYPE=");
-	// line.append(header.content_type);
+	line.append("CONTENT_TYPE=");
+	line.append(header.content_type);
 
-	// line.append(" REDIRECT_STATUS=");
-	// line.append("200");
+	line.append(" REDIRECT_STATUS=");
+	line.append("200");
 
 	line.append(" QUERY_STRING=");
 	line.append(confs[server_id].query_string);
 
-	// line.append(" SERVER_PROTOCOL=");
-	// line.append("HTTP/1.1");
+	line.append(" SERVER_PROTOCOL=");
+	line.append("HTTP/1.1");
 
 	// line.append(" SERVER_SOFTWARE=");
 	// line.append("WebServ");//*redirect
 
-	// line.append(" SCRIPT_NAME=");
-	// line.append(script_name);
-	(void)script_name;
+	// line.append(" SCRIPT_NAME=");//parse php_path
+	// line.append(php_path);
+	// (void)php_path;
 
+	std::string path_info;
+	path_info = php_path.substr(php_path.find(confs[server_id].cgi_extension) + confs[server_id].cgi_extension.size(), php_path.size());
 	line.append(" PATH_INFO=");
-	line.append(confs[server_id].cgi_path);
+	line.append(path_info);
 	
 
 	line.append(" SERVER_NAME=");
@@ -51,6 +53,6 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 
 	std::cout.rdbuf(old);
 
+	std::cout << line << std::endl;
 	send_cgi(buffer.str());
-	
 }
