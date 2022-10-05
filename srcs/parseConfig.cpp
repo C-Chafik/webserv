@@ -102,7 +102,7 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 	path = get_location_path(*it);
 	if ( path.empty() )
 	{
-		parsing_error("MISSING LOCATION PATH : ", *it);
+		parsing_error("ERROR IN A LOCATION PATH : ", *it);
 		return _file.end();
 	}
 
