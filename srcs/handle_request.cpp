@@ -31,6 +31,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 				send_404(server_id);
 		}
 		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
+		//! deleting the tmp file
+		remove(all_request[server_id].get_file_path().c_str());
+		std::cout <<  strerror(errno) << std::endl;
 		all_request.erase(server_id);
 	}
 	else if ( method == POST )
