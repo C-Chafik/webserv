@@ -18,7 +18,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
 	if (ext != std::string::npos){//!replace 4 par sizeof parsed extension
-		php_cgi(header, server_id , rtnFile);
+		php_cgi(header, server_id , rtnFile, "GET");
 		return "";
 	}
 
