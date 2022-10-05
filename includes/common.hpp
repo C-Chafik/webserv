@@ -4,3 +4,4 @@ std::string trim_data( std::string & raw_data, const std::string & data_name );
 std::string trim_data_semicolon( std::string & raw_data, const std::string & data_name );
 std::string 	insertion_semicolon( std::string & line, const std::string & name );
 std::string	 insertion( std::string & line, const std::string & name );
+bool         file_already_exist( const std::string & path );

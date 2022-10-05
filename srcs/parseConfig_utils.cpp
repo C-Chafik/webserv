@@ -150,6 +150,13 @@ std::string	 parseConfig::get_location_path( std::string & line )
 	if ( new_line.empty() )
 		return "";
 
+	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) != '/' ) && ( new_line.size() >= 3 && ( *( new_line.begin() ) != '*' ) && ( *( new_line.begin() + 1 ) != '.' ) ) )
+		return "";
+
+	for ( std::string::size_type i = 0 ; i < new_line.size() ; i++ )
+		if ( new_line[i] == '/' && i != new_line.size() - 1 )
+			return "";
+
 	return new_line;
 }
 

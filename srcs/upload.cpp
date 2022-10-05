@@ -1,12 +1,9 @@
 #include "../includes/server.hpp"
 
-
-//! The upload need to be merged with the configuration file
-//! need to undurstand it further
-//! This function must check the max body size !!!
-void	Server::treat_POST_request( struct header & head, struct body & bod )
-{
-	std::fstream 	file;
+void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file )
+{(void)bod;
+	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
+	std::fstream 	new_file;
 	std::string		path;   //! need to use the conf file to get that path
 
 	if ( head.content_type == "multipart/form-data" )
@@ -15,12 +12,14 @@ void	Server::treat_POST_request( struct header & head, struct body & bod )
 		std::string line;
 		std::string content;
 
-		//! setting up the loop
-		content = bod.content.substr(bod.content.find("\n") + 1);
-		line = content.substr(0, content.find("\n"));
-		content = content.substr(content.find("\n") + 1); //! way to iterate
+		while ( content.find("\r\n\r\n") == std::string::npos ) //? We skip the first header part, because we just want the body
+		{
+			std::getline(tmp, line);
+			content += line;
+			content += '\n';
+		}
 
-		while ( line != head.boundary + "--\r" && !content.empty() )
+		while ( std::getline(tmp, line) || line == head.boundary + "--\r" ) //? We iterate trough the file with a gnl until we find the last boundary 
 		{
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
@@ -28,64 +27,44 @@ void	Server::treat_POST_request( struct header & head, struct body & bod )
 				filename = name.back().substr(10);
 				filename = filename.substr(0, filename.find("\""));
 			}
-			else if ( line == "\r" )
+			else if ( line.substr(0, 13) == "Content-Type:" )
+				continue ;
+			else if ( line == "\r" ) //? between boundary you first find informations like content disposition or content type, those informations are separated by a carriage return from the binary file
 			{
-				if (filename.empty())
-					filename = "TEMPORARY";
-				path = path + filename;
-				file.open(path.c_str(), std::ios::out);
-				if ( !file.is_open() )
+				if ( filename.empty() )
+					filename = "T";
+				path = "./" + filename;
+				new_file.open(path.c_str(), std::ios::out);
+				if ( !new_file.is_open() )
 				{
 					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					return ;
 				}
-				line = content.substr(0, content.find("\n"));
-				content = content.substr(content.find("\n") + 1);
-				while ( !content.empty() )
+				std::string tmp_line;
+				std::string offset;
+				std::getline(tmp, tmp_line); 
+				while ( std::getline(tmp, offset) )
 				{
-					std::string tmp = line;
-
-					line = content.substr(0, content.find("\n"));
-					content = content.substr(content.find("\n") + 1);
-					if ( line == head.boundary + "\r" || line == head.boundary + "--\r" || content.empty() )
+					if ( offset == head.boundary + "\r" || offset == head.boundary + "--\r" )
 					{
-						//? removing last \r character  
-						if ( tmp.length() >= 1 )
-							tmp.erase(tmp.end() - 1);
-						
-						file << tmp;
+						if ( tmp_line.size() >= 1 )
+							tmp_line.erase(tmp_line.end() - 1);
+						new_file << tmp_line;
 						break ;
 					}
-					file << tmp;
-					file << '\n';
+
+					new_file << tmp_line;
+					new_file << '\n';
+					tmp_line = offset;
 				}
-				file.close();
+				new_file.close();
+				tmp_line.clear();
 			}
-			if ( line != head.boundary + "--\r" && !content.empty() )
-			{
-				line = content.substr(0, content.find("\n"));
-				content = content.substr(content.find("\n") + 1);
-			}
+			if ( line == head.boundary + "--\r" || line.empty() )
+				break ;
 		}
-		if ( line != head.boundary + "--\r" && !content.empty() )
-        {
-			std::cout << "error" << std::endl;
-        }
 	}
-	else
-	{
-		std::string filename;
-		
-		if (filename.empty())
-			filename = "TEMPORARY";
-		path = path + filename;
-		file.open(path.c_str(), std::ios::out);
-		if ( !file.is_open() )
-		{
-			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
-			return ;
-		}
-		file << bod.content;
-		file.close();
-	}
+	tmp.close();
+	remove(file.c_str());
+	std::cout <<  strerror(errno) << std::endl;
 }   
