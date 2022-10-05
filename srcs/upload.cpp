@@ -40,15 +40,25 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					return ;
 				}
-				while ( std::getline(tmp, line) )
+				std::string tmp_line;
+				std::string offset;
+				std::getline(tmp, tmp_line); 
+				while ( std::getline(tmp, offset) )
 				{
-					if ( line == head.boundary + "\r" || line == head.boundary + "--\r" )
+					if ( offset == head.boundary + "\r" || offset == head.boundary + "--\r" )
+					{
+						if ( tmp_line.size() >= 1 )
+							tmp_line.erase(tmp_line.end() - 1);
+						new_file << tmp_line;
 						break ;
-					new_file << line;
+					}
+
+					new_file << tmp_line;
 					new_file << '\n';
+					tmp_line = offset;
 				}
-				new_file << line;
 				new_file.close();
+				tmp_line.clear();
 			}
 			if ( line == head.boundary + "--\r" || line.empty() )
 				break ;
