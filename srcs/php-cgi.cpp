@@ -46,10 +46,9 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 	
 
 	system(line.c_str());
-	std::cout << std::ifstream("output_webserv.tmp").rdbuf();
-	// system("rm -f output_webserv.tmp");
+	std::cout << std::ifstream("/tmp/output_webserv.tmp").rdbuf();
 	remove("/tmp/output_webserv.tmp");
-	
+
 	std::cout.rdbuf(old);
 
 	send_cgi(buffer.str());
