@@ -8,6 +8,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	{
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
+
 	}
 
 	all_request[server_id].receive_request(clientSocket);
@@ -21,7 +22,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id);
-			send_200(to_send, server_id);//! do the file dynamic
+			send_200(to_send);//! do the file dynamic
 		}
 		catch (const Error_page& page){
 			std::string err = page.what();
@@ -29,6 +30,10 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 				send_400(server_id);
 			else if (err == "404")
 				send_404(server_id);
+			else{
+				std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;
+				send_301(confs[server_id].locations[err].http_redirection.second);
+			}
 		}
 		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
 		//! deleting the tmp file
@@ -58,5 +63,5 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
-	return false;//keep alive
+	return false;//add function to keep alive
 }

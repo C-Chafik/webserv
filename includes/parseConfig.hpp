@@ -19,11 +19,14 @@ struct parseLocation
 
 struct config 
 {
+
     std::vector<std::string> 												server_names;
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
     std::vector< std::pair<std::vector<int>, std::string> > 				errors;
     std::map< std::string, struct parseLocation > 							locations;
     int         															body_max_size;
+	  std::map<std::string, std::string> get_vars;
+
 
     config( void ) { body_max_size = 100000; }
     ~config ( void ) {}
