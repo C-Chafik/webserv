@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/03 19:28:02 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/05 18:28:00 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ struct header
 
 struct body
 {
-	std::string content;
+	std::string body_path;
+	
 	std::string type;
 	size_t		length;
 };

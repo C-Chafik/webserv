@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/05 10:11:45 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/05 20:40:20 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ Request & Request::operator=( Request const & src )
 	_header.content_length = src._header.content_length;
 	_header.keep_alive = src._header.keep_alive;
 
-	_body.content = src._body.content;
+	_body.body_path = src._body.body_path;
 	_body.type = src._body.type;
 	_body.length = src._body.length;
 
@@ -122,7 +122,10 @@ bool	Request::check_if_header_is_received( void )
 		full_buffer += '\n';
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
+		{
+			std::cout << YELLOW << full_buffer << WHITE << std::endl;
 			return true;
+		}
 	}
 	return false;
 }

@@ -77,6 +77,8 @@ class Server{
 
 
 
+	void		check_request_validity( struct header & header, id_server_type server_id );
+
 	//* GET
 	std::string treat_GET_request(struct header & header, id_server_type serverNb);
 
@@ -84,7 +86,7 @@ class Server{
 	//* POST
 	//* It create the POST Object
 	std::string get_file_name( const std::string & line );
-	void treat_POST_request( struct header & head, struct body & bod, const std::string & file );
+	void treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
 
 
 

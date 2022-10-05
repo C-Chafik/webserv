@@ -56,4 +56,10 @@ enum    METHOD{
     UNKNOWN
 };
 
+enum    LOCATION_TYPE{
+    EXTENSION,
+    FOLDER
+};
+
+
 #endif

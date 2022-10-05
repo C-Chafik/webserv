@@ -15,6 +15,9 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 	/*have to be the first check because can change the serverNb*/
 	check_server_name(header, serverNb);
 
+	if (file == "/Download") //! NEED TO FINISH THIS METHOD !
+		file = "./Download/index.html";
+
 	if (file == "/")
 		file = "index.html";
 

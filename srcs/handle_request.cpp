@@ -1,5 +1,37 @@
 #include "includes.hpp"
 
+void		Server::check_request_validity( struct header & header, id_server_type server_id )
+{
+	std::cout << "PATH = header.path " << std::endl;
+	if ( confs[server_id].locations.find(header.path) == confs[server_id].locations.end() )
+	{
+		std::cout << "THIS PATH EXIST " << std::endl;
+		return send_404(server_id);
+	}
+	else if ( header.method == GET )
+	{
+		std::cout << "METHOD == GET " << std::endl;
+		if (  confs[server_id].locations[header.path].GET == false )
+			return send_400(server_id);
+		std::cout << "METHOD GET IS AUTORISED " << std::endl;
+	}
+	else if ( header.method == POST )
+	{
+		std::cout << "METHOD == POST " << std::endl;
+		if (  confs[server_id].locations[header.path].POST == false )
+			return send_400(server_id);
+		std::cout << "METHOD POST IS AUTORISED " << std::endl;
+	}
+	else if ( header.method == DELETE )
+	{
+		std::cout << "METHOD == DELETE " << std::endl;
+		if (  confs[server_id].locations[header.path].DELETE == false )
+			return send_400(server_id);
+		std::cout << "METHOD DELETE IS AUTORISED " << std::endl;
+	}
+
+}
+
 bool Server::handle_connection(int clientSocket, id_server_type server_id)
 {
 	std::cout << "server id : " << server_id << std::endl;
@@ -11,14 +43,13 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 
 	all_request[server_id].receive_request(clientSocket);
+	check_request_validity(all_request[server_id].get_header(), server_id );
 
 	int method = all_request[server_id].get_header().method;
 
 	if ( method == GET )
 	{
 		std::string to_send;
-		std::cout << CYAN << "METHOD = GET " << WHITE << std::endl;
-
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id);
 			send_200(to_send, server_id);//! do the file dynamic
@@ -38,10 +69,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == POST )
 	{
-		std::cout << CYAN << "METHOD = POST " << WHITE << std::endl;
 		if ( all_request[server_id].is_full() == false )
 			return true;
-		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path());
+		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path(), server_id);
 		all_request.erase(server_id);
 		std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;
 	}

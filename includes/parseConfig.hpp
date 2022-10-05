@@ -5,6 +5,7 @@
 
 struct parseLocation 
 {
+	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;
 	bool 								DELETE;
