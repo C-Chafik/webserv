@@ -34,11 +34,49 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 ///                                               ///
 /////////////////////////////////////////////////////
 
+bool parseConfig::check_conf_name( std::string & str )
+{
+	std::string::size_type end = str.size();
+
+	if ( end <= 5 ) //? yes i refuse a file named ".conf"
+		return false;
+
+	if ( str[end - 1] == '/' || str[end - 1] == '\\' )
+		return false;
+	
+	else if ( str[end - 1] != 'f' )
+		return false;
+	
+	else if ( str[end - 2] != 'n' )
+		return false;
+	
+	else if ( str[end - 3] != 'o' )
+		return false;
+	
+	else if ( str[end - 4] != 'c' )
+		return false;
+	
+	else if ( str[end - 5] != '.' )
+		return false;
+
+	return true;
+}
+
 bool parseConfig::fill_file( void )
 {
 	std::ifstream 	file;
 	std::string 	buffer;
 	std::string		fileSTR;
+
+std::cout << "wtf" <<std::endl;
+
+	if ( check_conf_name( _file_path ) == false )
+	{
+		parsing_error("ERROR IN THE FILE NAME ");
+		return false;
+	}
+
+	std::cout << "wtf" <<std::endl;
 
 	file.open(_file_path.c_str());
 	if (!file.is_open())
@@ -47,11 +85,19 @@ bool parseConfig::fill_file( void )
 		return false;
 	}
 
+	std::cout << "wtf" <<std::endl;
+
 	while ( getline(file, buffer, '\n') )
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
+
+	std::cout << "wtf" <<std::endl;
+
+	std::cout << "[" << fileSTR << "]";
+
+		std::cout << "wtf" <<std::endl;
 
 	_file = ft_split(fileSTR, "\n");
 
@@ -130,8 +176,19 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		if ( exact_match(*it, "root") == true )
 			_config.locations[path].root = insert_root(*it);
 
+		else if ( exact_match(*it, "index") == true )
+		{
+			std::string ret = insert_index(*it);
+			if ( ret.empty() )
+			{
+				parsing_error(" : ", *it);
+				return _file.end();
+			}
+			_config.locations[path].index = ret;
+		}
+
 		else if ( exact_match(*it, "autoindex") == true )
-			_config.locations[path].autoindex = insert_index(*it);
+			_config.locations[path].autoindex = insert_autoindex(*it);
 
 		else if ( exact_match(*it, "return") == true )
 			_config.locations[path].http_redirection = insert_http_redirection(*it);
@@ -140,7 +197,26 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			insert_method(*it, path);
 
 		else if ( exact_match(*it, "set_upload") == true )
-			_config.locations[path].upload_path = insert_upload_path(*it);
+		{
+			std::string ret = insert_upload_path(*it);
+			if ( ret.empty() )
+			{
+				parsing_error("UPLOAD PATH IS INVALID : ", *it);
+				return _file.end();
+			}
+			_config.locations[path].upload_path = ret;
+		}
+
+		else if ( exact_match(*it, "client_max_body_size") == true )
+		{
+			_config.locations[path].body_max_size = insert_body_max_size(*it);
+			if ( _config.locations[path].body_max_size == -1 )
+			{
+				parsing_error("ERROR AT : ", *it);
+				return _file.end();
+			}
+		}
+
 	}
 
 	return it;
@@ -163,23 +239,33 @@ bool parseConfig::search_informations( std::string & line )
 
 		else if ( exact_match(line, "client_max_body_size") == true )
 		{
-			_config.body_max_size = insert_body_max_size(line);
-			if ( _config.body_max_size == -1 )
+			_config.locations["/"].body_max_size = insert_body_max_size(line);
+			if ( _config.locations["/"].body_max_size == -1 )
 			{
 				parsing_error("ERROR AT : ", line);
 				return false;
 			}
 		}
 
-
 		else if ( exact_match(line, "root") == true )
 			_config.locations["/"].root = insert_root(line);
+
+		else if ( exact_match(line, "index") == true )
+		{
+			std::string ret = insert_index(line);
+			if ( ret.empty() )
+			{
+				parsing_error(" : ", line);
+				return false;
+			}
+			_config.locations["/"].index = ret;
+		}
 
 		else if ( exact_match(line, "error_page") == true )
 			_config.errors.push_back(insert_error_page(line));
 
 		else if ( exact_match(line, "autoindex") == true )
-			_config.locations["/"].autoindex = insert_index(line);
+			_config.locations["/"].autoindex = insert_autoindex(line);
 		
 		else if ( exact_match(line, "return") == true )
 			_config.locations["/"].http_redirection = insert_http_redirection(line);
@@ -188,10 +274,15 @@ bool parseConfig::search_informations( std::string & line )
 			insert_method(line, "/");
 		
 		else if ( exact_match(line, "set_upload") == true )
-			_config.locations["/"].upload_path = insert_upload_path(line);
-		
-		else if ( exact_match(line, "root") == true )
-			_config.locations["/"].root = insert_root(line);
+		{
+			std::string ret = insert_upload_path(line);
+			if ( ret.empty() )
+			{
+				parsing_error("UPLOAD PATH IS INVALID : ", line);
+				return false;
+			}
+			_config.locations["/"].upload_path = ret;
+		}
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{

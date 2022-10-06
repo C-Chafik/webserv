@@ -99,6 +99,7 @@ std::string 	insertion_semicolon( std::string & line, const std::string & name )
 	return trim_data_semicolon(line, name);
 }
 
+//? return true if the file exist, else false
 bool         file_already_exist( const std::string & path )
 {
 	struct stat buf;

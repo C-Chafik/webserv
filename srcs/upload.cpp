@@ -1,10 +1,10 @@
 #include "../includes/server.hpp"
 
-void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file )
+void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id )
 {(void)bod;
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
-	std::string		path;   //! need to use the conf file to get that path
+	std::string		path = confs[server_id].locations[head.path].upload_path;   //! need to use the conf file to get that path
 
 	if ( head.content_type == "multipart/form-data" )
 	{
@@ -31,10 +31,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				continue ;
 			else if ( line == "\r" ) //? between boundary you first find informations like content disposition or content type, those informations are separated by a carriage return from the binary file
 			{
-				if ( filename.empty() )
-					filename = "T";
-				path = "./" + filename;
-				new_file.open(path.c_str(), std::ios::out);
+				std::string file_path = "." + path + filename;
+				bod.body_path = file_path;
+				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
 					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
@@ -63,6 +62,32 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			if ( line == head.boundary + "--\r" || line.empty() )
 				break ;
 		}
+	}
+	else
+	{ //! Need to find how to store it
+		std::string filename;
+		std::string line;
+		std::string content;
+
+		while ( content.find("\r\n\r\n") == std::string::npos ) //? We skip the first header part, because we just want the body
+		{
+			std::getline(tmp, line);
+			content += line;
+			content += '\n';
+		}
+
+		std::string file_path = "." + path;
+		new_file.open(file_path.c_str(), std::ios::out);
+		if ( !new_file.is_open() )
+		{
+			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+			return ;
+		}
+
+		while ( std::getline(tmp, line) )
+			new_file << line;
+		
+		new_file.close();
 	}
 	tmp.close();
 	remove(file.c_str());

@@ -51,8 +51,6 @@ void	parseConfig::print_all_informations( void )
 		for ( ; vit != vite ; vit++ )
 			std::cout << *vit << " ";
 		std::cout << std::endl;
-		std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
-		std::cout << conf_it->body_max_size << std::endl;
 		std::cout << "ALL ERRORS PAGE" << std::endl;
 		for ( ; eit != eite ; eit++ )
 		{
@@ -84,6 +82,8 @@ void	parseConfig::print_all_informations( void )
 				std::cout << "DELETE" << std::endl;
 			std::cout << "UPLOADED FILES WILL BE STORED IN -> ";
 			std::cout << lit->second.upload_path << std::endl;
+			std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
+			std::cout << lit->second.body_max_size << std::endl;
 
 			std::cout << std::endl;
 		}
@@ -151,11 +151,37 @@ std::string	 parseConfig::get_location_path( std::string & line )
 		return "";
 
 	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) != '/' ) && ( new_line.size() >= 3 && ( *( new_line.begin() ) != '*' ) && ( *( new_line.begin() + 1 ) != '.' ) ) )
+	{
+		std::cout << RED << "LOCATION PATH MUST BE A FOLDER OR AN EXTENSION " << WHITE << std::endl;
 		return "";
+	}
 
 	for ( std::string::size_type i = 0 ; i < new_line.size() ; i++ )
+	{
 		if ( new_line[i] == '/' && i != new_line.size() - 1 )
+		{
+			std::cout << RED << "LOCATION PATH MUST BE ONE FOLDER " << WHITE << std::endl;
 			return "";
+		}
+	}
+	
+	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) == '/' ) )
+		_config.locations[new_line].location_type = FOLDER;
+	else if ( new_line.size() >= 3 && ( *( new_line.begin() ) == '*' ) && ( *( new_line.begin() + 1 ) == '.' ) )
+		_config.locations[new_line].location_type = EXTENSION;
+	else
+		_config.locations[new_line].location_type = FOLDER;
+
+	if ( _config.locations[new_line].location_type == FOLDER )
+	{
+		_config.locations[new_line].upload_path = new_line;
+	 	if ( file_already_exist(new_line) == false )
+		{
+			std::cout << RED << "LOCATION PATH FOLDER DOESN'T EXIST " << WHITE << std::endl;
+			return "";
+		}
+	}
+
 
 	return new_line;
 }

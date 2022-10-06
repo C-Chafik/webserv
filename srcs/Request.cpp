@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/05 10:11:45 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/06 13:17:24 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ Request & Request::operator=( Request const & src )
 	_header.content_length = src._header.content_length;
 	_header.keep_alive = src._header.keep_alive;
 
-	_body.content = src._body.content;
+	_body.body_path = src._body.body_path;
 	_body.type = src._body.type;
 	_body.length = src._body.length;
 
@@ -83,8 +83,6 @@ void Request::receive_request( int requestFd )
 	std::fstream	file( _tmp_filename.c_str(), std::fstream::app | std::fstream::binary );
 	size_t 			end;
 
-	std::cout << YELLOW << "[" << requestFd << "]" << WHITE << std::endl;
-
 	memset( buffer, 0, 8192 );
 	if ( ( end = recv(requestFd, buffer, 8192 - 1, 0)) > 0 )
 		insert(buffer, end, file);
@@ -100,8 +98,8 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	// if ( _with_body == true )
 	// {
 		_read_content_length += len;
-		std::cout << RED << _header.content_length << WHITE << std::endl;
-		std::cout << _read_content_length << std::endl;
+		if ( _with_body == true )
+			std::cout << RED << _header.content_length << WHITE << std::endl;
 	// }
 
 	if ( _with_body == true )
@@ -122,7 +120,10 @@ bool	Request::check_if_header_is_received( void )
 		full_buffer += '\n';
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
+		{
+			std::cout << YELLOW << full_buffer << WHITE << std::endl;
 			return true;
+		}
 	}
 	return false;
 }
@@ -163,7 +164,10 @@ void	Request::read_header( void )
 
 		if ( infos.size() == 2 && infos.front() == "Content-Length:" )
 		{
+			_with_body = true;
 			_header.content_length = std::atoi(infos.back().c_str());
+			if ( _read_content_length >= _header.content_length ) //? Here we check if we didnt get the full body while reading the header
+				_is_full = true;
 		}
 		
 		if ( infos.size() == 2 && infos.front() == "Connection:" )
@@ -182,7 +186,6 @@ void	Request::read_header( void )
 			_header.content_type.erase(_header.content_type.size() - 1);
 		}
 	}
-	_with_body = true;
 }
 
 struct header & Request::get_header( void )
