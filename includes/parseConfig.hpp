@@ -5,6 +5,7 @@
 
 struct parseLocation 
 {
+	int         						body_max_size;
 	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;
@@ -15,7 +16,7 @@ struct parseLocation
 	std::string	 						index;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
+	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; }
 	~parseLocation ( void ) {}
 };
 
@@ -25,9 +26,8 @@ struct config
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
     std::vector< std::pair<std::vector<int>, std::string> > 				errors;
     std::map< std::string, struct parseLocation > 							locations;
-    int         															body_max_size;
 
-    config( void ) { body_max_size = 100000; }
+    config( void ) { }
     ~config ( void ) {}
 
     void clear( void )
@@ -36,7 +36,6 @@ struct config
         server_names.clear();
         listening.clear();
         errors.clear();
-        body_max_size = 100000;
     }
 };
 
@@ -81,6 +80,7 @@ class parseConfig
 		bool    											fill_file( void );
 		void												parse_file( void );
 		void												set_default_value( void );
+		bool			 					 				check_conf_name( std::string & str );
 
 		//? Insertion
 		std::string 										insert_upload_path( std::string & line );

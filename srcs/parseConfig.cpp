@@ -34,11 +34,49 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 ///                                               ///
 /////////////////////////////////////////////////////
 
+bool parseConfig::check_conf_name( std::string & str )
+{
+	std::string::size_type end = str.size();
+
+	if ( end <= 5 ) //? yes i refuse a file named ".conf"
+		return false;
+
+	if ( str[end - 1] == '/' || str[end - 1] == '\\' )
+		return false;
+	
+	else if ( str[end - 1] != 'f' )
+		return false;
+	
+	else if ( str[end - 2] != 'n' )
+		return false;
+	
+	else if ( str[end - 3] != 'o' )
+		return false;
+	
+	else if ( str[end - 4] != 'c' )
+		return false;
+	
+	else if ( str[end - 5] != '.' )
+		return false;
+
+	return true;
+}
+
 bool parseConfig::fill_file( void )
 {
 	std::ifstream 	file;
 	std::string 	buffer;
 	std::string		fileSTR;
+
+std::cout << "wtf" <<std::endl;
+
+	if ( check_conf_name( _file_path ) == false )
+	{
+		parsing_error("ERROR IN THE FILE NAME ");
+		return false;
+	}
+
+	std::cout << "wtf" <<std::endl;
 
 	file.open(_file_path.c_str());
 	if (!file.is_open())
@@ -47,11 +85,19 @@ bool parseConfig::fill_file( void )
 		return false;
 	}
 
+	std::cout << "wtf" <<std::endl;
+
 	while ( getline(file, buffer, '\n') )
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
+
+	std::cout << "wtf" <<std::endl;
+
+	std::cout << "[" << fileSTR << "]";
+
+		std::cout << "wtf" <<std::endl;
 
 	_file = ft_split(fileSTR, "\n");
 
@@ -160,6 +206,17 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			}
 			_config.locations[path].upload_path = ret;
 		}
+
+		else if ( exact_match(*it, "client_max_body_size") == true )
+		{
+			_config.locations[path].body_max_size = insert_body_max_size(*it);
+			if ( _config.locations[path].body_max_size == -1 )
+			{
+				parsing_error("ERROR AT : ", *it);
+				return _file.end();
+			}
+		}
+
 	}
 
 	return it;
@@ -182,8 +239,8 @@ bool parseConfig::search_informations( std::string & line )
 
 		else if ( exact_match(line, "client_max_body_size") == true )
 		{
-			_config.body_max_size = insert_body_max_size(line);
-			if ( _config.body_max_size == -1 )
+			_config.locations["/"].body_max_size = insert_body_max_size(line);
+			if ( _config.locations["/"].body_max_size == -1 )
 			{
 				parsing_error("ERROR AT : ", line);
 				return false;

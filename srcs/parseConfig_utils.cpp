@@ -51,8 +51,6 @@ void	parseConfig::print_all_informations( void )
 		for ( ; vit != vite ; vit++ )
 			std::cout << *vit << " ";
 		std::cout << std::endl;
-		std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
-		std::cout << conf_it->body_max_size << std::endl;
 		std::cout << "ALL ERRORS PAGE" << std::endl;
 		for ( ; eit != eite ; eit++ )
 		{
@@ -84,6 +82,8 @@ void	parseConfig::print_all_informations( void )
 				std::cout << "DELETE" << std::endl;
 			std::cout << "UPLOADED FILES WILL BE STORED IN -> ";
 			std::cout << lit->second.upload_path << std::endl;
+			std::cout << "CLIENT_MAX_BODY_SIZE " << std::endl;
+			std::cout << lit->second.body_max_size << std::endl;
 
 			std::cout << std::endl;
 		}
