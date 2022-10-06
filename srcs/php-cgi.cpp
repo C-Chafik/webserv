@@ -5,6 +5,7 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 
 	line.append("CONTENT_TYPE=" + header.content_type);
 	line.append(" REDIRECT_STATUS=");
+	(void) method;
 	line.append(" REQUEST_METHOD=" + method);
 	line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
 	line.append(" REDIRECT_STATUS=" + std::string("200"));
@@ -26,7 +27,9 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	if (header.content_length > 0)
 		line.append(SSTR(header.content_length));
 
-	line.append(" php-cgi php-files/test.php > /tmp/output_webserv.tmp");
+	line.append(" php-cgi ");
+	line.append(php_path);
+	line.append(" > /tmp/output_webserv.tmp");
 
 	std::clog << line << std::endl;//*log
 	return line;
