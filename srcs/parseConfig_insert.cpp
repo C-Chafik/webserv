@@ -226,6 +226,7 @@ bool	parseConfig::insert_cgi( std::string & raw_line )
 	_config.cgi_extension = s_line.front();
 
 	return true;
+}
 
 std::string	parseConfig::insert_index( std::string & line )
 {
