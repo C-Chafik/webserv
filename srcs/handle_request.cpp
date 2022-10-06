@@ -58,13 +58,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 
 	all_request[server_id].receive_request(clientSocket);
-	if ( check_request_validity(all_request[server_id].get_header(), server_id ) == false )
-	{
-		std::string response = HGen.getStr();
-		send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
-		return false;
-	}
-
+	
 	int method = all_request[server_id].get_header().method;
 
 	if ( method == GET )
@@ -94,8 +88,16 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == POST )
 	{
+		if ( check_request_validity(all_request[server_id].get_header(), server_id ) == false )
+		{
+			std::string response = HGen.getStr();
+			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+			return false;
+		}
+
 		if ( all_request[server_id].is_full() == false )
 			return true;
+		
 		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path(), server_id);
 		all_request.erase(server_id);
 		std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;

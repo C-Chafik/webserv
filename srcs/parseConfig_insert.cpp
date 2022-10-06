@@ -169,9 +169,6 @@ std::string parseConfig::insert_upload_path( std::string & line )
 
 	for ( std::string::size_type i = 0; !isspace(line[i]) && line[i] ; i++ )
 		new_line.append(1, line[i]);
-
-	if ( file_already_exist(new_line) == false )
-		return "";
 	
 	return new_line;
 }

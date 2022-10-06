@@ -11,10 +11,13 @@ std::list<std::string>::iterator parseConfig::remove_empty_line( std::list<std::
 }
 
 
-void	parseConfig::remove_tab( std::string & str )
+void	parseConfig::remove_first_isspace( std::string & str )
 {
-	for ( std::string::size_type i = 0 ; str[i] == '\t' ; i++ )
-		str.erase(i, 1);
+	if ( str.size() >= 1)
+	{
+		while ( isspace(str[0]) )
+			str.erase(0, 1);
+	}
 }
 
 void	parseConfig::print_all_informations( void )
@@ -125,22 +128,6 @@ int parseConfig::count_server( std::list<std::string>::iterator it, std::list<st
 	return n;
 }
 
-bool	parseConfig::check_closure( std::string & line )
-{
-	if ( (line.find(";") == std::string::npos) && (exact_match(line, "location") == false) && _closed == 1 && _inside == 1)
-	{
-		parsing_error( "MISSING ; OR UNKNOWN COMMAND : ", line);
-		return false ;
-	}
-
-	if ( line.find("{") != std::string::npos )
-	{
-		_closed = 1;
-		_inside = 1;
-	}
-
-	return true;
-}
 
 std::string	 parseConfig::get_location_path( std::string & line )
 {
@@ -230,9 +217,26 @@ bool	parseConfig::exact_match( std::string & raw_str, const std::string & keywor
 	if ( pos == std::string::npos )
 		return false;
 
-	if ( pos != 0 || !isspace(str[keyword.size()]))
+	if ( pos != 0 || ( !isspace(str[keyword.size()] ) ))
 		return false;
-	
+
+	return true;
+}
+
+bool	parseConfig::check_closure( std::string & line )
+{
+	if ( (line.find(";") == std::string::npos) && (exact_match(line, "location") == false) && _closed == 1 && _inside == 1)
+	{
+		parsing_error( "MISSING ; OR UNKNOWN COMMAND : ", line);
+		return false ;
+	}
+
+	if ( line.find("{") != std::string::npos )
+	{
+		_closed = 1;
+		_inside = 1;
+	}
+
 	return true;
 }
 
