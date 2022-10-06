@@ -1,3 +1,6 @@
+#ifndef HEADERGEN_HPP
+#define HEADERGEN_HPP
+
 #include <string>
 #include <vector>
 
@@ -32,6 +35,12 @@ public:
 		_Info[TYPE].append("\n");
 	}
 
+	void setLocation(std::string str){
+		_Info[TYPE].append("Location: ");
+		_Info[TYPE].append(str);
+		_Info[TYPE].append("\n");
+	}
+
 	void setContentString(std::string str){
 		_Info[LENGTH].append("Content-Length: ");
 		_Info[LENGTH].append(SSTR(str.length()));
@@ -55,3 +64,5 @@ public:
 
 	std::string getStr(){ return _response; }
 };
+
+#endif
