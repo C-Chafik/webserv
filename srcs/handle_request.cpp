@@ -58,12 +58,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 
 	all_request[server_id].receive_request(clientSocket);
-	if ( check_request_validity(all_request[server_id].get_header(), server_id ) == false )
-	{
-		std::string response = HGen.getStr();
-		send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
-		return false;
-	}
 
 	int method = all_request[server_id].get_header().method;
 

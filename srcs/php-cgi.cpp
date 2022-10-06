@@ -37,23 +37,12 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 	std::stringstream buffer_cout;
 	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
 
-	// int saveStdin = dup(STDIN_FILENO);
-	// FILE	*fIn = tmpfile();
-	// long	fdIn = fileno(fIn);
-	// write(fdIn, "test", 5);
-	// lseek(fdIn, 0, SEEK_SET);
-	// dup2(fdIn, STDIN_FILENO);
-
 
 	system(cgi_vars(header, server_id, php_path, method).c_str());
 	std::cout << std::ifstream("/tmp/output_webserv.tmp").rdbuf();
 	remove("/tmp/output_webserv.tmp");
 
 	std::cout.rdbuf(old_cout);
-	// dup2(saveStdin, STDIN_FILENO);
-	// fclose(fIn);
-	// close(fdIn);
-	// close(saveStdin);
 
 	// std::clog << buffer_cout.str() << std::endl;
 	send_cgi(buffer_cout.str());

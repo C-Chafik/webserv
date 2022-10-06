@@ -27,7 +27,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		rtn.append(confs[server_id].locations[location].root);
 		rtn.append(request.substr(slash + 1, request.size()));
 	}
-	else if (location.size() && confs[server_id].locations.find("/") != confs[server_id].locations.end()){//check if / config exist
+	else if (location.size() && confs[server_id].locations.find("/") != confs[server_id].locations.end() && confs[server_id].locations.find("/")->second.root.size() > 0){//check if / config exist
 		rtn.append(confs[server_id].locations["/"].root);
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
@@ -39,7 +39,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		rtn.append(confs[server_id].locations[request].root);
 		rtn.append(request.substr(0, request.size()));
 	}
-	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end()){//only file.html with "/" config
+	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end() && confs[server_id].locations.find("/")->second.root.size() > 0){//only file.html with "/" config
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
 		rtn.append(confs[server_id].locations["/"].root);
@@ -48,6 +48,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		rtn.append(request);
 
+	// std::clog << rtn << std::endl;
 	return rtn;
 }
 

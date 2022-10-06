@@ -15,7 +15,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 		file = "./Download/index.html";
 
 	if (file == "/")
-		file = "index.html";
+		file = confs[server_id].index;
 
 	rtnFile = fileLocation(file, server_id);//routing
 
