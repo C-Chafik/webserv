@@ -5,20 +5,19 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 
 	line.append("CONTENT_TYPE=" + header.content_type);
 	line.append(" REDIRECT_STATUS=");
-	(void) method;
-	// line.append(" REQUEST_METHOD=" + method);
-	// line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
+	line.append(" REQUEST_METHOD=" + method);
+	line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
 	line.append(" REDIRECT_STATUS=" + std::string("200"));
 	line.append(" QUERY_STRING=" + confs[server_id].query_string);
 	line.append(" SERVER_PROTOCOL=" + std::string("HTTP/1.1"));
-	// line.append(" SERVER_SOFTWARE=" + std::string("WebServ"));
+	line.append(" SERVER_SOFTWARE=" + std::string("WebServ"));
 	line.append(" SCRIPT_NAME=" + php_path);//parse php_path
 	line.append(" PATH_INFO=" + php_path);
-	// line.append(" SERVER_NAME=");
-	// if (confs[server_id].server_names.size() > 0)
-	// 	line.append(confs[server_id].server_names[0]);
-	// else
-	// 	line.append(header.host);
+	line.append(" SERVER_NAME=");
+	if (confs[server_id].server_names.size() > 0)
+		line.append(confs[server_id].server_names[0]);
+	else
+		line.append(header.host);
 	line.append(" SERVER_PORT=" + confs[server_id].listening.begin()->second[0]);
 	line.append(" PATH_TRANSLATED=" + php_path);
 	line.append(" REQUEST_URI=" + php_path + confs[server_id].query_string);
