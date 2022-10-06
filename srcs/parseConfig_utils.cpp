@@ -176,15 +176,15 @@ std::string	 parseConfig::get_location_path( std::string & line )
 	else
 		_config.locations[new_line].location_type = FOLDER;
 
-	if ( _config.locations[new_line].location_type == FOLDER )
-	{
-		_config.locations[new_line].upload_path = new_line;
-	 	if ( file_already_exist(new_line) == false )
-		{
-			std::cout << RED << "LOCATION PATH FOLDER DOESN'T EXIST " << WHITE << std::endl;
-			return "";
-		}
-	}
+	// if ( _config.locations[new_line].location_type == FOLDER )
+	// {
+	// 	_config.locations[new_line].upload_path = new_line;
+	//  	if ( file_already_exist(new_line) == false )
+	// 	{
+	// 		std::cout << RED << "LOCATION PATH FOLDER DOESN'T EXIST " << WHITE << std::endl;
+	// 		return "";
+	// 	}
+	// }
 
 
 	return new_line;
