@@ -43,6 +43,7 @@ std::string Server::parseCgiHeader(std::string buffer){
 	std::string header;
 	std::string CT = "Content-type: ";
 	std::string S = "Status: ";
+	std::string LOC = "Location: ";
 	std::string::size_type st;
 	
 	header = buffer.substr(0, buffer.find("\r\n\r\n"));
@@ -53,7 +54,10 @@ std::string Server::parseCgiHeader(std::string buffer){
 		HGen.setType(header.substr(st + CT.size(), header.find_first_of("\r", st) - CT.size()));
 
 	if ( (st = header.find(S)) != std::string::npos )
-		HGen.setStatus(header.substr(st + S.size(), header.find_first_of("\r", st) - CT.size()));
+		HGen.setStatus(header.substr(st + S.size(), header.find_first_of("\r", st) - S.size()));
+
+	if ( (st = header.find(LOC)) != std::string::npos )
+		HGen.setLocation(header.substr(st + LOC.size(), header.find_first_of("\r", st) - LOC.size()));
 
 	return rtn;
 }

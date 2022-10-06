@@ -4,20 +4,21 @@
 #include <string>
 #include <vector>
 
-#define NB_INFOS 4
+#define NB_INFOS 5
 
 class HeaderGen{
 private:
 	enum idx_info{
 		STATUS,
+		LOC,
 		TYPE,
 		LENGTH,
 		CONTENT
 	};
 
 	std::vector<std::string> _Info;
-
 	std::string _response;
+
 public:
 	HeaderGen() : _response(""){
 		_Info.assign(NB_INFOS, "");
@@ -34,11 +35,12 @@ public:
 		_Info[TYPE].append(str);
 		_Info[TYPE].append("\n");
 	}
+	
 
 	void setLocation(std::string str){
-		_Info[TYPE].append("Location: ");
-		_Info[TYPE].append(str);
-		_Info[TYPE].append("\n");
+		_Info[LOC].append("Location: ");
+		_Info[LOC].append(str);
+		_Info[LOC].append("\n");
 	}
 
 	void setContentString(std::string str){
