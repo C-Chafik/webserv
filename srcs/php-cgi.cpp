@@ -1,69 +1,60 @@
 #include "includes.hpp"
 
-void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method){
+std::string Server::cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method){
 	std::string line;
-	std::stringstream buffer;
-	std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-	line.append("CONTENT_TYPE=");
-	line.append(header.content_type);
-
+	line.append("CONTENT_TYPE=" + header.content_type);
 	line.append(" REDIRECT_STATUS=");
-	line.append("");
-
-	line.append(" REQUEST_METHOD=");
-	line.append(method);
-
-	line.append(" GATEWAY_INTERFACE=");
-	line.append("CGI/1.1");
-
-	line.append(" REDIRECT_STATUS=");
-	line.append("200");
-
-	line.append(" QUERY_STRING=");
-	line.append(confs[server_id].query_string);
-
-	line.append(" SERVER_PROTOCOL=");
-	line.append("HTTP/1.1");
-
-	line.append(" SERVER_SOFTWARE=");
-	line.append("WebServ");
-
-	line.append(" SCRIPT_NAME=");//parse php_path
-	line.append(php_path.substr(0, php_path.find(confs[server_id].cgi_extension) + confs[server_id].cgi_extension.size()));
-
-	std::string path_info;
-	path_info = php_path.substr(php_path.find(confs[server_id].cgi_extension) + confs[server_id].cgi_extension.size(), php_path.size());
-	line.append(" PATH_INFO=");
-	line.append(path_info);
-	
-
-	line.append(" SERVER_NAME=");
-	if (confs[server_id].server_names.size() > 0)
-		line.append(confs[server_id].server_names[0]);
-	else
-		line.append(header.host);
-
-	line.append(" SERVER_PORT=");
-	line.append(confs[server_id].listening.begin()->second[0]);
-
-	line.append(" PATH_TRANSLATED=");
-	line.append(path_info);
-
+	(void) method;
+	// line.append(" REQUEST_METHOD=" + method);
+	// line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
+	line.append(" REDIRECT_STATUS=" + std::string("200"));
+	line.append(" QUERY_STRING=" + confs[server_id].query_string);
+	line.append(" SERVER_PROTOCOL=" + std::string("HTTP/1.1"));
+	// line.append(" SERVER_SOFTWARE=" + std::string("WebServ"));
+	line.append(" SCRIPT_NAME=" + php_path);//parse php_path
+	line.append(" PATH_INFO=" + php_path);
+	// line.append(" SERVER_NAME=");
+	// if (confs[server_id].server_names.size() > 0)
+	// 	line.append(confs[server_id].server_names[0]);
+	// else
+	// 	line.append(header.host);
+	line.append(" SERVER_PORT=" + confs[server_id].listening.begin()->second[0]);
+	line.append(" PATH_TRANSLATED=" + php_path);
+	line.append(" REQUEST_URI=" + php_path + confs[server_id].query_string);
+	line.append(" REMOTE_ADDR=" + header.host);
 	line.append(" CONTENT_LENGTH=");
 	if (header.content_length > 0)
 		line.append(SSTR(header.content_length));
 
-	
-	line.append(" php-cgi -q php-files/test.php > /tmp/output_webserv.tmp");
-	
+	line.append(" php-cgi php-files/test.php > /tmp/output_webserv.tmp");
 
-	system(line.c_str());
+	std::clog << line << std::endl;//*log
+	return line;
+}
+
+void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method){
+	std::stringstream buffer_cout;
+	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
+
+	// int saveStdin = dup(STDIN_FILENO);
+	// FILE	*fIn = tmpfile();
+	// long	fdIn = fileno(fIn);
+	// write(fdIn, "test", 5);
+	// lseek(fdIn, 0, SEEK_SET);
+	// dup2(fdIn, STDIN_FILENO);
+
+
+	system(cgi_vars(header, server_id, php_path, method).c_str());
 	std::cout << std::ifstream("/tmp/output_webserv.tmp").rdbuf();
 	remove("/tmp/output_webserv.tmp");
 
-	std::cout.rdbuf(old);
-	std::cout << line << std::endl;//*log
+	std::cout.rdbuf(old_cout);
+	// dup2(saveStdin, STDIN_FILENO);
+	// fclose(fIn);
+	// close(fdIn);
+	// close(saveStdin);
 
-	send_cgi(buffer.str());
+	// std::clog << buffer_cout.str() << std::endl;
+	send_cgi(buffer_cout.str());
 }

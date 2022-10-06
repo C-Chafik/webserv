@@ -1,3 +1,5 @@
 <?php
-	echo "test\n";
+	// echo $_GET();
+	phpinfo();
+	// echo "test\n";
 ?>

@@ -44,5 +44,6 @@ void Server::send_cgi(std::string data){
 	HGen.setStatus("200 OK");
 	HGen.setType("text/html");
 	HGen.setContentString(data);
+	
 	HGen.processResponse();
 }
