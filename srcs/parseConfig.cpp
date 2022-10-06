@@ -176,17 +176,6 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		if ( exact_match(*it, "root") == true )
 			_config.locations[path].root = insert_root(*it);
 
-		else if ( exact_match(*it, "index") == true )
-		{
-			std::string ret = insert_index(*it);
-			if ( ret.empty() )
-			{
-				parsing_error(" : ", *it);
-				return _file.end();
-			}
-			_config.locations[path].index = ret;
-		}
-
 		else if ( exact_match(*it, "autoindex") == true )
 			_config.locations[path].autoindex = insert_autoindex(*it);
 
@@ -258,7 +247,7 @@ bool parseConfig::search_informations( std::string & line )
 				parsing_error(" : ", line);
 				return false;
 			}
-			_config.locations["/"].index = ret;
+			_config.index = ret;
 		}
 
 		else if ( exact_match(line, "error_page") == true )

@@ -13,7 +13,6 @@ struct parseLocation
 	bool 								autoindex;
 	std::string 						root;
 	std::string 						upload_path;
-	std::string	 						index;
 	std::pair< int, std::string >		http_redirection;
 
 	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; }
@@ -28,6 +27,7 @@ struct config
     std::vector< std::pair<std::vector<int>, std::string> > 				errors;
     std::map< std::string, struct parseLocation > 							locations;
     int         															body_max_size;
+	std::string	 						index;
 	  std::map<std::string, std::string> get_vars;
 
     config( void ) { }
