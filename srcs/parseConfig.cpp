@@ -130,8 +130,19 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		if ( exact_match(*it, "root") == true )
 			_config.locations[path].root = insert_root(*it);
 
+		else if ( exact_match(*it, "index") == true )
+		{
+			std::string ret = insert_index(*it);
+			if ( ret.empty() )
+			{
+				parsing_error(" : ", *it);
+				return _file.end();
+			}
+			_config.locations[path].index = ret;
+		}
+
 		else if ( exact_match(*it, "autoindex") == true )
-			_config.locations[path].autoindex = insert_index(*it);
+			_config.locations[path].autoindex = insert_autoindex(*it);
 
 		else if ( exact_match(*it, "return") == true )
 			_config.locations[path].http_redirection = insert_http_redirection(*it);
@@ -182,11 +193,22 @@ bool parseConfig::search_informations( std::string & line )
 		else if ( exact_match(line, "root") == true )
 			_config.locations["/"].root = insert_root(line);
 
+		else if ( exact_match(line, "index") == true )
+		{
+			std::string ret = insert_index(line);
+			if ( ret.empty() )
+			{
+				parsing_error(" : ", line);
+				return false;
+			}
+			_config.locations["/"].index = ret;
+		}
+
 		else if ( exact_match(line, "error_page") == true )
 			_config.errors.push_back(insert_error_page(line));
 
 		else if ( exact_match(line, "autoindex") == true )
-			_config.locations["/"].autoindex = insert_index(line);
+			_config.locations["/"].autoindex = insert_autoindex(line);
 		
 		else if ( exact_match(line, "return") == true )
 			_config.locations["/"].http_redirection = insert_http_redirection(line);
@@ -204,9 +226,6 @@ bool parseConfig::search_informations( std::string & line )
 			}
 			_config.locations["/"].upload_path = ret;
 		}
-		
-		else if ( exact_match(line, "root") == true )
-			_config.locations["/"].root = insert_root(line);
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{

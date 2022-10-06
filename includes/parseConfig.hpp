@@ -9,9 +9,10 @@ struct parseLocation
 	bool 								GET;
 	bool 								POST;
 	bool 								DELETE;
+	bool 								autoindex;
 	std::string 						root;
 	std::string 						upload_path;
-	bool 								autoindex;
+	std::string	 						index;
 	std::pair< int, std::string >		http_redirection;
 
 	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
@@ -87,10 +88,11 @@ class parseConfig
 		std::pair<int, std::string >						insert_http_redirection( std::string & raw_line );
 		std::pair<std::vector<int>, std::string>			insert_error_page( std::string & raw_error_page );
 		std::vector<std::string>							insert_server_names( std::string & raw_server_name );
-		bool												insert_index( std::string & raw_index );
+		bool												insert_autoindex( std::string & raw_index );
 		void												insert_method( std::string & raw_method, const std::string & location );
 		int													insert_body_max_size( std::string & raw_data );
 		std::string		 	 		 	 					insert_root( std::string & line );
+		std::string											insert_index( std::string & line );
 
 
 		//? Utils
