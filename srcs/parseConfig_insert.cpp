@@ -169,11 +169,14 @@ std::string parseConfig::insert_upload_path( std::string & line )
 
 	for ( std::string::size_type i = 0; !isspace(line[i]) && line[i] ; i++ )
 		new_line.append(1, line[i]);
+
+	if ( file_already_exist(new_line) == false )
+		return "";
 	
 	return new_line;
 }
 
-bool	parseConfig::insert_index( std::string & raw_index )
+bool	parseConfig::insert_autoindex( std::string & raw_index )
 {
 	std::string index = trim_data(raw_index, "autoindex");
 	std::string raw_state;
@@ -223,4 +226,20 @@ bool	parseConfig::insert_cgi( std::string & raw_line )
 	_config.cgi_extension = s_line.front();
 
 	return true;
+
+std::string	parseConfig::insert_index( std::string & line )
+{
+	std::string index = trim_data(line, "index");
+	std::string path;
+
+	for ( std::string::size_type i = 0; !isspace(index[i]) && index[i] ; i++ )
+		path.append(1, index[i]);
+	
+	if ( file_already_exist(path) == false )
+	{
+		std::cout << RED << " THE PATH OF THIS INDEX DOESN'T EXIST ! " << std::endl;
+		return "";
+	}
+	
+	return path;
 }

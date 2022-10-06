@@ -5,20 +5,24 @@
 
 struct parseLocation 
 {
-	bool GET;
-	bool POST;
-	bool DELETE;
-	std::string root;
-	std::string upload_path;
-	bool autoindex;
-	std::pair< int, std::string > http_redirection;
+	int         						body_max_size;
+	int	 	 							location_type;
+	bool 								GET;
+	bool 								POST;
+	bool 								DELETE;
+	bool 								autoindex;
+	std::string 						root;
+	std::string 						upload_path;
+	std::string	 						index;
+	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; }
+	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; }
 	~parseLocation ( void ) {}
 };
 
 struct config 
 {
+
 	std::string					cgi_extension;
 	std::string					cgi_path;
     std::vector<std::string> server_names;
@@ -38,7 +42,6 @@ struct config
         server_names.clear();
         listening.clear();
         errors.clear();
-        body_max_size = 100000;
     }
 };
 
@@ -47,12 +50,11 @@ class parseConfig
 {
 	public:
 
-		//? Contructor - Destructor
+
 		parseConfig( std::string path = std::string("conf/default.conf") );
 		~parseConfig( void );
 
 
-		//? Exit
 		int													exit_on_error( void );
 
 		//? Getter
@@ -64,26 +66,27 @@ class parseConfig
 
 
 	private:
-		//! Parsing
-		size_t					_closed;
-		bool					_inside;
-		std::list<std::string> 	_file;
-		std::string		 		_file_path;
 
-		//! Data
-		struct parseLocation _parseLocation;
-		struct config _config;
+		size_t									_closed;
+		bool									_inside;
+		std::list<std::string> 					_file;
+		std::string		 						_file_path;
+
+
+		struct parseLocation 					_parseLocation;
+		struct config 							_config;
 		std::vector< struct config > 			_configs;
 
-		//! Exit Parsing
-		std::string 			_actual_error;
-		bool 					_state;
+
+		std::string 							_actual_error;
+		bool 									_state;
 
 
 		//? Main
 		bool    											fill_file( void );
 		void												parse_file( void );
 		void												set_default_value( void );
+		bool			 					 				check_conf_name( std::string & str );
 
 		//? Insertion
 		std::string 										insert_upload_path( std::string & line );
@@ -91,12 +94,12 @@ class parseConfig
 		std::pair<int, std::string >						insert_http_redirection( std::string & raw_line );
 		std::pair<std::vector<int>, std::string>			insert_error_page( std::string & raw_error_page );
 		std::vector<std::string>							insert_server_names( std::string & raw_server_name );
-		bool												insert_index( std::string & raw_index );
+		bool												insert_autoindex( std::string & raw_index );
 		void												insert_method( std::string & raw_method, const std::string & location );
 		int													insert_body_max_size( std::string & raw_data );
 		std::string		 	 		 	 					insert_root( std::string & line );
 		bool												insert_cgi( std::string & raw_line );
-
+		std::string											insert_index( std::string & line );
 
 
 		//? Utils
