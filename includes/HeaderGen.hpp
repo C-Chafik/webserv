@@ -56,6 +56,8 @@ public:
 		}
 	}
 
+	bool checkStatus(){ return _Info[STATUS].empty(); }
+
 	void clear(){ 
 		_Info.clear(); 
 		_response.clear(); 

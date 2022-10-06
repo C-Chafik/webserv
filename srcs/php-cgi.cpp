@@ -34,11 +34,26 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 }
 
 std::string Server::parseCgiHeader(std::string buffer){
+	HGen.clear();
+
+	if (buffer.find("\r\n\r\n") == std::string::npos)
+		return buffer;
+
 	std::string rtn;
 	std::string header;
+	std::string CT = "Content-type: ";
+	std::string S = "Status: ";
+	std::string::size_type st;
 	
 	header = buffer.substr(0, buffer.find("\r\n\r\n"));
 	rtn = buffer.substr(header.size() + 4, buffer.size());
+	std::clog << header << std::endl;
+
+	if ( (st = header.find(CT)) != std::string::npos )
+		HGen.setType(header.substr(st + CT.size(), header.find_first_of("\r", st) - CT.size()));
+
+	if ( (st = header.find(S)) != std::string::npos )
+		HGen.setStatus(header.substr(st + S.size(), header.find_first_of("\r", st) - CT.size()));
 
 	return rtn;
 }

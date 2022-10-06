@@ -39,10 +39,8 @@ void Server::send_301(std::string location){
 }
 
 void Server::send_cgi(std::string data){
-	HGen.clear();
-
-	HGen.setStatus("200 OK");
-	HGen.setType("text/html");
+	if (HGen.checkStatus())
+		HGen.setStatus("200 OK");
 	HGen.setContentString(data);
 	
 	HGen.processResponse();
