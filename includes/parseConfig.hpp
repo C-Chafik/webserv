@@ -21,8 +21,7 @@ struct parseLocation
 
 struct config 
 {
-
-
+	std::string					index;
 	std::string					cgi_extension;
 	std::string					cgi_path;
     std::vector<std::string> server_names;
