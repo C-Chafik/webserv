@@ -33,6 +33,16 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	return line;
 }
 
+std::string Server::parseCgiHeader(std::string buffer){
+	std::string rtn;
+	std::string header;
+	
+	header = buffer.substr(0, buffer.find("\r\n\r\n"));
+	rtn = buffer.substr(header.size() + 4, buffer.size());
+
+	return rtn;
+}
+
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method){
 	std::stringstream buffer_cout;
 	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
@@ -44,6 +54,5 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 
 	std::cout.rdbuf(old_cout);
 
-	// std::clog << buffer_cout.str() << std::endl;
-	send_cgi(buffer_cout.str());
+	send_cgi(parseCgiHeader(buffer_cout.str()));
 }

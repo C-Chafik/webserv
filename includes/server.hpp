@@ -60,6 +60,7 @@ class Server{
 	void send_404(id_server_type serverNb);
 	void send_301(std::string location);
 	void send_cgi(std::string data);
+	std::string parseCgiHeader(std::string buffer);
 	bool isIpAddress(std::string addr);
 	bool hostToIp(std::string hostname);
 	int findServerIndex(int fdServer);
