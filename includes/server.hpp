@@ -59,7 +59,9 @@ class Server{
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
 	void send_301(std::string location);
-	void send_cgi(std::string data);
+	void send_500(id_server_type serverNb);
+	void send_cgi(id_server_type server_id, std::string data);
+	bool cgi_error(id_server_type server_id);
 	std::string parseCgiHeader(std::string buffer);
 	bool isIpAddress(std::string addr);
 	bool hostToIp(std::string hostname);

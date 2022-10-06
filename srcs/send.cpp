@@ -30,6 +30,16 @@ void Server::send_404(id_server_type serverNb){
 	HGen.processResponse();
 }
 
+void Server::send_500(id_server_type serverNb){
+	HGen.clear();
+	std::string fileSTR = fileToString(findPathError(serverNb, 500), true);
+
+	HGen.setStatus("500 Internal Server Error");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+}
+
 void Server::send_301(std::string location){
 	HGen.clear();
 
@@ -38,7 +48,10 @@ void Server::send_301(std::string location){
 	HGen.processResponse();
 }
 
-void Server::send_cgi(std::string data){
+void Server::send_cgi(id_server_type server_id, std::string data){
+	if (cgi_error(server_id))
+		return;
+	
 	if (HGen.checkStatus())
 		HGen.setStatus("200 OK");
 	HGen.setContentString(data);

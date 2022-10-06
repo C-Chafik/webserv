@@ -60,6 +60,8 @@ public:
 
 	bool checkStatus(){ return _Info[STATUS].empty(); }
 
+	std::string getStatus(){ return _Info[STATUS]; }
+
 	void clear(){ 
 		_Info.clear(); 
 		_response.clear(); 

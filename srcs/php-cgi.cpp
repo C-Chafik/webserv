@@ -64,6 +64,19 @@ std::string Server::parseCgiHeader(std::string buffer){
 	return rtn;
 }
 
+bool Server::cgi_error(id_server_type server_id){
+	if (HGen.getStatus().find("200") != std::string::npos || HGen.checkStatus())
+		return false;
+	if (HGen.getStatus().find("500") != std::string::npos)
+		send_500(server_id);
+	else if (HGen.getStatus().find("400") != std::string::npos)
+		send_400(server_id);
+	else if (HGen.getStatus().find("404") != std::string::npos)
+		send_404(server_id);
+
+	return true;
+}
+
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method){
 	std::stringstream buffer_cout;
 	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
@@ -75,5 +88,5 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 
 	std::cout.rdbuf(old_cout);
 
-	send_cgi(parseCgiHeader(buffer_cout.str()));
+	send_cgi(server_id, parseCgiHeader(buffer_cout.str()));
 }
