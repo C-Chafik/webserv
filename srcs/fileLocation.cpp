@@ -5,16 +5,22 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	std::string location;
 	std::string rtn;
 
-	if (request.size() > 1 && (request.rfind("/") == request.size() - 1))
+	if (request.size() > 1 && (request.rfind("/") == request.size() - 1))//if / at the end
 		request = request.substr(0, request.size() - 1);
 
 	//find 1st location
 	slash = request.find("/");
+	if (slash == 0 && request.size() > 1){
+		request = request.substr(slash+1, request.size());
+		slash = request.find("/");
+	}
+
 	if (slash != std::string::npos && request[slash + 1])
 		location = request.substr(0, slash + 1);
+	else
+		location = request;
 
 	//check if config exist
-
 	if (location.size() && confs[server_id].locations.find(location) != confs[server_id].locations.end()){//cas de dir/file.html
 		if (confs[server_id].locations[location].root[confs[server_id].locations[location].root.size() - 1] != '/')
 			confs[server_id].locations[location].root += "/";

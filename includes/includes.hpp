@@ -43,6 +43,8 @@
 # include <exception>
 # include <iostream>
 # include <fstream>
+# include <algorithm>
+# include <filesystem>
 # include "common.hpp"
 # include "Request.hpp"
 # include "parseConfig.hpp"

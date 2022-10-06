@@ -1,13 +1,14 @@
 NAME=WebServer
 CC=c++
-FLAGS= -Wall -Werror -Wextra -std=c++98
+FLAGS= -Wall -Werror -Wextra -std=c++98 -g
 
 SRC= main.cpp server.cpp Request.cpp accept_connection.cpp \
 	handle_request.cpp fileLocation.cpp parseConfig.cpp host.cpp \
 	send.cpp utils.cpp listen.cpp parseConfig_insert.cpp \
 	parseConfig_utils.cpp parseConfig_common.cpp \
-	common.cpp GET.cpp redirect.cpp parse_uri.cpp upload.cpp
-  
+	common.cpp GET.cpp redirect.cpp parse_uri.cpp upload.cpp \
+	php-cgi.cpp
+
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes
 OBJS=${SRC:.cpp=.o}

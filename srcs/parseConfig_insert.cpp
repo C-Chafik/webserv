@@ -193,6 +193,41 @@ bool	parseConfig::insert_autoindex( std::string & raw_index )
 	return state;
 }
 
+bool	parseConfig::insert_cgi( std::string & raw_line )
+{
+	std::string line = trim_data(raw_line, "cgi");
+
+	std::list<std::string> s_line = ft_split_no_r(line, " \n\t\v\f");
+	if ( s_line.size() != 2 )
+	{
+		parsing_error("WRONG NUMBER OF ARGUMENT IN CGI ", line);
+		return false;
+	}
+	try
+	{
+		if ( s_line.front().at(0) != '.' )
+		{
+			parsing_error("FIRST ARGUMENT IS THE CGI EXTENSION, AND MUST START WITH A DOT: ", line);
+			return false;
+		}
+		if ( s_line.front() != ".php" )
+		{
+			parsing_error("ONLY PHP IS SUPPORTED: ", line);
+			return false;
+		}
+	}
+	catch ( const std::out_of_range & e )
+	{
+		std::cerr << e.what() << std::endl;
+		return false;
+	}
+
+	_config.cgi_path = s_line.back();
+	_config.cgi_extension = s_line.front();
+
+	return true;
+}
+
 std::string	parseConfig::insert_index( std::string & line )
 {
 	std::string index = trim_data(line, "index");

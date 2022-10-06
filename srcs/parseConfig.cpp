@@ -235,7 +235,11 @@ bool parseConfig::search_informations( std::string & line )
 				return false;
 			}
 		}
-
+		else if ( exact_match(line, "cgi") == true )
+		{
+			if ( insert_cgi(line) == false )
+				return false ;
+		}
 		else if ( exact_match(line, "root") == true )
 			_config.locations["/"].root = insert_root(line);
 
@@ -334,6 +338,7 @@ void	parseConfig::parse_file( void )
 			break ;
 	}
 	// print_all_informations();
+	// exit(0);
 }
 
 /////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ public:
 		_Info.assign(NB_INFOS, "");
 	}
 
-	std::string getStr(){ return _response; }
+	std::string getStr(){ return _response; }///log
 };
 
 #endif

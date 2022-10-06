@@ -22,24 +22,11 @@ class Server{
 		std::string msg;
 	};
 
-	//struct
-	struct parseLocation{
-		std::string root;
-	};
-
-	struct parseGlobal{
-		std::map<std::string/*location*/, struct parseLocation> location;
-		in_addr_t ip_address;
-		std::vector<std::string> server_names;
-		std::string path_e_404;//init default path or parsed value
-		std::string path_e_400;//init default path or parsed value
-		std::vector<std::string> index;
-	};
 
 	typedef std::vector< struct config >::size_type id_server_type;
 
 	//var
-	std::string _header;
+	std::string _header;std::map<std::string/*port*/, std::vector<std::string>/*server_names*/> mutiple_server_port;
 	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
 	std::vector< std::vector< struct config >::size_type > socket_to_server;
@@ -52,13 +39,13 @@ class Server{
 	fd_set error_current_connections;
 	fd_set error_ready_connections;
 	HeaderGen HGen;
+	bool cgi_on;
 	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
-	struct parseGlobal parseG;
 
 
 	//func
 	int accept_connection(int fdServer);
-	void			receive_request_body( struct request & req, int requestFd );
+	void receive_request_body( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);
@@ -72,18 +59,21 @@ class Server{
 	void send_400(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
 	void send_301(std::string location);
+	void send_cgi(std::string data);
 	bool isIpAddress(std::string addr);
 	bool hostToIp(std::string hostname);
 	int findServerIndex(int fdServer);
 	void exitCloseSock();
 	bool wantToBeAccepted(int fd);
+	std::string cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method);
+	void php_cgi(struct header & header, id_server_type server_id, std::string script_name, std::string method);
 
 
 
 	bool		check_request_validity( struct header & header, id_server_type server_id );
 
 	//* GET
-	std::string treat_GET_request(struct header & header, id_server_type serverNb);
+	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 
 
 	//* POST
@@ -94,6 +84,7 @@ class Server{
 
 
 public:
+	Server() : cgi_on(false){}
 	void run(std::vector< struct config > confs);
 
 };
