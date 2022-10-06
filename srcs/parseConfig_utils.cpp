@@ -59,6 +59,10 @@ void	parseConfig::print_all_informations( void )
 				std::cout << *it <<": ";
 			std::cout << std::endl;
 		}
+		std::cout << "CGI PARAMETER" << std::endl;
+		std::cout << "CGI EXTENSION -> " << conf_it->cgi_extension << std::endl;
+		std::cout << "CGI PATH -> " << conf_it->cgi_path << std::endl;
+		std::cout << std::endl;
 
 		std::cout << "ALL LOCATIONS INFORMATIONS" << std::endl;
 		for ( ; lit != lite ; lit++)

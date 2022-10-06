@@ -23,14 +23,17 @@ struct parseLocation
 struct config 
 {
 
-    std::vector<std::string> 												server_names;
-    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
-    std::vector< std::pair<std::vector<int>, std::string> > 				errors;
-    std::map< std::string, struct parseLocation > 							locations;
-    int         															body_max_size;
-	  std::map<std::string, std::string> get_vars;
+	std::string					cgi_extension;
+	std::string					cgi_path;
+    std::vector<std::string> server_names;
+    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
+    std::vector< std::pair<std::vector<int>, std::string> > errors;
+    std::map< std::string, struct parseLocation > locations;
+    int         body_max_size;
+	// std::map<std::string, std::string> get_vars;
+	std::string query_string;
 
-    config( void ) { }
+    config( void ) { body_max_size = 100000; }
     ~config ( void ) {}
 
     void clear( void )
@@ -95,6 +98,7 @@ class parseConfig
 		void												insert_method( std::string & raw_method, const std::string & location );
 		int													insert_body_max_size( std::string & raw_data );
 		std::string		 	 		 	 					insert_root( std::string & line );
+		bool												insert_cgi( std::string & raw_line );
 		std::string											insert_index( std::string & line );
 
 

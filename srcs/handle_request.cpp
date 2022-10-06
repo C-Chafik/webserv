@@ -55,7 +55,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	{
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
-
 	}
 
 	all_request[server_id].receive_request(clientSocket);
@@ -72,8 +71,9 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	{
 		std::string to_send;
 		try{
-			to_send = treat_GET_request(all_request[server_id].get_header(), server_id);
-			send_200(to_send);//! do the file dynamic
+			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
+			if (!to_send.empty())
+				send_200(to_send);
 		}
 		catch (const Error_page& page){
 			std::string err = page.what();
@@ -82,7 +82,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			else if (err == "404")
 				send_404(server_id);
 			else{
-				std::cout << "301 expection : " << confs[server_id].locations[err].http_redirection.second << std::endl;
+				check_server_name(all_request[server_id].get_header(), server_id);
 				send_301(confs[server_id].locations[err].http_redirection.second);
 			}
 		}
@@ -102,16 +102,10 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == DELETE )
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
-	else
-	{
-		std::cout << CYAN << "SOMETHING WENT WRONG WITH THE REQUEST " << WHITE << std::endl;
-		exit(0);
-	}
-
 
 
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
-	return false;//add function to keep alive
+	return all_request[server_id].get_header().keep_alive;//add function to keep alive
 }
