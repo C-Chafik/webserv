@@ -74,7 +74,10 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			if (err == "400")
 				send_400(server_id);
 			else if (err == "404")
+			{
+				std::cout << "ERROR 404 WTF" << std::endl;
 				send_404(server_id);
+			}
 			else{
 				check_server_name(all_request[server_id].get_header(), server_id);
 				send_301(confs[server_id].locations[err].http_redirection.second);
