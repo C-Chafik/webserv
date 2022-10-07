@@ -4,7 +4,7 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 {
 	if ( confs[server_id].locations.find(header.path) == confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH EXIST " << std::endl;
+		std::cout << "THIS PATH DONT EXIST " << std::endl;
 		send_404(server_id);
 		return false;
 	}
