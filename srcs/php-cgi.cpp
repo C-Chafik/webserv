@@ -66,7 +66,7 @@ std::string Server::parseCgiHeader(std::string buffer){
 		HGen.processResponse();
 	}
 
-	std::clog << HGen.getStr() << std::endl;
+	// std::clog << HGen.getStr() << std::endl;
 	return rtn;
 }
 

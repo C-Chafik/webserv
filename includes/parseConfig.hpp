@@ -5,7 +5,7 @@
 
 struct parseLocation 
 {
-	long long         						body_max_size;
+	long long         					body_max_size;
 	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;

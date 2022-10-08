@@ -5,7 +5,10 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
-	std::string		path = fileLocation(confs[server_id].locations[head.path].upload_path, server_id);   //! need to use the conf file to get that path
+	std::string		path = fileLocation(head.path, server_id) + "/";
+	while ( path.find("//") != std::string::npos )
+		path.erase(path.find("//"));
+
 	std::cout << path << std::endl;
 
 	if ( head.content_type == "multipart/form-data" )
@@ -40,6 +43,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				if ( !new_file.is_open() )
 				{
 					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					remove(file.c_str());
 					return ;
 				}
 				std::string tmp_line;

@@ -5,6 +5,7 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 	if ( confs[server_id].locations.find(header.path) == confs[server_id].locations.end() )
 	{
 		std::cout << "THIS PATH DONT EXIST " << std::endl;
+		std::cout << header.path << std::endl;
 		send_404(server_id);
 		return false;
 	}
@@ -112,7 +113,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
-	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
+	// std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
 	return all_request[server_id].get_header().keep_alive;
