@@ -6,12 +6,20 @@
 		<h2>Index</h2>
 		<center>
 			<h2>Post</h2>
-			<form method="post">
+			<form method="post" action="html/">
 				<input type="text" id="name" name="name">
 				<input type="email" id="email" name="email">
 				<input type="submit" value="Submit">
 			</form>
 		</center>
-		<a href="http://localhost:8090/php/test.php">click it</a>
+		<ul>
+			<il> <a href="http://localhost:8095/">Server 1</a></il></br>
+			<il> <a href="http://localhost:8092/">Redirect all Server3 to Server2</a></il></br>
+			<il> <a href="http://localhost:8090/php/test.php">Test php-cgi</a></il></br>
+			<il><a href="http://localhost:8090/php/redirect.php">Test redirect php-cgi (cgi headers)</a></il></br>
+			<il><a href="http://localhost:8090/php/500.php">Test php-cgi error</a></il></br>
+			<il><a href="http://localhost:8090/html/other.html">Test Html routing</a></il></br>
+			<il><a href="http://localhost:8090/html/redirect.html">Test html redirect</a></il></br>
+		</ul>
 	</body>
 </html>

@@ -10,9 +10,6 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 
 	file = parse_uri(header, server_id);
 
-	if (file == "/")
-		file = confs[server_id].index;
-
 	rtnFile = fileLocation(file, server_id);//routing
 
 	size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
