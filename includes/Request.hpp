@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/05 18:28:00 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/08 15:17:38 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ struct header
 	std::string content_type;
 	std::string connection;
 	int			method;
-	int			content_length;
+	long long			content_length;
 	bool	 	keep_alive;
 	int			clientFd;
 
-	header(): content_type("text"), content_length(0) {}
+	header(): content_type("text"), content_length(0) { keep_alive = false; }
 };
 
 struct body
@@ -72,7 +72,7 @@ class Request
 		struct	header				_header;
 		struct	body		 		_body;
 
-		int							_read_content_length;
+		long long							_read_content_length;
 
 		bool			 			_is_full;
 		bool						_with_body;

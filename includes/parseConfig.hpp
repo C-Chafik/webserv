@@ -5,7 +5,7 @@
 
 struct parseLocation 
 {
-	int         						body_max_size;
+	long long         						body_max_size;
 	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;
@@ -15,7 +15,7 @@ struct parseLocation
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; }
+	parseLocation( void ) { autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "/"; }
 	~parseLocation ( void ) {}
 };
 

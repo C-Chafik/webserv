@@ -10,6 +10,7 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 	}
 	else if ( header.content_length > confs[server_id].locations[header.path].body_max_size && header.method == POST )
 	{
+		std::cout << header.content_length << " > " <<  confs[server_id].locations[header.path].body_max_size << std::endl;
 		std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
 		send_400(server_id);
 		return false;
@@ -74,10 +75,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			if (err == "400")
 				send_400(server_id);
 			else if (err == "404")
-			{
-				std::cout << "ERROR 404 WTF" << std::endl;
 				send_404(server_id);
-			}
 			else{
 				check_server_name(all_request[server_id].get_header(), server_id);
 				send_301(confs[server_id].locations[err].http_redirection.second);
@@ -86,7 +84,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
 		//! deleting the tmp file
 		remove(all_request[server_id].get_file_path().c_str());
-		std::cout <<  strerror(errno) << std::endl;
 		all_request.erase(server_id);
 	}
 	else if ( method == POST )
@@ -95,6 +92,8 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		{
 			std::string response = HGen.getStr();
 			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+			remove(all_request[server_id].get_file_path().c_str());
+			std::cout << "KILLING CLIENT" << std::endl;
 			return false;
 		}
 
