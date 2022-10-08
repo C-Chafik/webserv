@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/06 13:17:24 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/08 21:11:29 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,8 @@ void	Request::read_header( void )
 			_header.method = assign_method(infos.front());
 			infos.pop_back();
 			_header.path = infos.back();
+			if ( _header.path.size() > 2 )
+				_header.path
 			first = true;
 		}
 		else if ( first == false )
