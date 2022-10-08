@@ -5,6 +5,9 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	std::string location;
 	std::string rtn;
 
+	if (request == "/")
+		return confs[server_id].index;
+
 	if (request.size() > 1 && (request.rfind("/") == request.size() - 1))//if / at the end
 		request = request.substr(0, request.size() - 1);
 
