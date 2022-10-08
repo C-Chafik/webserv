@@ -68,8 +68,8 @@ class Server{
 	int findServerIndex(int fdServer);
 	void exitCloseSock();
 	bool wantToBeAccepted(int fd);
-	std::string cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method);
-	void php_cgi(struct header & header, id_server_type server_id, std::string script_name, std::string method);
+	std::string cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method, struct body& body);
+	void php_cgi(struct header & header, id_server_type server_id, std::string script_name, std::string method, struct body& body);
 
 
 
@@ -77,7 +77,7 @@ class Server{
 
 	//* GET
 	void Get(int clientSocket, id_server_type server_id);
-	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
+	std::string treat_GET_request(struct header & header, struct body & body, id_server_type serverNb, int clientFd);
 
 
 	//* POST

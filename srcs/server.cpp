@@ -1,5 +1,6 @@
 #include "includes.hpp"
 
+
 void Server::run(std::vector< struct config > confs){
 	this->confs = confs;
 	listenSocketServer();
@@ -37,7 +38,10 @@ void Server::run(std::vector< struct config > confs){
 				}
 				else{
 					if (!handle_connection(i, confs_index.at(i)))//keep alive
+					{
+						close(i);
 						FD_CLR(i, &current_connections);
+					}
 				}
 			}
 		}

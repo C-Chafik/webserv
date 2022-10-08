@@ -50,7 +50,7 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 void Server::Get(int clientSocket, id_server_type server_id){
 	std::string to_send;
 		try{
-			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
+			to_send = treat_GET_request(all_request[server_id].get_header(), all_request[server_id].get_body(), server_id, clientSocket);
 			if (!to_send.empty())
 				send_200(to_send);
 		}
@@ -103,7 +103,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
-	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
+	// std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
 	return all_request[server_id].get_header().keep_alive;

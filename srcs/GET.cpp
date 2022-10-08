@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-std::string Server::treat_GET_request(struct header & header, id_server_type server_id, int clientFd){
+std::string Server::treat_GET_request(struct header & header, struct body & body, id_server_type server_id, int clientFd){
 	std::string rtnFile;
 	std::string file = header.path;
 	header.clientFd=clientFd;
@@ -17,7 +17,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
 	if ( ext != std::string::npos && (rtnFile[ext + confs[server_id].cgi_extension.size()] == '/' || !rtnFile[ext + confs[server_id].cgi_extension.size()]) ){
-		php_cgi(header, server_id , rtnFile, "GET");
+		php_cgi(header, server_id , rtnFile, "GET", body);
 		return "";
 	}
 
