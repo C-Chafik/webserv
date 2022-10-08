@@ -29,7 +29,7 @@ struct header
 	bool	 	keep_alive;
 	int			clientFd;
 
-	header(): content_type("text"), content_length(0) {}
+	header(): content_type("text"), content_length(0), keep_alive(false) {}
 };
 
 struct body

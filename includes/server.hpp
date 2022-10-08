@@ -76,6 +76,7 @@ class Server{
 	bool		check_request_validity( struct header & header, id_server_type server_id );
 
 	//* GET
+	void Get(int clientSocket, id_server_type server_id);
 	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 
 

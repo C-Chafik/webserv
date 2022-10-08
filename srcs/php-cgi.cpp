@@ -31,7 +31,7 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	line.append(php_path);
 	line.append(" > /tmp/output_webserv.tmp");
 
-	std::clog << line << std::endl;//*log
+	// std::clog << line << std::endl;
 	return line;
 }
 
@@ -50,7 +50,6 @@ std::string Server::parseCgiHeader(std::string buffer){
 	
 	header = buffer.substr(0, buffer.find("\r\n\r\n"));
 	rtn = buffer.substr(header.size() + 4, buffer.size());
-	std::clog << header << std::endl;
 
 	if ( (st = header.find(CT)) != std::string::npos )
 		HGen.setType(header.substr(st + CT.size(), header.find_first_of("\r", st) - CT.size()));
@@ -58,9 +57,12 @@ std::string Server::parseCgiHeader(std::string buffer){
 	if ( (st = header.find(S)) != std::string::npos )
 		HGen.setStatus(header.substr(st + S.size(), header.find_first_of("\r", st) - S.size()));
 
-	if ( (st = header.find(LOC)) != std::string::npos )
+	if ( (st = header.find(LOC)) != std::string::npos ){
 		HGen.setLocation(header.substr(st + LOC.size(), header.find_first_of("\r", st) - LOC.size()));
+		HGen.processResponse();
+	}
 
+	std::clog << HGen.getStr() << std::endl;
 	return rtn;
 }
 

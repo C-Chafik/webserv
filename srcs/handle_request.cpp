@@ -47,23 +47,8 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 	return true;
 }
 
-bool Server::handle_connection(int clientSocket, id_server_type server_id)
-{
-	std::cout << "server id : " << server_id << std::endl;
-
-	if ( all_request.find(server_id) == all_request.end() )
-	{
-		Request request;
-		all_request.insert(std::make_pair(server_id, request));
-	}
-
-	all_request[server_id].receive_request(clientSocket);
-
-	int method = all_request[server_id].get_header().method;
-
-	if ( method == GET )
-	{
-		std::string to_send;
+void Server::Get(int clientSocket, id_server_type server_id){
+	std::string to_send;
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
 			if (!to_send.empty())
@@ -85,6 +70,25 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		remove(all_request[server_id].get_file_path().c_str());
 		std::cout <<  strerror(errno) << std::endl;
 		all_request.erase(server_id);
+}
+
+bool Server::handle_connection(int clientSocket, id_server_type server_id)
+{
+	std::cout << "server id : " << server_id << std::endl;
+
+	if ( all_request.find(server_id) == all_request.end() )
+	{
+		Request request;
+		all_request.insert(std::make_pair(server_id, request));
+	}
+
+	all_request[server_id].receive_request(clientSocket);
+
+	int method = all_request[server_id].get_header().method;
+
+	if ( method == GET )
+	{
+		Get(clientSocket, server_id);
 	}
 	else if ( method == POST )
 	{
@@ -99,7 +103,8 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
+	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
-	return all_request[server_id].get_header().keep_alive;//add function to keep alive
+	return all_request[server_id].get_header().keep_alive;
 }

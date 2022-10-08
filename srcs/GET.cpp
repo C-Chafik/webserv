@@ -10,9 +10,6 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	file = parse_uri(header, server_id);
 
-	if (file == "/Download") //! NEED TO FINISH THIS METHOD !
-		file = "./Download/index.html";
-
 	if (file == "/")
 		file = confs[server_id].index;
 

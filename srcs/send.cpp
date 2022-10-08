@@ -49,8 +49,9 @@ void Server::send_301(std::string location){
 }
 
 void Server::send_cgi(id_server_type server_id, std::string data){
-	if (cgi_error(server_id))
+	if (cgi_error(server_id)){
 		return;
+	}
 	
 	if (HGen.checkStatus())
 		HGen.setStatus("200 OK");
