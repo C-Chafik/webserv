@@ -58,6 +58,9 @@ std::string trim_data( std::string & raw_data, const std::string & data_name )
 
 	std::string::iterator trim_end = rit.base();
 
+	if ( std::distance(it, trim_end) < 0 )
+		return "";
+
 	std::string trimmed_raw_data(it, trim_end);
 
 	while ( trimmed_raw_data.find("\t") != std::string::npos )
@@ -80,6 +83,9 @@ std::string trim_data_semicolon( std::string & raw_data, const std::string & dat
 		rit++;
 
 	std::string::iterator trim_end = rit.base();
+
+	if ( std::distance(it, trim_end) < 0 )
+		return "";
 
 	std::string trimmed_raw_data(it, trim_end);
 

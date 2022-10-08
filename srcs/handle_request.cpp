@@ -4,12 +4,13 @@ bool		Server::check_request_validity( struct header & header, id_server_type ser
 {
 	if ( confs[server_id].locations.find(header.path) == confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH EXIST " << std::endl;
+		std::cout << "THIS PATH DONT EXIST " << std::endl;
 		send_404(server_id);
 		return false;
 	}
 	else if ( header.content_length > confs[server_id].locations[header.path].body_max_size && header.method == POST )
 	{
+		std::cout << header.content_length << " > " <<  confs[server_id].locations[header.path].body_max_size << std::endl;
 		std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
 		send_400(server_id);
 		return false;
@@ -68,7 +69,6 @@ void Server::Get(int clientSocket, id_server_type server_id){
 		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
 		//! deleting the tmp file
 		remove(all_request[server_id].get_file_path().c_str());
-		std::cout <<  strerror(errno) << std::endl;
 		all_request.erase(server_id);
 }
 
@@ -87,13 +87,22 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	int method = all_request[server_id].get_header().method;
 
 	if ( method == GET )
-	{
 		Get(clientSocket, server_id);
-	}
+
 	else if ( method == POST )
 	{
+		if ( check_request_validity(all_request[server_id].get_header(), server_id ) == false )
+		{
+			std::string response = HGen.getStr();
+			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+			remove(all_request[server_id].get_file_path().c_str());
+			std::cout << "KILLING CLIENT" << std::endl;
+			return false;
+		}
+
 		if ( all_request[server_id].is_full() == false )
 			return true;
+		
 		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path(), server_id);
 		all_request.erase(server_id);
 		std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;
@@ -103,7 +112,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
-	// std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
+	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
 	return all_request[server_id].get_header().keep_alive;

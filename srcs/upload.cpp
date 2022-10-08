@@ -1,10 +1,12 @@
 #include "../includes/server.hpp"
 
 void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id )
-{(void)bod;
+{
+
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
-	std::string		path = confs[server_id].locations[head.path].upload_path;   //! need to use the conf file to get that path
+	std::string		path = fileLocation(confs[server_id].locations[head.path].upload_path, server_id);   //! need to use the conf file to get that path
+	std::cout << path << std::endl;
 
 	if ( head.content_type == "multipart/form-data" )
 	{
@@ -31,8 +33,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				continue ;
 			else if ( line == "\r" ) //? between boundary you first find informations like content disposition or content type, those informations are separated by a carriage return from the binary file
 			{
-				std::string file_path = "." + path + filename;
+				std::string file_path = path + filename;
 				bod.body_path = file_path;
+				std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
@@ -76,10 +79,12 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			content += '\n';
 		}
 
-		std::string file_path = "." + path;
+		std::string file_path = path + "text.txt";
+		std::cout << MAGENTA << file_path << std::endl;
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
 		{
+			remove(file.c_str());
 			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 			return ;
 		}
@@ -91,5 +96,4 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	tmp.close();
 	remove(file.c_str());
-	std::cout <<  strerror(errno) << std::endl;
 }   

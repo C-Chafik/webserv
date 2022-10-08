@@ -21,6 +21,7 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 	_closed = 0;
 	_inside = 0;
 	_state = true;
+	_found = false;
 
 	if ( fill_file() == false )
 		return ;
@@ -68,15 +69,11 @@ bool parseConfig::fill_file( void )
 	std::string 	buffer;
 	std::string		fileSTR;
 
-std::cout << "wtf" <<std::endl;
-
 	if ( check_conf_name( _file_path ) == false )
 	{
 		parsing_error("ERROR IN THE FILE NAME ");
 		return false;
 	}
-
-	std::cout << "wtf" <<std::endl;
 
 	file.open(_file_path.c_str());
 	if (!file.is_open())
@@ -85,24 +82,16 @@ std::cout << "wtf" <<std::endl;
 		return false;
 	}
 
-	std::cout << "wtf" <<std::endl;
-
 	while ( getline(file, buffer, '\n') )
 	{
 		fileSTR += buffer;
 		fileSTR += "\n";
 	}
 
-	std::cout << "wtf" <<std::endl;
-
-	std::cout << "[" << fileSTR << "]";
-
-		std::cout << "wtf" <<std::endl;
-
 	_file = ft_split(fileSTR, "\n");
 
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
-		remove_tab(*it);
+		remove_first_isspace(*it);
 
 	for ( std::list<std::string>::iterator it = _file.begin() ; it != _file.end() ; it++ )
 		if (it->empty())
@@ -186,16 +175,8 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			insert_method(*it, path);
 
 		else if ( exact_match(*it, "set_upload") == true )
-		{
-			std::string ret = insert_upload_path(*it);
-			if ( ret.empty() )
-			{
-				parsing_error("UPLOAD PATH IS INVALID : ", *it);
-				return _file.end();
-			}
-			_config.locations[path].upload_path = ret;
-		}
-
+			_config.locations[path].upload_path = insert_upload_path(*it);
+		
 		else if ( exact_match(*it, "client_max_body_size") == true )
 		{
 			_config.locations[path].body_max_size = insert_body_max_size(*it);
@@ -267,15 +248,7 @@ bool parseConfig::search_informations( std::string & line )
 			insert_method(line, "/");
 		
 		else if ( exact_match(line, "set_upload") == true )
-		{
-			std::string ret = insert_upload_path(line);
-			if ( ret.empty() )
-			{
-				parsing_error("UPLOAD PATH IS INVALID : ", line);
-				return false;
-			}
-			_config.locations["/"].upload_path = ret;
-		}
+			_config.locations["/"].upload_path = insert_upload_path(line);
 	
 		else if ( line != *(_file.begin()) && line.find_first_of("{}") == std::string::npos )
 		{
@@ -296,12 +269,21 @@ void	parseConfig::parse_file( void )
 	
 	for ( ; it != ite ; it++ )
 	{
+		bool first_line = true;
+
 		if ( it->find("server") != std::string::npos )
 		{
 			while ( it != ite )
 			{
+				if ( it->find("{}", 6) != std::string::npos && first_line == true )
+				{
+					_found = true;
+					break ;
+				}
 				if ( ( it->find("}") != std::string::npos ) && _closed == 1 && it->find("location") == std::string::npos )
 				{
+					_found = true;
+					_closed = 2;
 					if ( it->at(it->length() - 1) != '}' )
 						return parsing_error("INVALID CLOSURE ");
 					break ;
@@ -310,7 +292,7 @@ void	parseConfig::parse_file( void )
 				if ( check_closure(*it) == false )
 					return ;
 
-				if ( _closed == 0 )
+				if ( _closed == 0 && first_line == false )
 					return parsing_error("MISSING OPENING BRACE");
 
 				if ( exact_match(*it, "location") == true )
@@ -323,9 +305,12 @@ void	parseConfig::parse_file( void )
 
 				else if ( search_informations(*it) == false )
 					return ;
-
+				
 				it++;
+				first_line = false;
 			}
+			if ( _closed == 1 )
+					return parsing_error("MISSING CLOSING BRACE");
 		}
 		if ( _config.listening.empty() )
 				_config.listening.insert(insert_port("localhost:8080"));
@@ -337,6 +322,8 @@ void	parseConfig::parse_file( void )
 		if ( it == ite )
 			break ;
 	}
+	if ( _found == false )
+		return parsing_error("NO SERVER FOUND IN THE CONF FILE ");
 	// print_all_informations();
 	// exit(0);
 }

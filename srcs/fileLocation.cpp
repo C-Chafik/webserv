@@ -48,7 +48,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		rtn.append(request);
 
-	// std::clog << rtn << std::endl;
+	std::clog << rtn << std::endl;
 	return rtn;
 }
 
