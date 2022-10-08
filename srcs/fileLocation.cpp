@@ -5,9 +5,6 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	std::string location;
 	std::string rtn;
 
-	if (request == "/")
-		return confs[server_id].index;
-
 	if (request.size() > 1 && (request.rfind("/") == request.size() - 1))//if / at the end
 		request = request.substr(0, request.size() - 1);
 
@@ -24,19 +21,19 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		location = request;
 
 	//check if config exist
-	if (location.size() && confs[server_id].locations.find(location) != confs[server_id].locations.end()){//cas de dir/file.html
+	if (location.size() && confs[server_id].locations.find(location) != confs[server_id].locations.end() && !confs[server_id].locations.find(location)->second.root.empty()){//cas de dir/file.html
 		if (confs[server_id].locations[location].root[confs[server_id].locations[location].root.size() - 1] != '/')
 			confs[server_id].locations[location].root += "/";
 		rtn.append(confs[server_id].locations[location].root);
 		rtn.append(request.substr(slash + 1, request.size()));
 	}
-	else if (location.size() && confs[server_id].locations.find("/") != confs[server_id].locations.end() && confs[server_id].locations.find("/")->second.root.size() > 0){//check if / config exist
+	else if (location.size() && confs[server_id].locations.find("/") != confs[server_id].locations.end() && !confs[server_id].locations.find("/")->second.root.empty()){//check if / config exist
 		rtn.append(confs[server_id].locations["/"].root);
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
 		rtn.append(request.substr(slash + 1, request.size()));
 	}
-	else if (confs[server_id].locations.find(request) != confs[server_id].locations.end()){//only file.html with config
+	else if (confs[server_id].locations.find(request) != confs[server_id].locations.end() && !confs[server_id].locations.find(request)->second.root.empty()){//only file.html with config
 		if (confs[server_id].locations[request].root[confs[server_id].locations[request].root.size() - 1] != '/')
 			confs[server_id].locations[request].root += "/";
 		rtn.append(confs[server_id].locations[request].root);
