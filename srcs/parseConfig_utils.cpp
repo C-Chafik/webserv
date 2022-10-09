@@ -157,12 +157,8 @@ std::string	 parseConfig::get_location_path( std::string & line )
 	}
 	
 	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) == '/' ) )
-		_config.locations[new_line].location_type = FOLDER;
-	else if ( new_line.size() >= 3 && ( *( new_line.begin() ) == '*' ) && ( *( new_line.begin() + 1 ) == '.' ) )
-		_config.locations[new_line].location_type = EXTENSION;
-	else
-		_config.locations[new_line].location_type = FOLDER;
-
+		new_line.erase( new_line.end() - 1);
+	std::cout << new_line << std::endl;
 	// if ( _config.locations[new_line].location_type == FOLDER )
 	// {
 	// 	_config.locations[new_line].upload_path = new_line;
