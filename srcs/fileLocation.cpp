@@ -42,7 +42,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		rtn.append(confs[server_id].locations[request].root);
 		rtn.append(request.substr(0, request.size()));
 	}
-	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end() && confs[server_id].locations.find("/")->second.root.size() > 0){//only file.html with "/" config
+	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end() && !confs[server_id].locations.find("/")->second.root.empty()){//only file.html with "/" config
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
 		rtn.append(confs[server_id].locations["/"].root);
@@ -51,10 +51,9 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		rtn.append(request);
 
-	(void)server_id;
-	std::clog << "Return : " << rtn << std::endl;
-	std::clog << "Location : " << location<< std::endl;
-	std::clog << "Request : " << request << std::endl;
+	// std::clog << "Return : " << rtn << std::endl;
+	// std::clog << "Location : " << location << std::endl;
+	// std::clog << "Request : " << request << std::endl;
 	return rtn;
 }
 /*

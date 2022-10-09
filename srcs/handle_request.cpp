@@ -112,7 +112,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 
 	std::string response = HGen.getStr();
-	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
+	// std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
 	return all_request[server_id].get_header().keep_alive;
