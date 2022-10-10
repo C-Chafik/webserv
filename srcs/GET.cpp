@@ -12,7 +12,7 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 
 	rtnFile = fileLocation(file, server_id);//routing
 
-	if (rtnFile == "/")
+	if (rtnFile.empty())
 		return confs[server_id].index;
 
 	size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);

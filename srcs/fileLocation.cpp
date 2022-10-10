@@ -1,12 +1,15 @@
 #include "includes.hpp"
 
 std::string Server::fileLocation(std::string request, std::vector< struct config >::size_type server_id){
-	std::string::size_type slash;
+	std::string::size_type slash;//postion de slash (dir/other_dir) entre dir et other_dir
 	std::string location;
 	std::string rtn;
 
-	if (request.size() > 1 && (request.rfind("/") == request.size() - 1))//if / at the end
+	if (request.rfind("/") == request.size() - 1)//if / at the end
 		request = request.substr(0, request.size() - 1);
+
+	if (request.find("/") == 0)//if / at the begining
+		request = request.substr(1, request.size() - 1);
 
 	//find 1st location
 	slash = request.find("/");
@@ -16,7 +19,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	}
 
 	if (slash != std::string::npos && request[slash + 1])
-		location = request.substr(0, slash + 1);
+		location = request.substr(0, slash);
 	else
 		location = request;
 
@@ -39,7 +42,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		rtn.append(confs[server_id].locations[request].root);
 		rtn.append(request.substr(0, request.size()));
 	}
-	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end() && confs[server_id].locations.find("/")->second.root.size() > 0){//only file.html with "/" config
+	else if (confs[server_id].locations.find("/") != confs[server_id].locations.end() && !confs[server_id].locations.find("/")->second.root.empty()){//only file.html with "/" config
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
 		rtn.append(confs[server_id].locations["/"].root);
@@ -48,7 +51,13 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		rtn.append(request);
 
-	std::clog << "rtn : " << rtn << std::endl;
+	// std::clog << "Return : " << rtn << std::endl;
+	// std::clog << "Location : " << location << std::endl;
+	// std::clog << "Request : " << request << std::endl;
 	return rtn;
 }
+/*
+	return le path sans / au debut et a la fin
+	si / return empty string
+*/
 
