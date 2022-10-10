@@ -45,12 +45,10 @@ std::string Server::fileToString(std::string fileName, bool error){
 	return fileSTR;
 }
 
-std::string Server::findPathError(id_server_type id_server, int error_code){
-	std::vector< std::pair<std::vector<int>, std::string> >::iterator big_it = confs[id_server].errors.begin();
+std::string Server::findPathError(id_server_type id_server, int error_code){ (void)id_server; (void)error_code;
+	std::map< int, std::string >::iterator big_it = confs[id_server].errors.begin();
 	for (; big_it != confs[id_server].errors.end(); big_it++){
-		std::vector<int>::iterator lil_it = big_it->first.begin();
-		for (; lil_it != big_it->first.end(); lil_it++)
-			if (*lil_it == error_code)
+			if (big_it->first == error_code)
 				return big_it->second;
 	}
 	return "";

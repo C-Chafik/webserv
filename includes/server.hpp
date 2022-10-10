@@ -56,7 +56,9 @@ class Server{
 	std::string parse_uri(struct header & header, id_server_type server_id);
 	void redirect(std::string file, id_server_type server_id);
 	void send_200(std::string file);
+	void send_202( void );
 	void send_400(id_server_type serverNb);
+	void send_413(id_server_type serverNb);
 	void send_404(id_server_type serverNb);
 	void send_301(std::string location);
 	void send_500(id_server_type serverNb);
@@ -74,6 +76,10 @@ class Server{
 
 
 	bool		check_request_validity( struct header & header, id_server_type server_id );
+
+	//* DELETE
+	
+	void	treat_DELETE_request( struct header & head );
 
 	//* GET
 	void Get(int clientSocket, id_server_type server_id);

@@ -64,41 +64,35 @@ int	parseConfig::insert_body_max_size( std::string & raw_data )
 	return std::atoi(first_value.c_str());
 }
 
-std::pair<std::vector<int>, std::string> parseConfig::insert_error_page( std::string & raw_error_page )
+bool parseConfig::insert_error_page( std::string & raw_error_page )
 {
-	std::vector<int> 		errors;
-	std::string 	 		error_path;
-	std::string		 		error_code;
-	std::string::size_type 	i = 0;
-
 	std::string error_page = trim_data(raw_error_page, "error_page");
+	std::list<std::string> splitted = ft_split_no_r(error_page, " \n\r\t\v\f");
 
-	for ( ; i < error_page.size() ; i++ )
+	if ( splitted.size() < 2 )
 	{
-		if ( !isdigit(error_page[i]) && !isspace(error_page[i]) )
-		{
-			while (!isspace(error_page[i]))
-				i--;
-			if (isspace(error_page[i]))
-				i++;
-			break ;
-		}
-		
-		for ( ; isdigit(error_page[i]) ; i++ )
-			error_code.append(1, error_page[i]);
-
-		if ( !error_code.empty() && (isspace(error_page[i]) || !error_page[i]) )
-		{
-			errors.push_back(std::atoi(error_code.c_str()));
-			error_code.clear();
-		}
+		std::cout << RED << "MISSING ARGUMENT ON ERROR PAGE " << WHITE << std::endl;
+		return false;
 	}
-	if ( i <= error_page.size() )
-		error_path.append(error_page, i, std::string::npos);
 
-	std::pair<std::vector<int>, std::string> ret(errors, error_path);
+	if ( isonly_digit(splitted.back()) == true )
+	{
+		std::cout << RED << "LAST PARAMETER MUST BE AN ERROR PAGE PATH " << WHITE << std::endl;
+		return false;
+	}
 
-	return ret;
+	for ( std::list<std::string>::iterator it = splitted.begin() ; it != splitted.end() ; it++ )
+	{
+		if ( isonly_digit(*it) == false && *it != splitted.back() )
+		{
+			std::cout << RED << "ERROR CODE IS ONLY DIGIT " << WHITE << std::endl;
+			return false;
+		}
+		else if ( isonly_digit(*it) == true )
+			_config.errors[std::atoi(it->c_str())] = splitted.back();
+	}
+
+	return true;
 }
 
 std::string	parseConfig::insert_root( std::string & line )

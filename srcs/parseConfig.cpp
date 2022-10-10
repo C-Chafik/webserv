@@ -184,6 +184,9 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			}
 		}
 
+		else if ( exact_match(*it, "set_upload") == true )
+			_config.locations[path].upload_path = insert_upload_path(*it);
+
 	}
 
 	return it;
@@ -218,6 +221,10 @@ bool parseConfig::search_informations( std::string & line )
 			if ( insert_cgi(line) == false )
 				return false ;
 		}
+
+		else if ( exact_match(line, "set_upload") == true )
+			_config.locations["/"].upload_path = insert_upload_path(line);
+
 		else if ( exact_match(line, "root") == true )
 			_config.locations["/"].root = insert_root(line);
 
@@ -233,7 +240,13 @@ bool parseConfig::search_informations( std::string & line )
 		}
 
 		else if ( exact_match(line, "error_page") == true )
-			_config.errors.push_back(insert_error_page(line));
+		{
+			if ( insert_error_page(line) == false )
+			{
+				parsing_error("ERROR, IN ERROR PAGE PARSING : ", line);
+				return false;
+			}
+		}
 
 		else if ( exact_match(line, "autoindex") == true )
 			_config.locations["/"].autoindex = insert_autoindex(line);

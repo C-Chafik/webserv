@@ -15,7 +15,7 @@ struct parseLocation
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "/"; }
+	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "./"; }
 	~parseLocation ( void ) {}
 };
 
@@ -26,7 +26,8 @@ struct config
 	std::string					cgi_path;
     std::vector<std::string> server_names;
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
-    std::vector< std::pair<std::vector<int>, std::string> > errors;
+    // std::vector< std::pair<std::vector<int>, std::string> > errors;
+    std::map< int, std::string > errors;
     std::map< std::string, struct parseLocation > locations;
     int         body_max_size;
 	// std::map<std::string, std::string> get_vars;
@@ -92,7 +93,7 @@ class parseConfig
 		std::string 										insert_upload_path( std::string & line );
 		std::pair<std::string, std::vector<std::string> >	insert_port( std::string raw_address );
 		std::pair<int, std::string >						insert_http_redirection( std::string & raw_line );
-		std::pair<std::vector<int>, std::string>			insert_error_page( std::string & raw_error_page );
+		bool												insert_error_page( std::string & raw_error_page );
 		std::vector<std::string>							insert_server_names( std::string & raw_server_name );
 		bool												insert_autoindex( std::string & raw_index );
 		void												insert_method( std::string & raw_method, const std::string & location );

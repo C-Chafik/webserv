@@ -2,14 +2,13 @@
 
 void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id )
 {
-
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
-	std::string		path = fileLocation(head.path, server_id);
-	while ( path.find("//") != std::string::npos )
-		path.erase(path.find("//"));
 
-	std::cout << path << std::endl;
+	std::string location_name = head.path; //! need to automate this...
+	location_name.erase(0, 1);
+
+	std::string		path = confs[server_id].locations[location_name].upload_path;
 
 	if ( head.content_type == "multipart/form-data" )
 	{

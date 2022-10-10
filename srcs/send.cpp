@@ -10,11 +10,28 @@ void Server::send_200(std::string file){
 	HGen.processResponse();
 }
 
+void Server::send_202(void){
+	HGen.clear();
+
+	HGen.setStatus("202 Accepted");
+	HGen.processResponse();
+}
+
 void Server::send_400(id_server_type serverNb){
 	HGen.clear();
 	std::string fileSTR = fileToString(findPathError(serverNb, 400), true);
 
 	HGen.setStatus("400 Bad Request");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+}
+
+void Server::send_413(id_server_type serverNb){
+	HGen.clear();
+	std::string fileSTR = fileToString(findPathError(serverNb, 413), true);
+
+	HGen.setStatus("413 Bad Request");
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();

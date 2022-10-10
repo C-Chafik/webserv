@@ -113,3 +113,11 @@ bool         file_already_exist( const std::string & path )
 		return true;
 	return false;
 }
+
+bool         isonly_digit( const std::string & haystack )
+{
+	for ( std::string::size_type i = 0 ; i < haystack.size() ; i++ )
+		if ( !isdigit(haystack[i]) )
+			return false;
+	return true;
+}

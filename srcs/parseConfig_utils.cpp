@@ -34,12 +34,11 @@ void	parseConfig::print_all_informations( void )
 		std::vector<std::string>::iterator vit = conf_it->server_names.begin();
 		std::vector<std::string>::iterator vite = conf_it->server_names.end();
 
-		std::vector< std::pair<std::vector<int>, std::string> >::iterator eit = conf_it->errors.begin();
-		std::vector< std::pair<std::vector<int>, std::string> >::iterator eite = conf_it->errors.end();
+		std::map< int, std::string >::iterator eit = conf_it->errors.begin();
+		std::map< int, std::string >::iterator eite = conf_it->errors.end();
 
 		std::map< std::string, struct parseLocation >::iterator lit = conf_it->locations.begin();
 		std::map< std::string, struct parseLocation >::iterator lite = conf_it->locations.end();
-
 
 		std::cout << "ALL LISTEN PORT AND IP " << std::endl;
 		for ( ; mit != mite ; mit++ )
@@ -58,8 +57,7 @@ void	parseConfig::print_all_informations( void )
 		for ( ; eit != eite ; eit++ )
 		{
 			std::cout << "ERROR PATH : " << eit->second << " FOR ERROR CODE -> ";
-			for ( std::vector<int>::iterator it = eit->first.begin() ; it != eit->first.end() ; it++ )
-				std::cout << *it <<": ";
+			std::cout << eit->first << std::endl;
 			std::cout << std::endl;
 		}
 		std::cout << "CGI PARAMETER" << std::endl;
