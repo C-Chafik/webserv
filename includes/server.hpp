@@ -74,9 +74,6 @@ class Server{
 	void php_cgi(struct header & header, id_server_type server_id, std::string script_name, std::string method, struct body& body);
 
 
-
-	bool		check_request_validity( struct header & header, id_server_type server_id );
-
 	//* DELETE
 	
 	void	treat_DELETE_request( struct header & head );
@@ -90,6 +87,7 @@ class Server{
 	//* It create the POST Object
 	std::string get_file_name( const std::string & line );
 	void treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
+	bool		check_POST_request_validity( struct header & header, id_server_type server_id );
 
 
 

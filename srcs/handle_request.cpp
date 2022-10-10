@@ -1,62 +1,28 @@
 #include "includes.hpp"
 
-bool		Server::check_request_validity( struct header & header, id_server_type server_id )
+bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
 {
 	std::string location_name = header.path;
+	if ( location_name.size() > 2 && location_name[0] == '/')
+		location_name.erase(0, 1);
 	
-	if ( location_name != "/")
-		if ( location_name[0] == '/' )
-			location_name.erase(0, 1);
-	if ( confs[server_id].locations.find(location_name) == confs[server_id].locations.end() )
+	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH DONT EXIST " << std::endl;
+		std::cout << "THIS PATH EXIST " << std::endl;
 		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
-		send_404(server_id);
-		return false;
-	}
-	else if ( header.content_length > confs[server_id].locations[location_name].body_max_size && header.method == POST )
-	{
-		std::cout << header.content_length << " > " <<  confs[server_id].locations[header.path].body_max_size << std::endl;
-		std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
-		send_413(server_id);
-		return false;
-	}
-	else if ( header.method == GET )
-	{
-		std::cout << "METHOD == GET " << std::endl;
-		if (  confs[server_id].locations[location_name].GET == false )
+		if ( header.content_length > confs[server_id].locations[location_name].body_max_size && header.method == POST )
 		{
-			send_400(server_id);
+			std::cout << header.content_length << " > " <<  confs[server_id].locations[header.path].body_max_size << std::endl;
+			std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
+			send_413(server_id);
 			return false;
 		}
-		std::cout << "METHOD GET IS AUTORISED " << std::endl;
-	}
-	else if ( header.method == POST )
-	{
-		std::cout << "METHOD == POST " << std::endl;
-		if (  confs[server_id].locations[location_name].POST == false )
+		if ( confs[server_id].locations[location_name].POST == false )
 		{
-			std::cout << "METHOD POST IS NOT AUTORISED IN THIS LOCATION " << std::endl;
-			send_400(server_id);
+			std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
+			send_400(server_id); //! must be 405
 			return false;
 		}
-		if ( confs[server_id].locations[location_name].upload_path.empty() )
-		{
-			std::cout << "THERE IS NO WHERE TO STORE UPLOADED FILES IN THIS LOCATION " << std::endl;
-			send_400(server_id);
-			return false;
-		}
-		std::cout << "METHOD POST IS AUTORISED " << std::endl;
-	}
-	else if ( header.method == DELETE )
-	{
-		std::cout << "METHOD == DELETE " << std::endl;
-		if (  confs[server_id].locations[location_name].DELETE == false )
-		{
-			send_400(server_id);
-			return false;
-		}
-		std::cout << "METHOD DELETE IS AUTORISED " << std::endl;
 	}
 	return true;
 }
@@ -104,7 +70,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 	else if ( method == POST )
 	{
-		if ( check_request_validity(all_request[server_id].get_header(), server_id ) == false )
+		if ( check_POST_request_validity(all_request[server_id].get_header(), server_id ) == false )
 		{
 			std::string response = HGen.getStr();
 			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
@@ -123,16 +89,16 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	else if ( method == DELETE )
 	{
 		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
-		all_request.erase(server_id);
 		treat_DELETE_request(all_request[server_id].get_header());
 		remove(all_request[server_id].get_file_path().c_str());
 		send_202();
+		all_request.erase(server_id);
 		std::cout << CYAN << "END METHOD = DELETE " << WHITE << std::endl;
 	}
 
 
 	std::string response = HGen.getStr();
-	std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
+	// std::clog << "Response sent : [\"" << response << "\"]" << std::endl;
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 
 	return all_request[server_id].get_header().keep_alive;

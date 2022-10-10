@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/10 09:45:12 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/10 18:27:00 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	Request::read_header( void )
 		if ( infos.size() == 2 && infos.front() == "Host:" )
 			assign_host(infos.back());
 
-		if ( infos.size() == 2 && infos.front() == "Content-Length:" )
+		if ( infos.size() == 2 && infos.front() == "Content-Length:" ) //! If content_length is missing and the method is POST, must throw an 411
 		{
 			_with_body = true;
 			_header.content_length = std::atoi(infos.back().c_str());

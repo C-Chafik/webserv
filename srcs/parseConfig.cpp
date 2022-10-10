@@ -321,6 +321,7 @@ void	parseConfig::parse_file( void )
 		}
 		if ( _config.listening.empty() )
 				_config.listening.insert(insert_port("localhost:8080"));
+
 		_configs.push_back(_config);
 		_config.clear();
 		_inside = 0;

@@ -29,7 +29,7 @@ struct config
     // std::vector< std::pair<std::vector<int>, std::string> > errors;
     std::map< int, std::string > errors;
     std::map< std::string, struct parseLocation > locations;
-    int         body_max_size;
+    long long         body_max_size;
 	// std::map<std::string, std::string> get_vars;
 	std::string query_string;
 
@@ -41,7 +41,8 @@ struct config
         locations.clear();
         server_names.clear();
         listening.clear();
-        errors.clear();
+        errors.clear();	
+		body_max_size = 100000;
     }
 };
 

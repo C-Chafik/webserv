@@ -6,9 +6,13 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	std::fstream 	new_file;
 
 	std::string location_name = head.path; //! need to automate this...
-	location_name.erase(0, 1);
+	if ( location_name.size() > 2 && location_name[0] == '/')
+		location_name.erase(0, 1);
 
-	std::string		path = confs[server_id].locations[location_name].upload_path;
+	std::string		path = confs[server_id].locations[location_name].upload_path + "/";
+	while ( path.find("//") != std::string::npos )
+		path.erase(path.find("//"), 1);
+	
 
 	if ( head.content_type == "multipart/form-data" )
 	{
@@ -42,6 +46,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				if ( !new_file.is_open() )
 				{
 					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
 				}
@@ -87,6 +92,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
 		{
+			send_500(server_id);
 			remove(file.c_str());
 			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 			return ;

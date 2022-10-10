@@ -154,7 +154,7 @@ std::string	 parseConfig::get_location_path( std::string & line )
 		}
 	}
 	
-	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) == '/' ) )
+	if ( ( new_line.size() >= 2 && *( new_line.end() - 1 ) == '/' ) )
 		new_line.erase( new_line.end() - 1);
 	
 	return new_line;
