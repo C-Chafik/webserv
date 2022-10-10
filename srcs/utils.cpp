@@ -28,7 +28,7 @@ std::string Server::fileToString(std::string fileName, bool error){
 	if (!file.is_open())
 	{
 		if (!file.is_open() && error){
-			std::cout << "Fail when opening file" << std::endl;
+			std::cout << "Fail when opening : \"" << fileName << "\"" << std::endl;
 			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
@@ -43,13 +43,4 @@ std::string Server::fileToString(std::string fileName, bool error){
 	file.close();
 
 	return fileSTR;
-}
-
-std::string Server::findPathError(id_server_type id_server, int error_code){ (void)id_server; (void)error_code;
-	std::map< int, std::string >::iterator big_it = confs[id_server].errors.begin();
-	for (; big_it != confs[id_server].errors.end(); big_it++){
-			if (big_it->first == error_code)
-				return big_it->second;
-	}
-	return "";
 }

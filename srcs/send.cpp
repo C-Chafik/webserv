@@ -19,7 +19,7 @@ void Server::send_202(void){
 
 void Server::send_400(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(findPathError(serverNb, 400), true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[400], true);
 
 	HGen.setStatus("400 Bad Request");
 	HGen.setType("text/html");
@@ -29,7 +29,7 @@ void Server::send_400(id_server_type serverNb){
 
 void Server::send_413(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(findPathError(serverNb, 413), true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[413], true);
 
 	HGen.setStatus("413 Bad Request");
 	HGen.setType("text/html");
@@ -39,7 +39,7 @@ void Server::send_413(id_server_type serverNb){
 
 void Server::send_404(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(findPathError(serverNb, 404), true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[404], true);
 
 	HGen.setStatus("404 Not Found");
 	HGen.setType("text/html");
@@ -49,7 +49,7 @@ void Server::send_404(id_server_type serverNb){
 
 void Server::send_500(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(findPathError(serverNb, 500), true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
 
 	HGen.setStatus("500 Internal Server Error");
 	HGen.setType("text/html");
