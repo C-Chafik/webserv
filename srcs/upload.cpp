@@ -5,9 +5,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
 
-	std::string location_name = head.path; //! need to automate this...
-	if ( location_name.size() > 2 && location_name[0] == '/')
-		location_name.erase(0, 1);
+	std::string location_name = targetLocation(head.path);
 
 	std::string		path = confs[server_id].locations[location_name].upload_path + "/";
 	while ( path.find("//") != std::string::npos )

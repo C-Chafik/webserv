@@ -1,10 +1,26 @@
 #include "includes.hpp"
 
+bool		Server::check_DELETE_request_validity( struct header & header, id_server_type server_id )
+{
+	std::string location_name = fileLocation(header.path, server_id);
+	
+	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
+	{
+		std::cout << "THIS PATH EXIST " << std::endl;
+		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
+		if ( confs[server_id].locations[location_name].DELETE == false )
+		{
+			std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
+			send_400(server_id); //! must be 405
+			return false;
+		}
+	}
+	return true;
+}
+
 bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
 {
-	std::string location_name = header.path;
-	if ( location_name.size() > 2 && location_name[0] == '/')
-		location_name.erase(0, 1);
+	std::string location_name = fileLocation(header.path, server_id);
 	
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
@@ -88,8 +104,16 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	}
 	else if ( method == DELETE )
 	{
-		std::cout << CYAN << "METHOD = DELETE " << WHITE << std::endl;
-		treat_DELETE_request(all_request[server_id].get_header());
+		if ( check_DELETE_request_validity(all_request[server_id].get_header(), server_id ) == false )
+		{
+			std::string response = HGen.getStr();
+			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+			remove(all_request[server_id].get_file_path().c_str());
+			std::cout << "KILLING CLIENT" << std::endl;
+			return false;
+		}
+
+		treat_DELETE_request(all_request[server_id].get_header(), server_id);
 		remove(all_request[server_id].get_file_path().c_str());
 		send_202();
 		all_request.erase(server_id);

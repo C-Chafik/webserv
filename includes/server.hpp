@@ -49,6 +49,7 @@ class Server{
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string findPathError(id_server_type id_server, int errorCode);
 	std::string fileLocation(std::string request, id_server_type serverNb);
+	std::string	targetLocation( std::string & URI );
 	std::string fileToString(std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
@@ -76,7 +77,8 @@ class Server{
 
 	//* DELETE
 	
-	void	treat_DELETE_request( struct header & head );
+	void	treat_DELETE_request( struct header & head, id_server_type server_id );
+	bool	check_DELETE_request_validity( struct header & header, id_server_type server_id );
 
 	//* GET
 	void Get(int clientSocket, id_server_type server_id);
@@ -84,9 +86,8 @@ class Server{
 
 
 	//* POST
-	//* It create the POST Object
 	std::string get_file_name( const std::string & line );
-	void treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
+	void 		treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
 	bool		check_POST_request_validity( struct header & header, id_server_type server_id );
 
 
