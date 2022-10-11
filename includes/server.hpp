@@ -48,13 +48,14 @@ class Server{
 	void receive_request_body( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string fileLocation(std::string request, id_server_type serverNb);
-	std::string	targetLocation( std::string & URI );
+	std::string	targetLocation( std::string URI );
 	std::string fileToString(std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
 	void check_server_name(struct header & header, id_server_type &id);
 	std::string parse_uri(struct header & header, id_server_type server_id);
 	void redirect(std::string file, id_server_type server_id);
+	void send_200_autoindex(std::string content);
 	void send_200(std::string file);
 	void send_202( void );
 	void send_400(id_server_type serverNb);
@@ -82,6 +83,7 @@ class Server{
 	//* GET
 	void Get(int clientSocket, id_server_type server_id);
 	std::string treat_GET_request(struct header & header, struct body & body, id_server_type serverNb, int clientFd);
+	std::string autoindex( std::string URI );
 
 
 	//* POST

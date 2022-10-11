@@ -1,5 +1,13 @@
 #include "includes.hpp"
 
+void Server::send_200_autoindex(std::string content){
+	HGen.clear();
+	HGen.setStatus("200 OK");
+	HGen.setType("text/html");
+	HGen.setContentString(content);
+	HGen.processResponse();
+}
+
 void Server::send_200(std::string file){
 	HGen.clear();
 	std::string fileSTR = fileToString(file);
