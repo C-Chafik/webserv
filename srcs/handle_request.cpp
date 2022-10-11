@@ -3,7 +3,9 @@
 bool		Server::check_DELETE_request_validity( struct header & header, id_server_type server_id )
 {
 	std::string location_name = fileLocation(header.path, server_id);
-	
+	if ( location_name.empty() )
+		location_name = "/";
+		
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
 		std::cout << "THIS PATH EXIST " << std::endl;
@@ -21,6 +23,8 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
 {
 	std::string location_name = fileLocation(header.path, server_id);
+	if ( location_name.empty() )
+		location_name = "/";
 	
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{

@@ -2,12 +2,13 @@
 
 std::string	 	 Server::targetLocation( std::string & URI )
 {
+	if ( URI == "/" )
+		return URI;
 	if ( URI.size() >= 2 && URI[0] == '/' )
 		URI.erase(0, 1);
 	if ( URI.find("/") != std::string::npos )
 		URI = URI.substr(0, URI.find("/"));
 	
-	std::cout << MAGENTA << "[" << URI << "]" << WHITE << std::endl;
 	return URI;
 }
 
@@ -34,7 +35,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		location = request;
 
-	std::cout << GREEN << "[" << location << "]" << WHITE << std::endl;
+	// std::cout << GREEN << "[" << location << "]" << WHITE << std::endl;
 	//check if config exist
 	if (location.size() && confs[server_id].locations.find(location) != confs[server_id].locations.end() && !confs[server_id].locations.find(location)->second.root.empty()){//cas de dir/file.html
 		if (confs[server_id].locations[location].root[confs[server_id].locations[location].root.size() - 1] != '/')
@@ -66,7 +67,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	// std::clog << "Return : " << rtn << std::endl;
 	// std::clog << "Location : " << location << std::endl;
 	// std::clog << "Request : " << request << std::endl;
-	std::cout << MAGENTA << "[" << rtn << "]" << WHITE << std::endl;
+	// std::cout << MAGENTA << "[" << rtn << "]" << WHITE << std::endl;
 	return rtn;
 }
 /*
