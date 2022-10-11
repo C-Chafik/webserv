@@ -28,7 +28,7 @@ std::string Server::fileToString(std::string fileName, bool error){
 	if (!file.is_open())
 	{
 		if (!file.is_open() && error){
-			std::cout << "Fail when opening : \"" << fileName << "\"" << std::endl;
+			std::cerr << "Fail when opening : \"" << fileName << "\"" << std::endl;
 			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
