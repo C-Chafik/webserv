@@ -48,7 +48,7 @@ class Server{
 	void receive_request_body( struct request & req, int requestFd );
 	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string fileLocation(std::string request, id_server_type serverNb);
-	std::string	targetLocation( std::string & URI );
+	std::string	targetLocation( std::string URI );
 	std::string fileToString(std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);

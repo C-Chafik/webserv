@@ -101,8 +101,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
-		std::clog << "path : " << fileLocation(head.path, server_id) << std::endl;
-		php_cgi(head, server_id , path, "POST", bod);
+		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST", bod);
 		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();

@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-std::string	 	 Server::targetLocation( std::string & URI )
+std::string	 	 Server::targetLocation( std::string URI )
 {
 	if ( URI == "/" )
 		return URI;
@@ -35,7 +35,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	else
 		location = request;
 
-	// std::cout << GREEN << "[" << location << "]" << WHITE << std::endl;
+	std::cout << GREEN << "[" << location << "]" << WHITE << std::endl;
 	//check if config exist
 	if (location.size() && confs[server_id].locations.find(location) != confs[server_id].locations.end() && !confs[server_id].locations.find(location)->second.root.empty()){//cas de dir/file.html
 		if (confs[server_id].locations[location].root[confs[server_id].locations[location].root.size() - 1] != '/')
@@ -67,7 +67,7 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	// std::clog << "Return : " << rtn << std::endl;
 	// std::clog << "Location : " << location << std::endl;
 	// std::clog << "Request : " << request << std::endl;
-	// std::cout << MAGENTA << "[" << rtn << "]" << WHITE << std::endl;
+	std::cout << MAGENTA << "[" << rtn << "]" << WHITE << std::endl;
 	return rtn;
 }
 /*
