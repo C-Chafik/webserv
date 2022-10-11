@@ -35,7 +35,7 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	line.append(php_path);
 	line.append(" > /tmp/output_webserv.tmp");
 
-	std::clog << line << std::endl;
+	// std::clog << line << std::endl;
 	return line;
 }
 

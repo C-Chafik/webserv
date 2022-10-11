@@ -71,12 +71,14 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 				}
 			}
 
+			int other = 0;
 			//check pour tous les servers le qui ecoute de meme port pour le bon host
 			for (std::vector< struct config >::size_type k = 0; k < confs.size(); k++){//for all servers configs
 					std::map< std::string, std::vector<std::string> >::iterator it = confs[k].listening.begin();
 					while (it != confs[k].listening.end()){//for all their ips
 							std::vector<std::string>::iterator it_port = std::find(it->second.begin(), it->second.end(), header.port_host);//find the first config with the port requested
 							if (it_port != it->second.end()){
+									++other;
 									//search for server_name == Host
 									for (std::vector<std::string>::size_type i = 0; i < confs[k].server_names.size(); i++){
 										if (confs[k].server_names[i] == header.host){
@@ -88,6 +90,7 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 							it++;
 					}
 			}
-			id = 0;
+			if (other > 1)
+				id = 0;
 	}
 }

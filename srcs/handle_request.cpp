@@ -52,7 +52,7 @@ void Server::Get(int clientSocket, id_server_type server_id){
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), all_request[server_id].get_body(), server_id, clientSocket);
 			if (!to_send.empty()){
-				std::clog << "to_send : " << to_send << std::endl;
+				// std::clog << "to_send : " << to_send << std::endl;
 				send_200(to_send);
 			}
 		}

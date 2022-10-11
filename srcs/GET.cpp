@@ -23,6 +23,6 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 
 	redirect(rtnFile, server_id);
 	
-	std::clog << "rtnFile : " << rtnFile << std::endl;
+	// std::clog << "rtnFile : " << rtnFile << std::endl;
 	return rtnFile;
 }
