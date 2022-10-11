@@ -101,7 +101,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
-		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST", bod);
+		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
 		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();

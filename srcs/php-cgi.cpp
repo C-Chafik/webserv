@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-std::string Server::cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method, struct body& body){
+std::string Server::cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method){
 	std::string line;
 
 	line.append("CONTENT_TYPE=" + header.content_type);
@@ -29,13 +29,13 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 
 	if (method == "POST"){
 		line.append(" < ");
-		line.append(body.body_path);
+		line.append("/tmp/cgi_post.log");
 	}
 	line.append(" php-cgi ");
 	line.append(php_path);
 	line.append(" > /tmp/output_webserv.tmp");
 
-	// std::clog << line << std::endl;
+	std::clog << line << std::endl;
 	return line;
 }
 
@@ -83,12 +83,12 @@ bool Server::cgi_error(id_server_type server_id){
 	return true;
 }
 
-void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method, struct body& body){
+void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method){
 	std::stringstream buffer_cout;
 	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
 
 
-	system(cgi_vars(header, server_id, php_path, method, body).c_str());
+	system(cgi_vars(header, server_id, php_path, method).c_str());
 	std::cout << std::ifstream("/tmp/output_webserv.tmp").rdbuf();
 	remove("/tmp/output_webserv.tmp");
 
