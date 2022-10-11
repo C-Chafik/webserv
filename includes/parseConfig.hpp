@@ -33,7 +33,7 @@ struct config
 	// std::map<std::string, std::string> get_vars;
 	std::string query_string;
 
-    config( void ) { body_max_size = 100000; }
+    config( void ) { body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; }
     ~config ( void ) {}
 
     void clear( void )
