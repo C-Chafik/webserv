@@ -9,7 +9,7 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	line.append(" REQUEST_METHOD=" + method);
 	line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
 	line.append(" REDIRECT_STATUS=" + std::string("200"));
-	line.append(" QUERY_STRING=" + confs[server_id].query_string);
+	line.append(" QUERY_STRING=" + std::string("\"") + confs[server_id].query_string + std::string("\""));
 	line.append(" SERVER_PROTOCOL=" + std::string("HTTP/1.1"));
 	line.append(" SERVER_SOFTWARE=" + std::string("WebServ"));
 	line.append(" SCRIPT_NAME=" + php_path);//parse php_path
@@ -35,7 +35,7 @@ std::string Server::cgi_vars(struct header & header, id_server_type server_id, s
 	line.append(php_path);
 	line.append(" > /tmp/output_webserv.tmp");
 
-	// std::clog << line << std::endl;
+	std::clog << line << std::endl;
 	return line;
 }
 

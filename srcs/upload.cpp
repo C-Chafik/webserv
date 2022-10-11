@@ -85,7 +85,8 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			content += '\n';
 		}
 
-		std::string file_path = path + "text.txt";
+		std::string file_path = "/tmp/cgi_post.log";
+		bod.body_path = file_path;
 		std::cout << MAGENTA << file_path << std::endl;
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
@@ -100,6 +101,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
+		std::clog << "path : " << fileLocation(head.path, server_id) << std::endl;
+		php_cgi(head, server_id , path, "POST", bod);
+		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();
 	remove(file.c_str());
