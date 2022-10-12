@@ -184,16 +184,6 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 
 		else if ( exact_match(*it, "method_accept") == true )
 			insert_method(*it, path);
-		
-		else if ( exact_match(*it, "client_max_body_size") == true )
-		{
-			_config.locations[path].body_max_size = insert_body_max_size(*it);
-			if ( _config.locations[path].body_max_size == -1 )
-			{
-				parsing_error("ERROR AT : ", *it);
-				return _file.end();
-			}
-		}
 
 		else if ( exact_match(*it, "set_upload") == true )
 			_config.locations[path].upload_path = insert_upload_path(*it);
@@ -220,13 +210,14 @@ bool parseConfig::search_informations( std::string & line )
 
 		else if ( exact_match(line, "client_max_body_size") == true )
 		{
-			_config.locations["/"].body_max_size = insert_body_max_size(line);
-			if ( _config.locations["/"].body_max_size == -1 )
+			_config.body_max_size = insert_body_max_size(line);
+			if ( _config.body_max_size == -1 )
 			{
 				parsing_error("ERROR AT : ", line);
 				return false;
 			}
 		}
+
 		else if ( exact_match(line, "cgi") == true )
 		{
 			if ( insert_cgi(line) == false )

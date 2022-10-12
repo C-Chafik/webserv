@@ -1,14 +1,49 @@
 #include "includes.hpp"
 
-std::string	 	 Server::targetLocation( std::string URI )
+std::string	 	 Server::retrieve_location_name( std::string URI, id_server_type server_id )
 {
 	if ( URI == "/" )
 		return URI;
+	
 	if ( URI.size() >= 2 && URI[0] == '/' )
 		URI.erase(0, 1);
-	if ( URI.find("/") != std::string::npos )
-		URI = URI.substr(0, URI.find("/"));
+
+	std::map< std::string, struct parseLocation >::iterator it = confs[server_id].locations.begin();
+	std::map< std::string, struct parseLocation >::iterator ite = confs[server_id].locations.end();
+
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->first != "/" && URI.compare(0, it->first.size(), it->first) == 0 )
+			return it->first;
+	}
+
+	return "/";
+}
+
+std::string	 	 Server::targetLocation( std::string URI, id_server_type server_id )
+{
+	if ( URI == "/" )
+		return URI;
 	
+	if ( URI.size() >= 2 && URI[0] == '/' )
+		URI.erase(0, 1);
+	
+	std::map< std::string, struct parseLocation >::iterator it = confs[server_id].locations.begin();
+	std::map< std::string, struct parseLocation >::iterator ite = confs[server_id].locations.end();
+
+	for ( ; it != ite ; it++ )
+	{
+		if ( it->first != "/" && URI.compare(0, it->first.size(), it->first) == 0 )
+		{
+			URI.erase(0, it->first.size());
+			break ;
+		}
+	}
+
+	if ( it == ite )
+		if ( URI.compare( 0, 1, "/" ) == 0 )
+			URI.erase(0, 1);
+
 	return URI;
 }
 
@@ -41,15 +76,15 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 		if (confs[server_id].locations[location].root[confs[server_id].locations[location].root.size() - 1] != '/')//si pas de / a la fin du root ajouter
 			confs[server_id].locations[location].root += "/";
 		rtn.append(confs[server_id].locations[location].root);//ajouter le root de la config
-		if (slash != std::string::npos)
-			rtn.append(request.substr(slash + 1, request.size()));//ajouter ce qu'il y a apres le /
+		// if (slash != std::string::npos)
+		// 	rtn.append(request.substr(slash + 1, request.size()));//ajouter ce qu'il y a apres le /
 	}
 	else if (location.size() && confs[server_id].locations.find("/") != confs[server_id].locations.end() && !confs[server_id].locations.find("/")->second.root.empty()){//check if / config exist
 		rtn.append(confs[server_id].locations["/"].root);
 		if (confs[server_id].locations["/"].root[confs[server_id].locations["/"].root.size() - 1] != '/')
 			confs[server_id].locations["/"].root += "/";
-		if (slash != std::string::npos)
-			rtn.append(request.substr(slash + 1, request.size()));
+		// if (slash != std::string::npos)
+		// 	rtn.append(request.substr(slash + 1, request.size()));
 	}
 	else if (confs[server_id].locations.find(request) != confs[server_id].locations.end() && !confs[server_id].locations.find(request)->second.root.empty()){//only file.html with config
 		if (confs[server_id].locations[request].root[confs[server_id].locations[request].root.size() - 1] != '/')
@@ -76,4 +111,3 @@ std::string Server::fileLocation(std::string request, std::vector< struct config
 	return le path sans / au debut et a la fin
 	si / return empty string
 */
-

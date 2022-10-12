@@ -43,19 +43,30 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 	bool autoindexed = false;
 	header.clientFd=clientFd;
 
-	location_name = targetLocation(header.path);
-	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
-		autoindexed = confs[server_id].locations[location_name].autoindex;
-
-	if (*(header.path.end() - 1) == '/' )
-		slash = true;
-
 	/*have to be the first check because can change the server_id*/
 	check_server_name(header, server_id);
 
 	file = parse_uri(header, server_id);
 
 	rtnFile = fileLocation(file, server_id);//routing
+
+	location_name = retrieve_location_name(header.path, server_id);
+
+	std::string URI = targetLocation(header.path, server_id);
+
+	std::string responses = rtnFile + "/" + URI;
+	
+	while ( responses.find("//") != std::string::npos )
+		responses.erase(responses.find("//"), 1);
+
+	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
+		autoindexed = confs[server_id].locations[location_name].autoindex;
+
+	if (*(header.path.end() - 1) == '/' )
+		slash = true;
+	
+	else if ( is_folder(responses) == true )
+		slash = true;
 
 	if ( slash == true && autoindexed == true ) //! IF autoindexed
 	{
@@ -79,14 +90,17 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 		}
 	}
 
-	size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
-	if ( ext != std::string::npos && (rtnFile[ext + confs[server_id].cgi_extension.size()] == '/' || !rtnFile[ext + confs[server_id].cgi_extension.size()]) ){
-		php_cgi(header, server_id , rtnFile, "GET", body);
-		return "";
+	if ( !confs[server_id].cgi_extension.empty() )
+	{
+		size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
+		if ( ext != std::string::npos && (rtnFile[ext + confs[server_id].cgi_extension.size()] == '/' || !rtnFile[ext + confs[server_id].cgi_extension.size()]) ){
+			php_cgi(header, server_id , rtnFile, "GET", body);
+			return "";
+		}
 	}
 
 	redirect(rtnFile, server_id);
-	
-	std::cout << MAGENTA << "[" << rtnFile << "]" << WHITE << std::endl;
-	return rtnFile;	
+
+	std::cout << GREEN << "[" << responses << "]" << WHITE << std::endl;
+	return responses;	
 }

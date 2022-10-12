@@ -55,6 +55,16 @@ void Server::send_404(id_server_type serverNb){
 	HGen.processResponse();
 }
 
+void Server::send_405(id_server_type serverNb){
+	HGen.clear();
+	std::string fileSTR = fileToString(confs[serverNb].errors[405], true);
+
+	HGen.setStatus("404 Not Found");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+}
+
 void Server::send_500(id_server_type serverNb){
 	HGen.clear();
 	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);

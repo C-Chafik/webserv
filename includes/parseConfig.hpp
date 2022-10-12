@@ -5,7 +5,6 @@
 
 struct parseLocation 
 {
-	long long         					body_max_size;
 	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;
@@ -16,7 +15,7 @@ struct parseLocation
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "./"; index = "default/index.html"; }
+	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; upload_path = "./"; index = "default/index.html"; }
 	~parseLocation ( void ) {}
 };
 
@@ -26,14 +25,13 @@ struct config
 	std::string					cgi_path;
     std::vector<std::string> server_names;
     std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
-    // std::vector< std::pair<std::vector<int>, std::string> > errors;
     std::map< int, std::string > errors;
-    std::map< std::string, struct parseLocation > locations;
+    std::map< std::string, struct parseLocation, greater<std::string> > locations;
     long long         body_max_size;
 	// std::map<std::string, std::string> get_vars;
 	std::string query_string;
 
-    config( void ) { body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; }
+    config( void ) { body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; errors[405] = "default/error_405.html";}
     ~config ( void ) {}
 
     void clear( void )
@@ -43,8 +41,13 @@ struct config
         listening.clear();
         errors.clear();	
 		body_max_size = 100000;
+		cgi_extension.clear();
+		cgi_path.clear();
+		query_string.clear();
+		
 		errors[400] = "default/error_400.html";
 		errors[404] = "default/error_404.html";
+		errors[405] = "default/error_405.html";
 		errors[413] = "default/error_413.html";
 		errors[500] = "default/error_500.html";
     }

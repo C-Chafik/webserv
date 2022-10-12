@@ -5,12 +5,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
 
-	std::string location_name = targetLocation(head.path);
-
+	std::string location_name = retrieve_location_name(head.path, server_id);
+	
 	std::string		path = confs[server_id].locations[location_name].upload_path + "/";
 	while ( path.find("//") != std::string::npos )
 		path.erase(path.find("//"), 1);
-	
 
 	if ( head.content_type == "multipart/form-data" )
 	{
@@ -29,8 +28,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
-				std::list<std::string> name = ft_split_no_r(line, " \r");
-				filename = name.back().substr(10);
+				// std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
+				// filename = name.back().substr(10);
+				filename = line.substr(57);
 				filename = filename.substr(0, filename.find("\""));
 			}
 			else if ( line.substr(0, 13) == "Content-Type:" )

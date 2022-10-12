@@ -121,3 +121,18 @@ bool         isonly_digit( const std::string & haystack )
 			return false;
 	return true;
 }
+
+bool         is_folder( std::string & URI )
+{
+	if ( URI == "/" )
+		return true;
+
+	if ( URI.size() >= 2 && URI[0] == '/' )
+		URI.erase(0, 1);
+	
+	DIR *dir = opendir(URI.c_str());
+	if ( dir == NULL )
+		return false;
+	closedir(dir);
+	return true;
+}

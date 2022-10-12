@@ -1,10 +1,27 @@
 #include "includes.hpp"
 
+bool		Server::check_GET_request_validity( struct header & header, id_server_type server_id )
+{
+	std::string location_name = retrieve_location_name(header.path, server_id);
+	
+	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
+	{
+		std::cout << "THIS PATH EXIST " << std::endl;
+		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
+		if ( confs[server_id].locations[location_name].GET == false )
+		{
+			std::cout << " METHOD GET IS NOT AUTORISED HERE ! " << std::endl;
+			send_405(server_id);
+			return false;
+		}
+	}
+	return true;
+}
+
+
 bool		Server::check_DELETE_request_validity( struct header & header, id_server_type server_id )
 {
-	std::string location_name = fileLocation(header.path, server_id);
-	if ( location_name.empty() )
-		location_name = "/";
+	std::string location_name = retrieve_location_name(header.path, server_id);
 		
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
@@ -12,8 +29,8 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
 		if ( confs[server_id].locations[location_name].DELETE == false )
 		{
-			std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
-			send_400(server_id); //! must be 405
+			std::cout << " METHOD DELETE IS NOT AUTORISED HERE ! " << std::endl;
+			send_405(server_id);
 			return false;
 		}
 	}
@@ -22,17 +39,15 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 
 bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
 {
-	std::string location_name = fileLocation(header.path, server_id);
-	if ( location_name.empty() )
-		location_name = "/";
+	std::string location_name = retrieve_location_name(header.path, server_id);
 	
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
 		std::cout << "THIS PATH EXIST " << std::endl;
 		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
-		if ( header.content_length > confs[server_id].locations[location_name].body_max_size && header.method == POST )
+		if ( header.content_length > confs[server_id].body_max_size && header.method == POST )
 		{
-			std::cout << header.content_length << " > " <<  confs[server_id].locations[header.path].body_max_size << std::endl;
+			std::cout << header.content_length << " > " <<  confs[server_id].body_max_size << std::endl;
 			std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
 			send_413(server_id);
 			return false;
@@ -40,7 +55,7 @@ bool		Server::check_POST_request_validity( struct header & header, id_server_typ
 		if ( confs[server_id].locations[location_name].POST == false )
 		{
 			std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
-			send_400(server_id); //! must be 405
+			send_405(server_id);
 			return false;
 		}
 	}
@@ -86,7 +101,16 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 	int method = all_request[server_id].get_header().method;
 
 	if ( method == GET )
+	{
+		if ( check_GET_request_validity(all_request[server_id].get_header(), server_id ) == false )
+		{
+			std::string response = HGen.getStr();
+			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+			remove(all_request[server_id].get_file_path().c_str());
+			return false;
+		}
 		Get(clientSocket, server_id);
+	}
 
 	else if ( method == POST )
 	{
@@ -95,7 +119,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			std::string response = HGen.getStr();
 			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 			remove(all_request[server_id].get_file_path().c_str());
-			std::cout << "KILLING CLIENT" << std::endl;
 			return false;
 		}
 
@@ -113,7 +136,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 			std::string response = HGen.getStr();
 			send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
 			remove(all_request[server_id].get_file_path().c_str());
-			std::cout << "KILLING CLIENT" << std::endl;
 			return false;
 		}
 
