@@ -26,14 +26,16 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 	int fdFileOut = fileno(fileOut);
 	int saveIn = dup(STDIN_FILENO);
 	int saveOut = dup(STDOUT_FILENO);
-	std::string body = fileToString("/tmp/cgi_post.log");
 	std::string output;
 
-	write(fdFileIn, body.c_str(), body.size());
-	lseek(fdFileIn, 0, SEEK_SET);
-	// char test[body.size()];
-	// read(fdFileIn, test, body.size());
-	// std::clog << "["<< test << "]"<< std::endl;
+	if (method == "POST"){
+		std::string body = fileToString("/tmp/cgi_post.log");
+		write(fdFileIn, body.c_str(), body.size());
+		lseek(fdFileIn, 0, SEEK_SET);
+		// char test[body.size()];
+		// read(fdFileIn, test, body.size());
+		// std::clog << "["<< test << "]"<< std::endl;
+	}
 
 	int pid = fork();
 
@@ -67,7 +69,7 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 
 		while (rtn){
 			memset(buff, 0, 100);
-			rtn = read(fdFileOut, buff, 100);
+			rtn = read(fdFileOut, buff, 99);
 			// std::clog << "-> " << buff << std::endl;
 			output.append(buff);
 		}

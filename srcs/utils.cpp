@@ -32,8 +32,10 @@ std::string Server::fileToString(std::string fileName, bool error){
 			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
-		else
+		else{
+			// std::clog << fileName << " not foud, return 404\n";
 			throw Error_page("404");
+		}
 	}
 	while (getline(file, buffer, '\n'))
 	{

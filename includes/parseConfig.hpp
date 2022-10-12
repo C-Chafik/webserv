@@ -43,7 +43,7 @@ struct config
         listening.clear();
         errors.clear();	
 		body_max_size = 100000;
-			index = "default/index.html";
+		index = "default/index.html";
 		errors[400] = "default/error_400.html";
 		errors[404] = "default/error_404.html";
 		errors[413] = "default/error_413.html";
