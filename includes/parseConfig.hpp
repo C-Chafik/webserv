@@ -11,17 +11,17 @@ struct parseLocation
 	bool 								POST;
 	bool 								DELETE;
 	bool 								autoindex;
+	std::string							index;
 	std::string 						root;
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "./"; }
+	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; body_max_size = 100000; upload_path = "./"; index = "default/index.html"; }
 	~parseLocation ( void ) {}
 };
 
 struct config 
 {
-	std::string					index;
 	std::string					cgi_extension;
 	std::string					cgi_path;
     std::vector<std::string> server_names;
@@ -43,7 +43,6 @@ struct config
         listening.clear();
         errors.clear();	
 		body_max_size = 100000;
-			index = "default/index.html";
 		errors[400] = "default/error_400.html";
 		errors[404] = "default/error_404.html";
 		errors[413] = "default/error_413.html";
