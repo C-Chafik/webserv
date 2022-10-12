@@ -1,5 +1,5 @@
 NAME=WebServer
-CC=c++
+CC=g++
 FLAGS= -Wall -Werror -Wextra -std=c++98
 
 SRC= main.cpp server.cpp Request.cpp accept_connection.cpp \
@@ -7,7 +7,7 @@ SRC= main.cpp server.cpp Request.cpp accept_connection.cpp \
 	send.cpp utils.cpp listen.cpp parseConfig_insert.cpp \
 	parseConfig_utils.cpp parseConfig_common.cpp \
 	common.cpp GET.cpp redirect.cpp parse_uri.cpp upload.cpp \
-	php-cgi.cpp DELETE.cpp \
+	php-cgi.cpp DELETE.cpp exec_cgi.cpp \
 
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes

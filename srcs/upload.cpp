@@ -75,7 +75,39 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				if ( line == head.boundary + "--\r" || line.empty() )
 					break ;
 			}
-		}	
+		}
+		else
+		{ //! Need to find how to store it
+			std::string filename;
+			std::string line;
+			std::string content;
+
+			while ( content.find("\r\n\r\n") == std::string::npos ) //? We skip the first header part, because we just want the body
+			{
+				std::getline(tmp, line);
+				content += line;
+				content += '\n';
+			}
+
+			std::string file_path = "/tmp/cgi_post.log";
+			bod.body_path = file_path;
+			// std::cout << MAGENTA << file_path << std::endl;
+			new_file.open(file_path.c_str(), std::ios::out);
+			if ( !new_file.is_open() )
+			{
+				send_500(server_id);
+				remove(file.c_str());
+				std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+				return ;
+			}
+
+			while ( std::getline(tmp, line) )
+				new_file << line;
+			
+			new_file.close();
+			php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+			remove("/tmp/cgi_post.log");
+		}
 	}
 
 	else if ( head.content_type == "multipart/form-data" )
