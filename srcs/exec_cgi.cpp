@@ -29,11 +29,15 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 	std::string output;
 
 	if (method == "POST"){
-		std::string body = fileToString("/tmp/cgi_post.log");
-		write(fdFileIn, body.c_str(), body.size());
+		int fd_body = open("/tmp/cgi_post.log", O_RDONLY);
+		char buff_body[header.content_length];
+		read(fd_body, buff_body, header.content_length);
+		close(fd_body);
+
+		write(fdFileIn, buff_body, header.content_length);
 		lseek(fdFileIn, 0, SEEK_SET);
-		// char test[body.size()];
-		// read(fdFileIn, test, body.size());
+		// char test[header.content_length];
+		// read(fdFileIn, test, header.content_length);
 		// std::clog << "["<< test << "]"<< std::endl;
 	}
 

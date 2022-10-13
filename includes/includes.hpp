@@ -46,6 +46,9 @@
 # include <fstream>
 # include <algorithm>
 # include <filesystem>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 # include "common.hpp"
 # include "Request.hpp"
 # include "parseConfig.hpp"

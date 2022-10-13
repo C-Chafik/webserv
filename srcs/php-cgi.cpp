@@ -25,10 +25,7 @@ char **Server::cgi_vars(struct header & header, id_server_type server_id, std::s
 	line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
 	line["REMOTE_ADDR"] = header.host;
 	if (method == "POST"){
-		if (header.content_type == "multipart/form-data")
-			line["CONTENT_TYPE"] = "multipart/form-data; charset=utf-8; boundary=";
-		else
-			line["CONTENT_TYPE"] = header.content_type;
+		line["CONTENT_TYPE"] = header.raw_content_type;
 		line["CONTENT_LENGTH"] = SSTR(header.content_length);
 	}
 
