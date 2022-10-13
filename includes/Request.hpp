@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/08 15:17:38 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/13 12:09:44 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@ struct header
 	std::string header_str;
 	std::string boundary;
 	std::string content_type;
+	std::string raw_content_type;
 	std::string connection;
 	int			method;
-	long long			content_length;
+	long long	content_length;
 	bool	 	keep_alive;
 	int			clientFd;
 
