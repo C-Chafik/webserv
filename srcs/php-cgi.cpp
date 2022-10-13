@@ -12,21 +12,21 @@ char **Server::cgi_vars(struct header & header, id_server_type server_id, std::s
 	if (method == "GET")
 		line["QUERY_STRING"] = std::string("\"") + confs[server_id].query_string + std::string("\"");
 	line["SERVER_PROTOCOL"] = "HTTP/1.1";
-	// line["SERVER_SOFTWARE"] = "WebServ";
-	// line["SCRIPT_NAME"] = php_arg;//parse php_arg
+	line["SERVER_SOFTWARE"] = "WebServ";
+	line["SCRIPT_NAME"] = php_arg;//parse php_arg
 	line["SCRIPT_FILENAME"] = php_arg;
-	// line["PATH_INFO"] = php_arg;
-	// if (confs[server_id].server_names.size() > 0)
-	// 	line["SERVER_NAME"] = confs[server_id].server_names[0];
-	// else
-	line["SERVER_NAME"] = "webserv";
+	line["PATH_INFO"] = php_arg;
+	if (confs[server_id].server_names.size() > 0)
+		line["SERVER_NAME"] = confs[server_id].server_names[0];
+	else
+		line["SERVER_NAME"] = "webserv";
 	line["SCRIPT_PORT"] = confs[server_id].listening.begin()->second[0];
-	// line["PATH_TRANSLATED"] = php_arg;
-	// line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
-	// line["REMOTE_ADDR"] = header.host;
+	line["PATH_TRANSLATED"] = php_arg;
+	line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
+	line["REMOTE_ADDR"] = header.host;
 	if (method == "POST"){
 		if (header.content_type == "multipart/form-data")
-		line["CONTENT_TYPE"] = "multipart/form-data; charset=utf-8; boundary=";
+			line["CONTENT_TYPE"] = "multipart/form-data; charset=utf-8; boundary=";
 		else
 			line["CONTENT_TYPE"] = header.content_type;
 		line["CONTENT_LENGTH"] = SSTR(header.content_length);
