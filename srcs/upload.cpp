@@ -47,7 +47,12 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 					new_file << '\n';
 				}
 				new_file.close();
-				php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+
+				std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+				while ( script_path.find("//") != std::string::npos )
+					script_path.erase(script_path.find("//"), 1)
+					;
+				php_cgi(head, server_id , script_path, "POST");
 				remove("/tmp/cgi_post.log");
 				tmp_line.clear();
 			}
@@ -82,8 +87,8 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			
 			new_file.close();
 
-           std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
-           while ( script_path.find("//") != std::string::npos )
+			std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+			while ( script_path.find("//") != std::string::npos )
 				script_path.erase(script_path.find("//"), 1);
 
 			php_cgi(head, server_id , script_path, "POST");
@@ -180,6 +185,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
+		
+		std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+		while ( script_path.find("//") != std::string::npos )
+			script_path.erase(script_path.find("//"), 1);
+
 		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
 		remove("/tmp/cgi_post.log");
 	}
