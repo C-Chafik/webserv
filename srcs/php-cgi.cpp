@@ -90,7 +90,9 @@ bool Server::cgi_error(id_server_type server_id){
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
 	
 	char **env = cgi_vars(header, server_id, php_arg, method);
+	std::clog << "php_arg : " << php_arg << std::endl;
 	std::string buffer_cout = cgi_exec(header, server_id, php_arg, method, env);
+	std::clog << "buffer_cout : " << buffer_cout << std::endl;
 
 	send_cgi(server_id, parseCgiHeader(buffer_cout));
 
