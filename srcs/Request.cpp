@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/13 17:31:12 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/13 23:17:59 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,17 @@ void	Request::read_header( void )
 	std::ifstream tmp(_tmp_filename.c_str(), std::ifstream::binary );
 	
 	std::string buff;
+	std::string end;
 
 	bool first = false;
 
 	while ( std::getline(tmp, buff) )
 	{
+		end += buff;
+		end += '\n';
+		if ( end.rfind("\r\n\r\n") != std::string::npos )
+			break ;
+			
 		std::list<std::string> infos = ft_split_no_r(buff, " \r");
 
 		if ( infos.size() == 3 && (infos.front() == "GET" || infos.front() == "POST" || infos.front() == "DELETE") )
@@ -192,7 +198,7 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = _header.content_type;
-			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 	
+			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 	
 		}
 	}
 }
