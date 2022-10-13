@@ -56,8 +56,9 @@ class Server{
 	void check_server_name(struct header & header, id_server_type &id);
 	std::string parse_uri(struct header & header, id_server_type server_id);
 	void redirect(std::string file, id_server_type server_id);
+	void send_responses(std::string file);
 	void send_200_autoindex(std::string content);
-	void send_200(std::string file);
+	void send_200(std::string file, std::string & extension );
 	void send_202( void );
 	void send_400(id_server_type serverNb);
 	void send_413(id_server_type serverNb);
@@ -65,6 +66,7 @@ class Server{
 	void send_405(id_server_type serverNb);
 	void send_301(std::string location);
 	void send_500(id_server_type serverNb);
+	void send_501(id_server_type serverNb);
 	void send_cgi(id_server_type server_id, std::string data);
 	bool cgi_error(id_server_type server_id);
 	std::string parseCgiHeader(std::string buffer);
@@ -88,6 +90,7 @@ class Server{
 	bool		check_GET_request_validity( struct header & header, id_server_type server_id );
 	std::string autoindex( std::string URI );
 	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
+	std::string return_content_type( std::string URI );
 
 
 	//* POST

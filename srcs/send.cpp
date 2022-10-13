@@ -1,5 +1,11 @@
 #include "includes.hpp"
 
+void Server::send_responses(std::string file){ //? Look for the file extension and send the proper content type
+	std::string content_type = return_content_type(file);
+
+	send_200(file, content_type);
+}
+
 void Server::send_200_autoindex(std::string content){
 	HGen.clear();
 	HGen.setStatus("200 OK");
@@ -8,12 +14,12 @@ void Server::send_200_autoindex(std::string content){
 	HGen.processResponse();
 }
 
-void Server::send_200(std::string file){
+void Server::send_200( std::string file, std::string & extension ){
 	HGen.clear();
 	std::string fileSTR = fileToString(file);
 
 	HGen.setStatus("200 OK");
-	HGen.setType("text/html");
+	HGen.setType(extension);
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
 }
@@ -72,6 +78,16 @@ void Server::send_500(id_server_type serverNb){
 	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
 
 	HGen.setStatus("500 Internal Server Error");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+}
+
+void Server::send_501(id_server_type serverNb){
+	HGen.clear();
+	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
+
+	HGen.setStatus("501 Not Implemented");
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();

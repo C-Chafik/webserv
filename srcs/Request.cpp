@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/13 12:10:00 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/13 17:31:12 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,6 @@ void	Request::read_header( void )
 		}
 		else if ( first == false )
 		{
-			std::cout << "THIS METHOD IS UNKNOWN ABORTING " << std::endl;
 			_header.method = UNKNOWN;
 			return ;
 		}
@@ -183,7 +182,7 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = infos.front() + " " + infos.back();
-			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 
+			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 
 			_header.boundary = "--" + infos.back().substr(9);		
 			_header.content_type.erase(_header.content_type.size() - 1);
 		}
