@@ -11,7 +11,81 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	while ( path.find("//") != std::string::npos )
 		path.erase(path.find("//"), 1);
 
-	if ( head.content_type == "multipart/form-data" )
+	if ( head.path.size() >= 4 && head.path.substr(head.path.size() - 4) == ".php" )
+	{
+		if ( head.content_type == "multipart/form-data" )
+		{
+			std::cout << "CGI POST ENBALED !!!" << std::endl;
+			std::string filename;
+			std::string line;
+			std::string content;
+
+			while ( content.find("\r\n\r\n") == std::string::npos ) //? We skip the first header part, because we just want the body
+			{
+				std::getline(tmp, line);
+				content += line;
+				content += '\n';
+			}
+
+			while ( std::getline(tmp, line) ) //? We iterate trough the file with a gnl until we find the last boundary 
+			{
+				std::string file_path = "/tmp/cgi_post.log";
+				bod.body_path = file_path;
+				std::cout << "OPENING " << file_path << std::endl;
+				new_file.open(file_path.c_str(), std::ios::out);
+				if ( !new_file.is_open() )
+				{
+					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					send_500(server_id); //! for now its an internal server error 500
+					remove(file.c_str());
+					return ;
+				}
+				std::string tmp_line;
+				while ( std::getline(tmp, tmp_line) )
+				{
+					new_file << tmp_line;
+					new_file << '\n';
+				}
+				new_file.close();
+				php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+				remove("/tmp/cgi_post.log");
+				tmp_line.clear();
+			}
+		}
+		else
+		{ //! Need to find how to store it
+			std::string filename;
+			std::string line;
+			std::string content;
+
+			while ( content.find("\r\n\r\n") == std::string::npos ) //? We skip the first header part, because we just want the body
+			{
+				std::getline(tmp, line);
+				content += line;
+				content += '\n';
+			}
+
+			std::string file_path = "/tmp/cgi_post.log";
+			bod.body_path = file_path;
+			// std::cout << MAGENTA << file_path << std::endl;
+			new_file.open(file_path.c_str(), std::ios::out);
+			if ( !new_file.is_open() )
+			{
+				send_500(server_id);
+				remove(file.c_str());
+				std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+				return ;
+			}
+
+			while ( std::getline(tmp, line) )
+				new_file << line;
+			
+			new_file.close();
+			php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+			remove("/tmp/cgi_post.log");
+		}
+	}
+	else if ( head.content_type == "multipart/form-data" )
 	{
 		std::string filename;
 		std::string line;
@@ -85,8 +159,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			content += '\n';
 		}
 
-		std::string file_path = path + "text.txt";
-		std::cout << MAGENTA << file_path << std::endl;
+		std::string file_path = "/tmp/cgi_post.log";
+		bod.body_path = file_path;
+		// std::cout << MAGENTA << file_path << std::endl;
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
 		{
@@ -100,7 +175,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
+		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();
 	remove(file.c_str());
-}   
+}

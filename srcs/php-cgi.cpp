@@ -1,42 +1,45 @@
 #include "includes.hpp"
 
-std::string Server::cgi_vars(struct header & header, id_server_type server_id, std::string php_path, std::string method, struct body& body){
-	std::string line;
+char **Server::cgi_vars(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
+	std::map<std::string, std::string> line;
 
-	line.append("CONTENT_TYPE=" + header.content_type);
-	line.append(" REDIRECT_STATUS=");
-	(void) method;
-	line.append(" REQUEST_METHOD=" + method);
-	line.append(" GATEWAY_INTERFACE=" + std::string("CGI/1.1"));
-	line.append(" REDIRECT_STATUS=" + std::string("200"));
-	line.append(" QUERY_STRING=" + confs[server_id].query_string);
-	line.append(" SERVER_PROTOCOL=" + std::string("HTTP/1.1"));
-	line.append(" SERVER_SOFTWARE=" + std::string("WebServ"));
-	line.append(" SCRIPT_NAME=" + php_path);//parse php_path
-	line.append(" PATH_INFO=" + php_path);
-	line.append(" SERVER_NAME=");
+	line["REQUEST_METHOD"] = method;
+	line["AUTH_TYPE"] = "";
+	line["PATH_TRANSLATED"] = "";
+	line["CONTENT_LENGTH"] = "0";
+	line["GATEWAY_INTERFACE"] = "CGI/1.1";
+	line["REDIRECT_STATUS"] = "200";
+	if (method == "GET")
+		line["QUERY_STRING"] = std::string("\"") + confs[server_id].query_string + std::string("\"");
+	line["SERVER_PROTOCOL"] = "HTTP/1.1";
+	line["SERVER_SOFTWARE"] = "WebServ";
+	line["SCRIPT_NAME"] = php_arg;//parse php_arg
+	line["SCRIPT_FILENAME"] = php_arg;
+	line["PATH_INFO"] = php_arg;
 	if (confs[server_id].server_names.size() > 0)
-		line.append(confs[server_id].server_names[0]);
+		line["SERVER_NAME"] = confs[server_id].server_names[0];
 	else
-		line.append(header.host);
-	line.append(" SERVER_PORT=" + confs[server_id].listening.begin()->second[0]);
-	line.append(" PATH_TRANSLATED=" + php_path);
-	line.append(" REQUEST_URI=" + php_path + confs[server_id].query_string);
-	line.append(" REMOTE_ADDR=" + header.host);
-	line.append(" CONTENT_LENGTH=");
-	if (header.content_length > 0)
-		line.append(SSTR(header.content_length));
-
+		line["SERVER_NAME"] = "webserv";
+	line["SCRIPT_PORT"] = confs[server_id].listening.begin()->second[0];
+	line["PATH_TRANSLATED"] = php_arg;
+	line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
+	line["REMOTE_ADDR"] = header.host;
 	if (method == "POST"){
-		line.append(" < ");
-		line.append(body.body_path);
+		line["CONTENT_TYPE"] = header.raw_content_type;
+		line["CONTENT_LENGTH"] = SSTR(header.content_length);
 	}
-	line.append(" php-cgi ");
-	line.append(php_path);
-	line.append(" > /tmp/output_webserv.tmp");
 
-	// std::clog << line << std::endl;
-	return line;
+	
+	char	**env = new char*[line.size() + 1];
+	int	j = 0;
+	for (std::map<std::string, std::string>::const_iterator i = line.begin(); i != line.end(); i++) {
+		std::string	element = i->first + "=" + i->second;
+		env[j] = new char[element.size() + 1];
+		env[j] = strcpy(env[j], (const char*)element.c_str());
+		j++;
+	}
+	env[j] = NULL;
+	return env;
 }
 
 std::string Server::parseCgiHeader(std::string buffer){
@@ -83,16 +86,17 @@ bool Server::cgi_error(id_server_type server_id){
 	return true;
 }
 
-void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_path, std::string method, struct body& body){
-	std::stringstream buffer_cout;
-	std::streambuf *old_cout = std::cout.rdbuf(buffer_cout.rdbuf());
 
+void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
+	
+	char **env = cgi_vars(header, server_id, php_arg, method);
+	std::string buffer_cout = cgi_exec(header, server_id, php_arg, method, env);
 
-	system(cgi_vars(header, server_id, php_path, method, body).c_str());
-	std::cout << std::ifstream("/tmp/output_webserv.tmp").rdbuf();
-	remove("/tmp/output_webserv.tmp");
+	send_cgi(server_id, parseCgiHeader(buffer_cout));
 
-	std::cout.rdbuf(old_cout);
-
-	send_cgi(server_id, parseCgiHeader(buffer_cout.str()));
+	for (size_t i = 0; env[i]; i++){
+		std::clog << env[i] << std::endl;
+		delete[] env[i];
+	}
+	delete[] env;
 }

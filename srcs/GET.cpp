@@ -35,7 +35,7 @@ std::string Server::autoindex( std::string URI )
 	return listing;
 }	
 
-std::string Server::treat_GET_request(struct header & header, struct body & body, id_server_type server_id, int clientFd ) {
+std::string Server::treat_GET_request(struct header & header, id_server_type server_id, int clientFd ) {
 	std::string rtnFile;
 	std::string location_name;
 	std::string file = header.path;
@@ -72,8 +72,8 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 	{
         rtnFile = autoindex(rtnFile);
 		send_200_autoindex(rtnFile);
-		return "";
 	}
+
 	else if ( slash == true )
 	{
 		if ( rtnFile.empty() ) //! so its root
@@ -94,13 +94,13 @@ std::string Server::treat_GET_request(struct header & header, struct body & body
 	{
 		size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
 		if ( ext != std::string::npos && (rtnFile[ext + confs[server_id].cgi_extension.size()] == '/' || !rtnFile[ext + confs[server_id].cgi_extension.size()]) ){
-			php_cgi(header, server_id , rtnFile, "GET", body);
+			php_cgi(header, server_id , rtnFile, "GET");
 			return "";
 		}
 	}
 
 	redirect(rtnFile, server_id);
 
-	std::cout << GREEN << "[" << responses << "]" << WHITE << std::endl;
+	// std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
 	return responses;	
 }

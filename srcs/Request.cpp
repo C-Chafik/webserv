@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/10 18:27:00 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/13 12:10:00 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,8 +182,18 @@ void	Request::read_header( void )
 		{
 			infos.pop_front();
 			_header.content_type = infos.front();
+			_header.raw_content_type = infos.front() + " " + infos.back();
+			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 
 			_header.boundary = "--" + infos.back().substr(9);		
 			_header.content_type.erase(_header.content_type.size() - 1);
+		}
+
+		else if ( infos.size() == 2 && infos.front() == "Content-Type:" )
+		{
+			infos.pop_front();
+			_header.content_type = infos.front();
+			_header.raw_content_type = _header.content_type;
+			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 	
 		}
 	}
 }

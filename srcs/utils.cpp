@@ -28,12 +28,14 @@ std::string Server::fileToString(std::string fileName, bool error){
 	if (!file.is_open())
 	{
 		if (!file.is_open() && error){
-			std::cout << "Fail when opening : \"" << fileName << "\"" << std::endl;
+			std::cerr << "Fail when opening : \"" << fileName << "\"" << std::endl;
 			exitCloseSock();
 			exit (EXIT_FAILURE);
 		}
-		else
+		else{
+			std::clog << fileName << " not foud, return 404\n";
 			throw Error_page("404");
+		}
 	}
 	while (getline(file, buffer, '\n'))
 	{

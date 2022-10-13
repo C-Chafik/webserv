@@ -7,7 +7,7 @@
 		<h2>Index</h2>
 		<center>
 			<h2>Post</h2>
-			<form method="POST" enctype="application/x-www-form-urlencoded">
+			<form method="POST" action="php/upload.php" enctype="application/x-www-form-urlencoded">
 				<text> Envoi ici un formulaire textuel </text>
 				<input type="text" id="name" name="name">
 				<input type="email" id="email" name="email">
@@ -15,7 +15,7 @@
 			</form>
 
 			<h3>Post</h3>
-			<form method="POST" enctype="multipart/form-data">
+			<form method="POST" action="php/upload.php" enctype="multipart/form-data">
 				<text> Envoi ici un fichier binaire </text>
 				<input type="file" id="file" name="myFile">
 				<input type="submit" value="Submit">
@@ -24,6 +24,15 @@
 				<a href="favicon.ico" download>
 				<img src="favicon.ico" alt="img">
 			</a>
+
+			<form action="php/upload.php" method="POST">
+				<label>Last Name : </label></br>
+				<input class="input" name="last_name" id="name" required>
+				<br>
+				<button type="submit" id="get_form" class="formbtn">
+				<pre class="btn-pre">S U B M I T</pre>
+				</button>
+			</form>
 
 		</center>
 	</body>

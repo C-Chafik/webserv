@@ -47,6 +47,8 @@ void Server::send_413(id_server_type serverNb){
 
 void Server::send_404(id_server_type serverNb){
 	HGen.clear();
+	// std::clog << "serverNb : " << serverNb << std::endl;
+	// std::clog << "path error_404 : " << confs[serverNb].errors[404] << std::endl;
 	std::string fileSTR = fileToString(confs[serverNb].errors[404], true);
 
 	HGen.setStatus("404 Not Found");
