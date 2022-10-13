@@ -13,7 +13,7 @@ std::string	 	 Server::retrieve_location_name( std::string URI, id_server_type s
 
 	for ( ; it != ite ; it++ )
 	{
-		if ( it->first != "/" && URI.compare(0, it->first.size(), it->first) == 0 )
+		if ( it->first != "/" && URI.compare(0, it->first.size() + 1, it->first + "/") == 0 )
 			return it->first;
 	}
 
