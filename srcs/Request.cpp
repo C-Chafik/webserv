@@ -99,7 +99,7 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	// {
 		_read_content_length += len;
 		if ( _with_body == true )
-			std::cout << RED << _header.content_length << WHITE << std::endl;
+			// std::cout << RED << _header.content_length << WHITE << std::endl;
 	// }
 
 	if ( _with_body == true )
@@ -121,7 +121,7 @@ bool	Request::check_if_header_is_received( void )
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
-			std::cout << YELLOW << full_buffer << WHITE << std::endl;
+			// std::cout << YELLOW << full_buffer << WHITE << std::endl;
 			return true;
 		}
 	}
@@ -154,7 +154,7 @@ void	Request::read_header( void )
 		}
 		else if ( first == false )
 		{
-			std::cout << "THIS METHOD IS UNKNOWN ABORTING " << std::endl;
+			// std::cout << "THIS METHOD IS UNKNOWN ABORTING " << std::endl;
 			_header.method = UNKNOWN;
 			return ;
 		}

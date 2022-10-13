@@ -15,7 +15,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	{
 		if ( head.content_type == "multipart/form-data" )
 		{
-			std::cout << "CGI POST ENBALED !!!" << std::endl;
+			// std::cout << "CGI POST ENBALED !!!" << std::endl;
 			std::string filename;
 			std::string line;
 			std::string content;
@@ -31,11 +31,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = "/tmp/cgi_post.log";
 				bod.body_path = file_path;
-				std::cout << "OPENING " << file_path << std::endl;
+				// std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
@@ -73,7 +73,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				send_500(server_id);
 				remove(file.c_str());
-				std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+				// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 				return ;
 			}
 
@@ -118,11 +118,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = path + filename;
 				bod.body_path = file_path;
-				std::cout << "OPENING " << file_path << std::endl;
+				// std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
@@ -172,7 +172,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			send_500(server_id);
 			remove(file.c_str());
-			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+			// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 			return ;
 		}
 

@@ -33,7 +33,7 @@ std::string Server::fileToString(std::string fileName, bool error){
 			exit (EXIT_FAILURE);
 		}
 		else{
-			std::clog << fileName << " not foud, return 404\n";
+			// std::clog << fileName << " not foud, return 404\n";
 			throw Error_page("404");
 		}
 	}

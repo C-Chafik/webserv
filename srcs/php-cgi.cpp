@@ -4,26 +4,26 @@ char **Server::cgi_vars(struct header & header, id_server_type server_id, std::s
 	std::map<std::string, std::string> line;
 
 	line["REQUEST_METHOD"] = method;
-	line["AUTH_TYPE"] = "";
-	line["PATH_TRANSLATED"] = "";
+	// line["AUTH_TYPE"] = "";
+	// line["PATH_TRANSLATED"] = "";
 	line["CONTENT_LENGTH"] = "0";
 	line["GATEWAY_INTERFACE"] = "CGI/1.1";
 	line["REDIRECT_STATUS"] = "200";
 	if (method == "GET")
 		line["QUERY_STRING"] = std::string("\"") + confs[server_id].query_string + std::string("\"");
 	line["SERVER_PROTOCOL"] = "HTTP/1.1";
-	line["SERVER_SOFTWARE"] = "WebServ";
-	line["SCRIPT_NAME"] = php_arg;//parse php_arg
+	// line["SERVER_SOFTWARE"] = "WebServ/1.0";
+	// line["SCRIPT_NAME"] = php_arg;//parse php_arg
 	line["SCRIPT_FILENAME"] = php_arg;
-	line["PATH_INFO"] = php_arg;
+	// line["PATH_INFO"] = php_arg;
 	if (confs[server_id].server_names.size() > 0)
 		line["SERVER_NAME"] = confs[server_id].server_names[0];
 	else
 		line["SERVER_NAME"] = "webserv";
-	line["SCRIPT_PORT"] = confs[server_id].listening.begin()->second[0];
-	line["PATH_TRANSLATED"] = php_arg;
-	line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
-	line["REMOTE_ADDR"] = header.host;
+	line["SERVER_PORT"] = confs[server_id].listening.begin()->second[0];
+	// line["PATH_TRANSLATED"] = php_arg;
+	// line["REQUEST_URI"] = php_arg + confs[server_id].query_string;
+	// line["REMOTE_ADDR"] = header.host;
 	if (method == "POST"){
 		line["CONTENT_TYPE"] = header.raw_content_type;
 		line["CONTENT_LENGTH"] = SSTR(header.content_length);
@@ -90,12 +90,13 @@ bool Server::cgi_error(id_server_type server_id){
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
 	
 	char **env = cgi_vars(header, server_id, php_arg, method);
-	std::clog << "php_arg : " << php_arg << std::endl;
+	// std::clog << "php_arg : " << php_arg << std::endl;
 	std::string buffer_cout = cgi_exec(header, server_id, php_arg, method, env);
-	std::clog << "buffer_cout : " << buffer_cout << std::endl;
+	// std::clog << "buffer_cout : " << buffer_cout << std::endl;
 
 	send_cgi(server_id, parseCgiHeader(buffer_cout));
 
+	std::clog << "=========================" << std::endl;
 	for (size_t i = 0; env[i]; i++){
 		std::clog << env[i] << std::endl;
 		delete[] env[i];

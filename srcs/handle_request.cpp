@@ -6,11 +6,11 @@ bool		Server::check_GET_request_validity( struct header & header, id_server_type
 	
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH EXIST " << std::endl;
-		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
+		// std::cout << "THIS PATH EXIST " << std::endl;
+		// std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
 		if ( confs[server_id].locations[location_name].GET == false )
 		{
-			std::cout << " METHOD GET IS NOT AUTORISED HERE ! " << std::endl;
+			// std::cout << " METHOD GET IS NOT AUTORISED HERE ! " << std::endl;
 			send_405(server_id);
 			return false;
 		}
@@ -25,11 +25,11 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 		
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH EXIST " << std::endl;
-		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
+		// std::cout << "THIS PATH EXIST " << std::endl;
+		// std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
 		if ( confs[server_id].locations[location_name].DELETE == false )
 		{
-			std::cout << " METHOD DELETE IS NOT AUTORISED HERE ! " << std::endl;
+			// std::cout << " METHOD DELETE IS NOT AUTORISED HERE ! " << std::endl;
 			send_405(server_id);
 			return false;
 		}
@@ -43,18 +43,18 @@ bool		Server::check_POST_request_validity( struct header & header, id_server_typ
 	
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
-		std::cout << "THIS PATH EXIST " << std::endl;
-		std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
+	// 	std::cout << "THIS PATH EXIST " << std::endl;
+	// 	std::cout << "FOR HEADER PATH >> " << location_name << std::endl;
 		if ( header.content_length > confs[server_id].body_max_size && header.method == POST )
 		{
-			std::cout << header.content_length << " > " <<  confs[server_id].body_max_size << std::endl;
-			std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
+			// std::cout << header.content_length << " > " <<  confs[server_id].body_max_size << std::endl;
+			// std::cout << "BODY MAX SIZE IS EXCEEDED !" << std::endl;
 			send_413(server_id);
 			return false;
 		}
 		if ( confs[server_id].locations[location_name].POST == false )
 		{
-			std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
+			// std::cout << " METHOD POST IS NOT AUTORISED HERE ! " << std::endl;
 			send_405(server_id);
 			return false;
 		}
@@ -82,7 +82,7 @@ void Server::Get(int clientSocket, id_server_type server_id){
 				send_301(confs[server_id].locations[err].http_redirection.second);
 			}
 		}
-		std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
+		// std::cout << CYAN << "END METHOD = GET " << WHITE << std::endl;
 		//! deleting the tmp file
 		remove(all_request[server_id].get_file_path().c_str());
 		all_request.erase(server_id);
@@ -90,7 +90,7 @@ void Server::Get(int clientSocket, id_server_type server_id){
 
 bool Server::handle_connection(int clientSocket, id_server_type server_id)
 {
-	std::cout << "server id : " << server_id << std::endl;
+	// std::cout << "server id : " << server_id << std::endl;
 
 	if ( all_request.find(server_id) == all_request.end() )
 	{
@@ -129,7 +129,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		
 		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path(), server_id);
 		all_request.erase(server_id);
-		std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;
+		// std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;
 	}
 	else if ( method == DELETE )
 	{
@@ -145,7 +145,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		remove(all_request[server_id].get_file_path().c_str());
 		send_202();
 		all_request.erase(server_id);
-		std::cout << CYAN << "END METHOD = DELETE " << WHITE << std::endl;
+		// std::cout << CYAN << "END METHOD = DELETE " << WHITE << std::endl;
 	}
 
 

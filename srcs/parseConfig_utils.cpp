@@ -139,7 +139,7 @@ std::string	 parseConfig::get_location_path( std::string & line )
 
 	if ( ( new_line.size() >= 1 && *( new_line.end() - 1 ) != '/' ) )
 	{
-		std::cout << RED << "LOCATION PATH MUST BE A FOLDER" << WHITE << std::endl;
+		// std::cout << RED << "LOCATION PATH MUST BE A FOLDER" << WHITE << std::endl;
 		return "";
 	}
 
