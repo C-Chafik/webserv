@@ -44,9 +44,12 @@ class Server{
 
 
 	//func
+
+	bool handle_connection(int clientSocket, id_server_type server_id);
+
+
 	int accept_connection(int fdServer);
 	void receive_request_body( struct request & req, int requestFd );
-	bool handle_connection(int clientSocket, id_server_type server_id);
 	std::string fileLocation(std::string request, id_server_type serverNb);
 	std::string	targetLocation( std::string URI, id_server_type server_id );
 	std::string retrieve_location_name( std::string URI, id_server_type server_id );

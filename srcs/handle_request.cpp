@@ -96,8 +96,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
 	}
-
-	all_request[server_id].receive_request(clientSocket);
+	all_request[server_id].read_client(clientSocket);
 
 	int method = all_request[server_id].get_header().method;
 

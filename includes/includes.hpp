@@ -9,7 +9,7 @@
 # define MAGENTA "\033[1m\033[35m"
 # define CYAN    "\033[1m\033[36m"
 # define WHITE   "\033[1m\033[37m"
-# define TMP_FILE_NAME "tmp_filex"
+# define TMP_FILE_NAME "/tmp/tmp_filex"
 
 # define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
@@ -56,13 +56,13 @@
 # include "HeaderGen.hpp"
 # include "server.hpp"
 
-#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
+# define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
 
 
-#include "parseConfig.hpp"
-#include "HeaderGen.hpp"
-#include "server.hpp"
+# include "parseConfig.hpp"
+# include "HeaderGen.hpp"
+# include "server.hpp"
 
 enum    METHOD{
     GET,
