@@ -11,14 +11,6 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	while ( path.find("//") != std::string::npos )
 		path.erase(path.find("//"), 1);
 
-	// std::clog << "avant\n";
-	// std::clog << head.path.substr(head.path.size() - 4);
-	// std::clog << head.path.size() << std::endl;
-	// std::clog << "apres\n";
-	// std::clog << "full path : " << head.path << std::endl;
-	// std::clog << "sub path : " << head.path.substr(head.path.size() - 4) << std::endl;
-
-
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
 		if ( head.content_type == "multipart/form-data" )
@@ -58,8 +50,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 				std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
 				while ( script_path.find("//") != std::string::npos )
-					script_path.erase(script_path.find("//"), 1)
-					;
+					script_path.erase(script_path.find("//"), 1);
 				php_cgi(head, server_id , script_path, "POST");
 				remove("/tmp/cgi_post.log");
 				tmp_line.clear();

@@ -9,7 +9,7 @@ char **Server::cgi_vars(struct header & header, id_server_type server_id, std::s
 	line["GATEWAY_INTERFACE"] = "CGI/1.1";
 	line["REDIRECT_STATUS"] = "";
 	if (method == "GET")
-		line["QUERY_STRING"] = std::string("\"") + confs[server_id].query_string + std::string("\"");
+		line["QUERY_STRING"] = confs[server_id].query_string ;
 	line["SERVER_PROTOCOL"] = "HTTP/1.1";
 	line["SERVER_SOFTWARE"] = "WebServ/1.0";
 	line["SCRIPT_NAME"] = php_arg;//parse php_arg
@@ -93,7 +93,7 @@ bool Server::cgi_error(id_server_type server_id){
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
 	char **env = cgi_vars(header, server_id, php_arg, method);
 	std::string buffer_cout = cgi_exec(header, server_id, php_arg, method, env);
-	// std::clog << "buffer_cout : " << buffer_cout << std::endl;
+	std::clog << "php_arg : "<< php_arg << buffer_cout << std::endl;
 
 	send_cgi(server_id, parseCgiHeader(buffer_cout));
 

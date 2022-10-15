@@ -100,9 +100,19 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	if ( !confs[server_id].cgi_extension.empty() )
 	{
-		size_t ext = rtnFile.rfind(confs[server_id].cgi_extension);
-		if ( ext != std::string::npos && (rtnFile[ext + confs[server_id].cgi_extension.size()] == '/' || !rtnFile[ext + confs[server_id].cgi_extension.size()]) ){
-			php_cgi(header, server_id , rtnFile, "GET");
+
+		std::string tar_loc = targetLocation(header.path, server_id);
+		size_t ext = tar_loc.rfind(confs[server_id].cgi_extension);
+
+		std::clog << "tar_loc : " << tar_loc << std::endl;
+		std::clog << "ext : " << ext << std::endl;
+		std::clog << "tar_loc[ext] : " << tar_loc[ext] << std::endl;
+
+		if ( ext != std::string::npos && (tar_loc[ext + confs[server_id].cgi_extension.size()] == '/' || !tar_loc[ext + confs[server_id].cgi_extension.size()]) ){
+			std::string script_path = fileLocation(header.path, server_id) + targetLocation(header.path, server_id);
+			while ( script_path.find("//") != std::string::npos )
+				script_path.erase(script_path.find("//"), 1);
+			php_cgi(header, server_id , script_path, "GET");
 			return "";
 		}
 	}
