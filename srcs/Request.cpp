@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/13 12:10:00 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/14 14:56:48 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ Request::Request( Request const & src )
 Request & Request::operator=( Request const & src )
 {
 	_tmp_filename = src._tmp_filename;
-
 	_read_content_length = src._read_content_length;	
 	_is_full = src._is_full;
 	_with_body = src._with_body;
@@ -46,7 +45,6 @@ Request & Request::operator=( Request const & src )
 	_header.method = src._header.method;
 	_header.content_length = src._header.content_length;
 	_header.keep_alive = src._header.keep_alive;
-
 	_body.body_path = src._body.body_path;
 	_body.type = src._body.type;
 	_body.length = src._body.length;
@@ -56,28 +54,29 @@ Request & Request::operator=( Request const & src )
 
 void	Request::search_tmp_name( void )
 {
-	std::stringstream out;
-	std::string name = TMP_FILE_NAME;
-	std::string s_id;
-	size_t id = 174;
+	std::stringstream 	out;
+	std::string 		name = TMP_FILE_NAME;
+	std::string 		s_id;
+	size_t 				id = 174;
 	
 	while ( 1 )
 	{
 		out << id;
-
 		s_id = out.str();
+		
 		if ( file_already_exist(name + s_id) == false )
 		{
 			_tmp_filename = name + s_id;
 			return ;
 		}
+		
 		s_id.clear();
 		out.str("");
 		id++;
 	}
 }
 
-void Request::receive_request( int requestFd )
+void Request::read_client( int requestFd )
 {
     char 			buffer[8192 + 1];
 	std::fstream	file( _tmp_filename.c_str(), std::fstream::app | std::fstream::binary );
@@ -159,7 +158,6 @@ void	Request::read_header( void )
 		}
 		else if ( first == false )
 		{
-			// std::cout << "THIS METHOD IS UNKNOWN ABORTING " << std::endl;
 			_header.method = UNKNOWN;
 			return ;
 		}
@@ -188,7 +186,7 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = infos.front() + " " + infos.back();
-			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 
+			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 
 			_header.boundary = "--" + infos.back().substr(9);		
 			_header.content_type.erase(_header.content_type.size() - 1);
 		}
@@ -198,7 +196,7 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = _header.content_type;
-			// std::clog << "\'" << _header.raw_content_type << "\'\n"; 	
+			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 	
 		}
 	}
 }

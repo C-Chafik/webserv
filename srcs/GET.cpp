@@ -1,5 +1,12 @@
 #include "includes.hpp"
 
+std::string		Server::return_content_type( std::string URI )
+{
+	if (URI.size() >= 4 && URI.substr(URI.size() - 4) == ".ico" )
+		return "image/ico";
+	return "text/html";
+}
+
 std::string Server::autoindex( std::string URI )
 {
 	std::string listing;
@@ -67,11 +74,12 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 	
 	else if ( is_folder(responses) == true )
 		slash = true;
-
+	
 	if ( slash == true && autoindexed == true ) //! IF autoindexed
 	{
         rtnFile = autoindex(rtnFile);
 		send_200_autoindex(rtnFile);
+		return "";
 	}
 
 	else if ( slash == true )
@@ -101,6 +109,6 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	redirect(rtnFile, server_id);
 
-	// std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
+	std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
 	return responses;	
 }

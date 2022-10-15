@@ -67,8 +67,7 @@ void Server::Get(int clientSocket, id_server_type server_id){
 		try{
 			to_send = treat_GET_request(all_request[server_id].get_header(), server_id, clientSocket);
 			if (!to_send.empty()){
-				// std::clog << "to_send : " << to_send << std::endl;
-				send_200(to_send);
+				send_responses(to_send);
 			}
 		}
 		catch (const Error_page& page){
@@ -97,8 +96,7 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		Request request;
 		all_request.insert(std::make_pair(server_id, request));
 	}
-
-	all_request[server_id].receive_request(clientSocket);
+	all_request[server_id].read_client(clientSocket);
 
 	int method = all_request[server_id].get_header().method;
 
@@ -146,10 +144,14 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 		all_request.erase(server_id);
 		// std::cout << CYAN << "END METHOD = DELETE " << WHITE << std::endl;
 	}
+	else
+		send_501(server_id);
 
 
 	std::string response = HGen.getStr();
 	send(clientSocket, response.c_str(), response.size(), SOCK_DGRAM);
+
+	// std::cout << "REPONSE [" << response << "]" << std::endl;
 
 	return all_request[server_id].get_header().keep_alive;
 }

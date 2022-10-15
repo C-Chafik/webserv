@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/13 12:09:44 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/14 14:55:53 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ struct header
 struct body
 {
 	std::string body_path;
-	
 	std::string type;
 	size_t		length;
 };
@@ -51,7 +50,7 @@ class Request
 		
 		void				search_tmp_name( void );
 
-		void 				receive_request( int requestFd );
+		void 				read_client( int requestFd );
 		void		 		start_treating( void );
 
 
@@ -73,7 +72,7 @@ class Request
 		struct	header				_header;
 		struct	body		 		_body;
 
-		long long							_read_content_length;
+		long long					_read_content_length;
 
 		bool			 			_is_full;
 		bool						_with_body;
