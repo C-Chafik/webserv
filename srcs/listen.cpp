@@ -33,7 +33,7 @@ void Server::listenSocketServer(){
 					socket_to_server.push_back(k);
 
 
-					std::cout << it->second[i] << std::endl;
+					// std::cout << it->second[i] << std::endl;
 
 					if (bind(server_sockets.at(server_sockets.size() - 1),
 						reinterpret_cast<struct sockaddr *>(&serverSocketStruct),

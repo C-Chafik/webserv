@@ -98,7 +98,7 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	// {
 		_read_content_length += len;
 		if ( _with_body == true )
-			std::cout << RED << _header.content_length << WHITE << std::endl;
+			// std::cout << RED << _header.content_length << WHITE << std::endl;
 	// }
 
 	if ( _with_body == true )
@@ -120,7 +120,7 @@ bool	Request::check_if_header_is_received( void )
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
-			std::cout << YELLOW << full_buffer << WHITE << std::endl;
+			// std::cout << YELLOW << full_buffer << WHITE << std::endl;
 			return true;
 		}
 	}
@@ -147,7 +147,6 @@ void	Request::read_header( void )
 		end += '\n';
 		if ( end.rfind("\r\n\r\n") != std::string::npos )
 			break ;
-			
 		std::list<std::string> infos = ft_split_no_r(buff, " \r");
 
 		if ( infos.size() == 3 && (infos.front() == "GET" || infos.front() == "POST" || infos.front() == "DELETE") )
