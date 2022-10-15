@@ -68,11 +68,8 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 		autoindexed = confs[server_id].locations[location_name].autoindex;
-
-	if (*(header.path.end() - 1) == '/' )
-		slash = true;
 	
-	else if ( is_folder(responses) == true )
+	if ( is_folder(responses) == true )
 		slash = true;
 	
 	if ( slash == true && autoindexed == true ) //! IF autoindexed
@@ -84,17 +81,12 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	else if ( slash == true )
 	{
-		if ( rtnFile.empty() ) //! so its root
-			return confs[server_id].locations["/"].index;
+		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
+			return confs[server_id].locations[location_name].index;
 		else
 		{
-			if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
-				return confs[server_id].locations[location_name].index;
-			else
-			{
-				send_404(server_id);
-				return "";
-			}
+			send_404(server_id);
+			return "";
 		}
 	}
 

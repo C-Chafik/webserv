@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 14:28:47 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/14 14:55:53 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/15 12:32:09 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ class Request
 		void		 		read_header( void );
 		void		 		read_body( void );
 
+		void				set_curr_response( std::string & src );
+
+		std::string &		get_curr_response( void );
 		std::string &	 	get_file_path( void );
 		struct header & 	get_header( void );
 		std::string & 		get_request( void );
@@ -67,6 +70,8 @@ class Request
 		bool		 		is_full( void );
 		
 	private:
+
+		std::string 				_curr_response;
 		std::string		 			_tmp_filename;
 		std::fstream			 	_request_fd;
 		struct	header				_header;

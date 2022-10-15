@@ -42,8 +42,6 @@ class Server{
 	bool cgi_on;
 	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
 
-	std::string _curr_response;
-
 
 	//func
 

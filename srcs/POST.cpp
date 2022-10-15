@@ -15,7 +15,6 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	{
 		if ( head.content_type == "multipart/form-data" )
 		{
-			// std::cout << "CGI POST ENBALED !!!" << std::endl;
 			std::string filename;
 			std::string line;
 			std::string content;
@@ -31,11 +30,9 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = "/tmp/cgi_post.log";
 				bod.body_path = file_path;
-				// std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
@@ -71,13 +68,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 			std::string file_path = "/tmp/cgi_post.log";
 			bod.body_path = file_path;
-			// std::cout << MAGENTA << file_path << std::endl;
 			new_file.open(file_path.c_str(), std::ios::out);
 			if ( !new_file.is_open() )
 			{
 				send_500(server_id);
 				remove(file.c_str());
-				// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 				return ;
 			}
 
@@ -111,9 +106,15 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
-				// std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
-				// filename = name.back().substr(10);
-				// filename = line.substr(57);
+				std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
+				if ( name.back().find("filename") == std::string::npos )
+				{
+					std::cout << " NO FILENAME FOUND IN THE BODY ! MAKE A PROPER FORM !" << std::endl;
+					send_500(server_id); //! for now its an internal server error 500
+					remove(file.c_str());
+					return ;
+				}
+				filename = name.back().substr(10);
 				filename = filename.substr(0, filename.find("\""));
 			}
 			else if ( line.substr(0, 13) == "Content-Type:" )
@@ -122,12 +123,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = path + filename;
 				bod.body_path = file_path;
-				// std::cout << "OPENING " << file_path << std::endl;
+				std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
-					send_500(server_id); //! for now its an internal server error 500
+					send_500(server_id);
 					remove(file.c_str());
 					return ;
 				}
@@ -170,13 +170,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 		std::string file_path = "/tmp/cgi_post.log";
 		bod.body_path = file_path;
-		// std::cout << MAGENTA << file_path << std::endl;
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
 		{
 			send_500(server_id);
 			remove(file.c_str());
-			// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 			return ;
 		}
 

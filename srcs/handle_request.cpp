@@ -136,7 +136,7 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 
 int	Server::send_client_response( int clientSocket )
 {
-	if ( send(clientSocket, _curr_response.c_str(), _curr_response.size(), SOCK_DGRAM) < 0 )
+	if ( send(clientSocket, HGen.getStr().c_str(), HGen.getStr().size(), SOCK_DGRAM) < 0 )
 	{
 		std::cout << MAGENTA << " FATAL ERROR SENDING CLIENT RESPONSE. ABORTING " << WHITE << std::endl;
 		return -1;

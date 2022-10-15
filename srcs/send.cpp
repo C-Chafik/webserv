@@ -12,7 +12,6 @@ void Server::send_200_autoindex(std::string content){
 	HGen.setType("text/html");
 	HGen.setContentString(content);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_200( std::string file, std::string & extension ){
@@ -23,7 +22,6 @@ void Server::send_200( std::string file, std::string & extension ){
 	HGen.setType(extension);
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_202(void){
@@ -41,7 +39,6 @@ void Server::send_400(id_server_type serverNb){
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_413(id_server_type serverNb){
@@ -52,7 +49,6 @@ void Server::send_413(id_server_type serverNb){
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_404(id_server_type serverNb){
@@ -65,7 +61,6 @@ void Server::send_404(id_server_type serverNb){
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_405(id_server_type serverNb){
@@ -76,7 +71,6 @@ void Server::send_405(id_server_type serverNb){
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_500(id_server_type serverNb){
@@ -87,18 +81,16 @@ void Server::send_500(id_server_type serverNb){
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_501(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[501], true);
 
 	HGen.setStatus("501 Not Implemented");
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();
-	_curr_response = HGen.getStr();
 }
 
 void Server::send_301(std::string location){
