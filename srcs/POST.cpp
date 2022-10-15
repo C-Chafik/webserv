@@ -11,14 +11,6 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	while ( path.find("//") != std::string::npos )
 		path.erase(path.find("//"), 1);
 
-	// std::clog << "avant\n";
-	// std::clog << head.path.substr(head.path.size() - 4);
-	// std::clog << head.path.size() << std::endl;
-	// std::clog << "apres\n";
-	// std::clog << "full path : " << head.path << std::endl;
-	// std::clog << "sub path : " << head.path.substr(head.path.size() - 4) << std::endl;
-
-
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
 		if ( head.content_type == "multipart/form-data" )
