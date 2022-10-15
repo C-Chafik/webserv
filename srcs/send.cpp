@@ -85,7 +85,7 @@ void Server::send_500(id_server_type serverNb){
 
 void Server::send_501(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
+	std::string fileSTR = fileToString(confs[serverNb].errors[501], true);
 
 	HGen.setStatus("501 Not Implemented");
 	HGen.setType("text/html");

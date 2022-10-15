@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/14 14:56:48 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/15 12:48:57 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,16 +120,11 @@ bool	Request::check_if_header_is_received( void )
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
-			// std::cout << YELLOW << full_buffer << WHITE << std::endl;
+			std::cout << YELLOW << full_buffer << WHITE << std::endl;
 			return true;
 		}
 	}
 	return false;
-}
-
-void	Request::read_body( void )
-{
-	
 }
 
 void	Request::read_header( void )
@@ -209,6 +204,16 @@ struct header & Request::get_header( void )
 struct body & Request::get_body( void )
 {
 	return _body;
+}
+
+void				Request::set_curr_response( std::string & src )
+{
+	_curr_response = src;
+}
+
+std::string &		Request::get_curr_response( void )
+{
+	return _curr_response;
 }
 
 bool		 		Request::is_full( void )

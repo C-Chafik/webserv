@@ -50,7 +50,7 @@ struct config
 		errors[405] = "default/error_405.html";
 		errors[413] = "default/error_413.html";
 		errors[500] = "default/error_500.html";
-		errors[500] = "default/error_501.html";
+		errors[501] = "default/error_501.html";
     }
 };
 
