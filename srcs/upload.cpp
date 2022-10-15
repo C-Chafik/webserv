@@ -11,11 +11,19 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	while ( path.find("//") != std::string::npos )
 		path.erase(path.find("//"), 1);
 
-	if ( head.path.size() >= 4 && head.path.substr(head.path.size() - 4) == ".php" )
+	// std::clog << "avant\n";
+	// std::clog << head.path.substr(head.path.size() - 4);
+	// std::clog << head.path.size() << std::endl;
+	// std::clog << "apres\n";
+	// std::clog << "full path : " << head.path << std::endl;
+	// std::clog << "sub path : " << head.path.substr(head.path.size() - 4) << std::endl;
+
+
+	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
 		if ( head.content_type == "multipart/form-data" )
 		{
-			std::cout << "CGI POST ENBALED !!!" << std::endl;
+			// std::cout << "CGI POST ENBALED !!!" << std::endl;
 			std::string filename;
 			std::string line;
 			std::string content;
@@ -31,11 +39,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = "/tmp/cgi_post.log";
 				bod.body_path = file_path;
-				std::cout << "OPENING " << file_path << std::endl;
+				// std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
@@ -47,7 +55,12 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 					new_file << '\n';
 				}
 				new_file.close();
-				php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+
+				std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+				while ( script_path.find("//") != std::string::npos )
+					script_path.erase(script_path.find("//"), 1)
+					;
+				php_cgi(head, server_id , script_path, "POST");
 				remove("/tmp/cgi_post.log");
 				tmp_line.clear();
 			}
@@ -73,7 +86,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				send_500(server_id);
 				remove(file.c_str());
-				std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+				// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 				return ;
 			}
 
@@ -81,7 +94,12 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				new_file << line;
 			
 			new_file.close();
-			php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+
+			std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+			while ( script_path.find("//") != std::string::npos )
+				script_path.erase(script_path.find("//"), 1);
+
+			php_cgi(head, server_id , script_path, "POST");
 			remove("/tmp/cgi_post.log");
 		}
 	}
@@ -104,7 +122,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				// std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
 				// filename = name.back().substr(10);
-				filename = line.substr(57);
+				// filename = line.substr(57);
 				filename = filename.substr(0, filename.find("\""));
 			}
 			else if ( line.substr(0, 13) == "Content-Type:" )
@@ -113,11 +131,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = path + filename;
 				bod.body_path = file_path;
-				std::cout << "OPENING " << file_path << std::endl;
+				// std::cout << "OPENING " << file_path << std::endl;
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
-					std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+					// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
@@ -167,7 +185,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			send_500(server_id);
 			remove(file.c_str());
-			std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
+			// std::cout << "ERROR CREATING THE UPLOAD FILE " << std::endl;
 			return ;
 		}
 
@@ -175,6 +193,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			new_file << line;
 		
 		new_file.close();
+		
+		std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
+		while ( script_path.find("//") != std::string::npos )
+			script_path.erase(script_path.find("//"), 1);
+
 		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
 		remove("/tmp/cgi_post.log");
 	}
