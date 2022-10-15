@@ -48,7 +48,9 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 		char ** arg = create_arg(php_arg);
 
 		dup2(fdFileIn, STDIN_FILENO);
+		close(fdFileIn);
 		dup2(fdFileOut, STDOUT_FILENO);
+		close(fdFileOut);
 
 		execve(confs[server_id].cgi_path.c_str(), arg, env);
 
@@ -79,8 +81,6 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 	dup2(saveOut, STDOUT_FILENO);
 	fclose(fileIn);
 	fclose(fileOut);
-	close(fdFileIn);
-	close(fdFileOut);
 	close(saveIn);
 	close(saveOut);
 

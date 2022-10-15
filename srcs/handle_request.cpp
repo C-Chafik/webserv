@@ -1,4 +1,4 @@
-#include "includes.hpp"
+#include "../includes/includes.hpp"
 
 bool		Server::check_GET_request_validity( struct header & header, id_server_type server_id )
 {
@@ -126,10 +126,9 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 	else
 		send_501(server_id);
 	
-	
 	if ( send_client_response(clientSocket) < 0 ) //? Send final response
 		exit(1);
-
+	
 	remove(client_request.get_file_path().c_str());
 	all_request.erase(server_id);
 	return client_request.get_header().keep_alive;
