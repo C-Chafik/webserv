@@ -126,7 +126,6 @@ bool Server::handle_connection(int clientSocket, id_server_type server_id)
 
 		if ( all_request[server_id].is_full() == false )
 			return true;
-		
 		treat_POST_request(all_request[server_id].get_header(), all_request[server_id].get_body(), all_request[server_id].get_file_path(), server_id);
 		all_request.erase(server_id);
 		// std::cout << CYAN << "END METHOD = POST " << WHITE << std::endl;

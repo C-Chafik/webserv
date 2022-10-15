@@ -18,6 +18,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	// std::clog << "full path : " << head.path << std::endl;
 	// std::clog << "sub path : " << head.path.substr(head.path.size() - 4) << std::endl;
 
+
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
 		if ( head.content_type == "multipart/form-data" )
@@ -121,7 +122,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				// std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
 				// filename = name.back().substr(10);
-				filename = line.substr(57);
+				// filename = line.substr(57);
 				filename = filename.substr(0, filename.find("\""));
 			}
 			else if ( line.substr(0, 13) == "Content-Type:" )
