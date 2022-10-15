@@ -8,10 +8,16 @@
 	}
 	fclose( $f );
 
-	echo "*******************</br>";
-	var_dump($_POST);
-	echo "</br>";
-	var_dump($_FILES);
-	echo "</br>";
-	echo "*******************</br>";
+	if (isset($_POST)){
+		echo "<h2>POST :</h2>";
+		echo "<p>";
+		var_dump($_POST);
+		echo "</p>";
+	}
+	if (isset($_FILES)){
+		echo "<h2>FILES :</h2>";
+		echo "<p>";
+		var_dump($_FILES);
+		echo "</p>";
+	}
 ?>
