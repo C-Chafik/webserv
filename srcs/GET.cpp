@@ -109,6 +109,6 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	redirect(rtnFile, server_id);
 
-	std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
+	// std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
 	return responses;	
 }

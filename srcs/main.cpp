@@ -4,8 +4,8 @@ int main( int ac, char ** av )
 {
 	if ( ac > 2 )
 	{
-		std::cout << MAGENTA << "Wrong number of argument." << std::endl;
-		std::cout << " Provide a configuration file path, or launch webserv with no argument." << WHITE << std::endl;
+		// std::cout << MAGENTA << "Wrong number of argument." << std::endl;
+		// std::cout << " Provide a configuration file path, or launch webserv with no argument." << WHITE << std::endl;
 		return EXIT_FAILURE;
 	}
 

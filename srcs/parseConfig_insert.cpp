@@ -71,13 +71,13 @@ bool parseConfig::insert_error_page( std::string & raw_error_page )
 
 	if ( splitted.size() < 2 )
 	{
-		std::cout << RED << "MISSING ARGUMENT ON ERROR PAGE " << WHITE << std::endl;
+		// std::cout << RED << "MISSING ARGUMENT ON ERROR PAGE " << WHITE << std::endl;
 		return false;
 	}
 
 	if ( isonly_digit(splitted.back()) == true )
 	{
-		std::cout << RED << "LAST PARAMETER MUST BE AN ERROR PAGE PATH " << WHITE << std::endl;
+		// std::cout << RED << "LAST PARAMETER MUST BE AN ERROR PAGE PATH " << WHITE << std::endl;
 		return false;
 	}
 
@@ -85,7 +85,7 @@ bool parseConfig::insert_error_page( std::string & raw_error_page )
 	{
 		if ( isonly_digit(*it) == false && *it != splitted.back() )
 		{
-			std::cout << RED << "ERROR CODE IS ONLY DIGIT " << WHITE << std::endl;
+			// std::cout << RED << "ERROR CODE IS ONLY DIGIT " << WHITE << std::endl;
 			return false;
 		}
 		else if ( isonly_digit(*it) == true )
@@ -229,7 +229,7 @@ std::string	parseConfig::insert_index( std::string & line )
 	
 	if ( file_already_exist(path) == false )
 	{
-		std::cout << RED << " THE PATH OF THIS INDEX DOESN'T EXIST ! " << std::endl;
+		// std::cout << RED << " THE PATH OF THIS INDEX DOESN'T EXIST ! " << std::endl;
 		return "";
 	}
 	

@@ -6,7 +6,7 @@
 /*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/14 14:56:48 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/14 15:19:56 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	// {
 		_read_content_length += len;
 		if ( _with_body == true )
-			std::cout << RED << _header.content_length << WHITE << std::endl;
+			// std::cout << RED << _header.content_length << WHITE << std::endl;
 	// }
 
 	if ( _with_body == true )
@@ -127,11 +127,6 @@ bool	Request::check_if_header_is_received( void )
 	return false;
 }
 
-void	Request::read_body( void )
-{
-	
-}
-
 void	Request::read_header( void )
 {
 	std::ifstream tmp(_tmp_filename.c_str(), std::ifstream::binary );
@@ -147,7 +142,6 @@ void	Request::read_header( void )
 		end += '\n';
 		if ( end.rfind("\r\n\r\n") != std::string::npos )
 			break ;
-			
 		std::list<std::string> infos = ft_split_no_r(buff, " \r");
 
 		if ( infos.size() == 3 && (infos.front() == "GET" || infos.front() == "POST" || infos.front() == "DELETE") )

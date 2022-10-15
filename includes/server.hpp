@@ -42,10 +42,15 @@ class Server{
 	bool cgi_on;
 	std::map<id_server_type/*socket id*/, class Request /*Request Object*/> all_request;
 
+	std::string _curr_response;
+
 
 	//func
 
-	bool handle_connection(int clientSocket, id_server_type server_id);
+	int		send_client_response( int clientSocket );
+
+	bool 	handle_connection(int clientSocket, id_server_type server_id);
+	bool 	treat_request( Request & client_request, int clientSocket, id_server_type server_id );
 
 
 	int accept_connection(int fdServer);
@@ -83,14 +88,18 @@ class Server{
 	std::string cgi_exec(struct header & header, id_server_type server_id, std::string php_arg, std::string method, char **env);
 	char **create_arg(std::string php_arg);
 
+
+	bool reject_client( int clientSocket, std::string & file_to_delete );
+
 	//* DELETE
 	
+	void	delete_request( Request & client_request, id_server_type server_id );
 	void	treat_DELETE_request( struct header & head, id_server_type server_id );
 	bool	check_DELETE_request_validity( struct header & header, id_server_type server_id );
 
 	//* GET
-	void Get(int clientSocket, id_server_type server_id);
-	bool		check_GET_request_validity( struct header & header, id_server_type server_id );
+	void get_request( Request & client_request, int clientSocket, id_server_type server_id );
+	bool	check_GET_request_validity( struct header & header, id_server_type server_id );
 	std::string autoindex( std::string URI );
 	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 	std::string return_content_type( std::string URI );
@@ -98,6 +107,7 @@ class Server{
 
 	//* POST
 	std::string get_file_name( const std::string & line );
+	void		post_request( Request & client_request, id_server_type server_id );
 	void 		treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
 	bool		check_POST_request_validity( struct header & header, id_server_type server_id );
 
