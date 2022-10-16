@@ -138,7 +138,7 @@ int	Server::send_client_response( int clientSocket )
 {
 	if ( send(clientSocket, HGen.getStr().c_str(), HGen.getStr().size(), SOCK_DGRAM) < 0 )
 	{
-		std::cout << MAGENTA << " FATAL ERROR SENDING CLIENT RESPONSE. ABORTING " << WHITE << std::endl;
+		std::cerr << MAGENTA << " FATAL ERROR SENDING CLIENT RESPONSE. ABORTING " << WHITE << std::endl;
 		return -1;
 	}
 	return 0;

@@ -13,8 +13,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
+		std::clog << "1\n";
 		if ( head.content_type == "multipart/form-data" )
 		{
+		std::clog << "2\n";
+
 			std::string filename;
 			std::string line;
 			std::string content;
@@ -55,6 +58,8 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		}
 		else
 		{ //! Need to find how to store it
+		std::clog << "3\n";
+		
 			std::string filename;
 			std::string line;
 			std::string content;
@@ -91,6 +96,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else if ( head.content_type == "multipart/form-data" )
 	{
+		std::clog << "4\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -107,10 +113,11 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
 				std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
+				std::clog << name.back() << std::endl;
 				if ( name.back().find("filename") == std::string::npos )
 				{
-					std::cout << " NO FILENAME FOUND IN THE BODY ! MAKE A PROPER FORM !" << std::endl;
-					send_500(server_id); //! for now its an internal server error 500
+					std::cerr << "No file name found in the body! Make a proper form" << std::endl;
+					send_400(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
 					return ;
 				}
@@ -157,6 +164,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
+		std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -187,7 +195,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		while ( script_path.find("//") != std::string::npos )
 			script_path.erase(script_path.find("//"), 1);
 
-		php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
+		// php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
 		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();

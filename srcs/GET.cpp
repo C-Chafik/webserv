@@ -96,9 +96,9 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 		std::string tar_loc = targetLocation(header.path, server_id);
 		size_t ext = tar_loc.rfind(confs[server_id].cgi_extension);
 
-		std::clog << "tar_loc : " << tar_loc << std::endl;
-		std::clog << "ext : " << ext << std::endl;
-		std::clog << "tar_loc[ext] : " << tar_loc[ext] << std::endl;
+		// std::clog << "tar_loc : " << tar_loc << std::endl;
+		// std::clog << "ext : " << ext << std::endl;
+		// std::clog << "tar_loc[ext] : " << tar_loc[ext] << std::endl;
 
 		if ( ext != std::string::npos && (tar_loc[ext + confs[server_id].cgi_extension.size()] == '/' || !tar_loc[ext + confs[server_id].cgi_extension.size()]) ){
 			std::string script_path = fileLocation(header.path, server_id) + targetLocation(header.path, server_id);

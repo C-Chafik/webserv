@@ -97,9 +97,9 @@ void Server::php_cgi(struct header & header, id_server_type server_id, std::stri
 
 	send_cgi(server_id, parseCgiHeader(buffer_cout));
 
-	std::clog << "=========================" << std::endl;
+	// std::clog << "=========================" << std::endl;
 	for (size_t i = 0; env[i]; i++){
-		std::clog << env[i] << std::endl;
+		// std::clog << env[i] << std::endl;
 		delete[] env[i];
 	}
 	delete[] env;
