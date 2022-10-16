@@ -6,8 +6,7 @@
 		<style>
 			body {
 			display: flex;
-			/* justify-content: center;
-			align-items: center; */
+			
 			min-height: 100vh;
 			background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
 			overflow: hidden;
@@ -15,18 +14,20 @@
 			}
 			h1, h2{
 				margin-top: 10px;
+				margin-left: 10px;
 				font-weight: bold;
 			}
 			h1{
 				color: white;
 				font-size: 65px;
-				margin-top: 10px;
-				margin-left: 10px;
+				/* margin-top: -80px;
+				margin-left: 10px; */
 			}
-			h2{
+			p{
 				color: #607d8b;
-				margin-top: -40px;
-				font-size: 20px;
+				margin-top: 200px;
+				margin-left: 10px;
+				font-size: 35px;
 			}
 			.head{
 				margin-top: -10px;
@@ -50,12 +51,13 @@
 	</head>
 	<body>
 		<h1>Post with cgi</h1>
-		<form method="GET" action="result_qs.php">
-			<label for="name">Nom</label>
-			<input type="text" id="name" name="name">
-			<label for="bd">Date de naissance</label>
-			<input type="date" id="bd" name="bd">
-			<input type="submit" value="Submit">
-		</form>
+		<center>
+		<p>
+			<?php if (isset($_GET['name']))
+				echo "Bonjour, ".$_GET['name']."<br/>";?>
+			<?php if (isset($_GET['bd']))
+				echo "Tu es nee le : ".$_GET['bd'];?>
+		</p>
+		</center>
 	</body>
 </html>

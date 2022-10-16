@@ -42,6 +42,21 @@ std::string Server::autoindex( std::string URI )
 	return listing;
 }	
 
+std::string parse_uri_lite(std::string path){
+	typedef std::string::size_type s_t;
+	
+	std::string uri = path;
+	s_t pos_i;
+	std::string rtn;
+	pos_i = uri.find("?");
+	if (pos_i == std::string::npos)
+		return path;
+
+	rtn = path.substr(0, pos_i);
+
+	return rtn;
+}
+
 std::string Server::treat_GET_request(struct header & header, id_server_type server_id, int clientFd ) {
 	std::string rtnFile;
 	std::string location_name;
@@ -100,8 +115,9 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 		// std::clog << "ext : " << ext << std::endl;
 		// std::clog << "tar_loc[ext] : " << tar_loc[ext] << std::endl;
 
-		if ( ext != std::string::npos && (tar_loc[ext + confs[server_id].cgi_extension.size()] == '/' || !tar_loc[ext + confs[server_id].cgi_extension.size()]) ){
-			std::string script_path = fileLocation(header.path, server_id) + targetLocation(header.path, server_id);
+		if ( ext != std::string::npos && (tar_loc[ext + confs[server_id].cgi_extension.size()] == '?' || tar_loc[ext + confs[server_id].cgi_extension.size()] == '/' || !tar_loc[ext + confs[server_id].cgi_extension.size()]) ){
+			std::string script_path = fileLocation(header.path, server_id) + parse_uri_lite(targetLocation(header.path, server_id));
+			std::clog << parse_uri_lite(targetLocation(header.path, server_id)) << std::endl;
 			while ( script_path.find("//") != std::string::npos )
 				script_path.erase(script_path.find("//"), 1);
 			php_cgi(header, server_id , script_path, "GET");
