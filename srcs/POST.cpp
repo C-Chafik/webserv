@@ -13,10 +13,10 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
-		std::clog << "1\n";
+		// std::clog << "1\n";
 		if ( head.content_type == "multipart/form-data" )
 		{
-		std::clog << "2\n";
+		// std::clog << "2\n";
 
 			std::string filename;
 			std::string line;
@@ -58,7 +58,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		}
 		else
 		{ //! Need to find how to store it
-		std::clog << "3\n";
+		// std::clog << "3\n";
 		
 			std::string filename;
 			std::string line;
@@ -96,7 +96,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else if ( head.content_type == "multipart/form-data" )
 	{
-		std::clog << "4\n";
+		// std::clog << "4\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -113,7 +113,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
 				std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
-				std::clog << name.back() << std::endl;
+				// std::clog << name.back() << std::endl;
 				if ( name.back().find("filename") == std::string::npos )
 				{
 					std::cerr << "No file name found in the body! Make a proper form" << std::endl;
@@ -164,7 +164,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
-		std::clog << "5\n";
+		// std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;

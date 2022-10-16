@@ -96,7 +96,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	else if ( slash == true )
 	{
-		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
+		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() && !confs[server_id].locations[location_name].index.empty() )
 			return confs[server_id].locations[location_name].index;
 		else
 		{

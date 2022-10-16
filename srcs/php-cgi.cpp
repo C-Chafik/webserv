@@ -76,7 +76,7 @@ std::string Server::parseCgiHeader(std::string buffer){
 }
 
 bool Server::cgi_error(id_server_type server_id){
-	std::clog << "*" << HGen.getStatus() << "*" << std::endl;
+	// std::clog << "*" << HGen.getStatus() << "*" << std::endl;
 	if (HGen.getStatus().find("200") != std::string::npos || HGen.checkStatus())
 		return false;
 	if (HGen.getStatus().find("500") != std::string::npos)
@@ -93,7 +93,7 @@ bool Server::cgi_error(id_server_type server_id){
 void Server::php_cgi(struct header & header, id_server_type server_id, std::string php_arg, std::string method){
 	char **env = cgi_vars(header, server_id, php_arg, method);
 	std::string buffer_cout = cgi_exec(header, server_id, php_arg, method, env);
-	std::clog << "php_arg : "<< php_arg << buffer_cout << std::endl;
+	// std::clog << "php_arg : "<< php_arg << buffer_cout << std::endl;
 
 	send_cgi(server_id, parseCgiHeader(buffer_cout));
 

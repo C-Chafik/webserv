@@ -15,7 +15,7 @@ struct parseLocation
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; upload_path = "./"; index = "default/index.html"; }
+	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; upload_path = "./"; }
 	~parseLocation ( void ) {}
 };
 
@@ -23,23 +23,23 @@ struct config
 {
 	std::string					cgi_extension;
 	std::string					cgi_path;
-    std::vector<std::string> server_names;
-    std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
-    std::map< int, std::string > errors;
-    std::map< std::string, struct parseLocation, greater<std::string> > locations;
-    long long         body_max_size;
+	std::vector<std::string> server_names;
+	std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
+	std::map< int, std::string > errors;
+	std::map< std::string, struct parseLocation, greater<std::string> > locations;
+	long long         body_max_size;
 	// std::map<std::string, std::string> get_vars;
 	std::string query_string;
 
-    config( void ) { body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; errors[405] = "default/error_405.html"; errors[501] = "default/error_501.html";}
-    ~config ( void ) {}
+	config( void ) { body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; errors[405] = "default/error_405.html"; errors[501] = "default/error_501.html";}
+	~config ( void ) {}
 
-    void clear( void )
-    {
-        locations.clear();
-        server_names.clear();
-        listening.clear();
-        errors.clear();	
+	void clear( void )
+	{
+		locations.clear();
+		server_names.clear();
+		listening.clear();
+		errors.clear();	
 		body_max_size = 100000;
 		cgi_extension.clear();
 		cgi_path.clear();
@@ -51,7 +51,8 @@ struct config
 		errors[413] = "default/error_413.html";
 		errors[500] = "default/error_500.html";
 		errors[501] = "default/error_501.html";
-    }
+		locations["/"].index = "default/index.html";
+	}
 };
 
 
