@@ -44,6 +44,7 @@ std::string	 	 Server::targetLocation( std::string URI, id_server_type server_id
 		if ( URI.compare( 0, 1, "/" ) == 0 )
 			URI.erase(0, 1);
 
+
 	return URI;
 }
 

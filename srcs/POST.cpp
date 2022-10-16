@@ -176,7 +176,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			content += '\n';
 		}
 
-		std::string file_path = "/tmp/cgi_post.log";
+		std::string file_path = "/tmp/default.txt";
 		bod.body_path = file_path;
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
@@ -188,15 +188,8 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 		while ( std::getline(tmp, line) )
 			new_file << line;
-		
+	
 		new_file.close();
-		
-		std::string script_path = fileLocation(head.path, server_id) + targetLocation(head.path, server_id);
-		while ( script_path.find("//") != std::string::npos )
-			script_path.erase(script_path.find("//"), 1);
-
-		// php_cgi(head, server_id , fileLocation(head.path, server_id), "POST");
-		remove("/tmp/cgi_post.log");
 	}
 	tmp.close();
 	remove(file.c_str());

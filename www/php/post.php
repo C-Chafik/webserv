@@ -50,7 +50,7 @@
 	</head>
 	<body>
 		<h1>Post with cgi</h1>
-		<form method="POST" action="php/result_post.php">
+		<form method="POST" action="result_post.php">
 			<label for="name">Nom</label>
 			<input type="text" id="name" name="name">
 			<label for="bd">Date de naissance</label>
