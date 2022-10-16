@@ -15,6 +15,8 @@ std::string	 	 Server::retrieve_location_name( std::string URI, id_server_type s
 	{
 		if ( it->first != "/" && URI.compare(0, it->first.size() + 1, it->first + "/") == 0 )
 			return it->first;
+		else if ( it->first != "/" &&  it->first == URI )
+			return it->first;
 	}
 
 	return "/";
