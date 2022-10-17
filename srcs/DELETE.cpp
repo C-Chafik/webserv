@@ -1,6 +1,6 @@
 #include "../includes/includes.hpp"
 
-void	Server::treat_DELETE_request( struct header & head, id_server_type server_id )
+void	Server::treat_DELETE_request( struct header & head, id_server_type &server_id )
 {
     std::string location_name = retrieve_location_name(head.path, server_id);
     std::string upload_path;

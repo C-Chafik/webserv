@@ -1,6 +1,6 @@
 #include "../includes/includes.hpp"
 
-bool		Server::check_GET_request_validity( struct header & header, id_server_type server_id )
+bool		Server::check_GET_request_validity( struct header & header, id_server_type &server_id )
 {
 	std::string location_name = retrieve_location_name(header.path, server_id);
 	
@@ -16,7 +16,7 @@ bool		Server::check_GET_request_validity( struct header & header, id_server_type
 }
 
 
-bool		Server::check_DELETE_request_validity( struct header & header, id_server_type server_id )
+bool		Server::check_DELETE_request_validity( struct header & header, id_server_type &server_id )
 {
 	check_server_name(header, server_id);
 	std::string location_name = retrieve_location_name(header.path, server_id);
@@ -32,7 +32,7 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 	return true;
 }
 
-bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
+bool		Server::check_POST_request_validity( struct header & header, id_server_type & server_id )
 {
 	check_server_name(header, server_id);
 	std::string location_name = retrieve_location_name(header.path, server_id);
@@ -54,7 +54,7 @@ bool		Server::check_POST_request_validity( struct header & header, id_server_typ
 	return true;
 }
 
-void Server::get_request( Request & client_request, int clientSocket, id_server_type server_id )
+void Server::get_request( Request & client_request, int clientSocket, id_server_type &server_id )
 {
 	std::string to_send;
 	try
@@ -79,12 +79,12 @@ void Server::get_request( Request & client_request, int clientSocket, id_server_
 	}
 }
 
-void Server::delete_request( Request & client_request, id_server_type server_id )
+void Server::delete_request( Request & client_request, id_server_type &server_id )
 {
 	treat_DELETE_request(client_request.get_header(), server_id);
 }
 
-void Server::post_request( Request & client_request, id_server_type server_id )
+void Server::post_request( Request & client_request, id_server_type &server_id )
 {
 	if ( treat_POST_request(client_request.get_header(), client_request.get_body(), client_request.get_file_path(), server_id) == true )
 		send_201();
@@ -132,8 +132,10 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 		}
 		else if ( client_request.is_full() == false )
 			return true;
-		else
+		else{
+			// std::clog << server_id 9<< std::endl;
 			post_request( client_request, server_id );
+		}
 	}
 	else if ( client_request.get_header().method == DELETE )
 	{

@@ -13,10 +13,10 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
-		std::clog << "1\n";
+		// std::clog << "1\n";
 		if ( head.content_type == "multipart/form-data" )
 		{
-		std::clog << "2\n";
+		// std::clog << "2\n";
 
 			std::string filename;
 			std::string line;
@@ -56,11 +56,14 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				php_cgi(head, server_id , script_path, "POST");
 				remove("/tmp/cgi_post.log");
 				tmp_line.clear();
+				tmp.close();
+				remove(file.c_str());
+				return false;
 			}
 		}
 		else
 		{ //! Need to find how to store it
-		std::clog << "3\n";
+		// std::clog << "3\n";
 		
 			std::string filename;
 			std::string line;
@@ -93,8 +96,13 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			while ( script_path.find("//") != std::string::npos )
 				script_path.erase(script_path.find("//"), 1);
 
+			// std::clog << server_id << std::endl;
+
 			php_cgi(head, server_id , script_path, "POST");
 			remove("/tmp/cgi_post.log");
+			tmp.close();
+			remove(file.c_str());
+			return false;
 		}
 	}
 	else if ( head.content_type == "multipart/form-data" )
@@ -114,18 +122,17 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
-				std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
-				if ( name.back().find("filename") == std::string::npos )
+				if ( line.find("filename") == std::string::npos )
 				{
-					std::cout << name.back()  << std::endl;
 					std::cerr << "No file name found in the body! Make a proper form" << std::endl;
-					send_400(server_id); //! for now its an internal server error 500
+					send_400(server_id);
 					tmp.close();
 					remove(file.c_str());
 					return false;
 				}
-				filename = name.back().substr(10);
+				filename = line.substr(line.find("filename") + 10, filename.find("\""));
 				filename = filename.substr(0, filename.find("\""));
+				std::cout << RED << "[" << filename << "]" << WHITE << std::endl;
 			}
 			else if ( line.substr(0, 13) == "Content-Type:" )
 				continue ;
@@ -178,7 +185,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
-		std::clog << "5\n";
+		// std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;

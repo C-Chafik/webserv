@@ -107,13 +107,13 @@ class Server{
 
 	//* DELETE
 	
-	void	delete_request( Request & client_request, id_server_type server_id );
-	void	treat_DELETE_request( struct header & head, id_server_type server_id );
-	bool	check_DELETE_request_validity( struct header & header, id_server_type server_id );
+	void	delete_request( Request & client_request, id_server_type &server_id );
+	void	treat_DELETE_request( struct header & head, id_server_type &server_id );
+	bool	check_DELETE_request_validity( struct header & header, id_server_type &server_id );
 
 	//* GET
-	void get_request( Request & client_request, int clientSocket, id_server_type server_id );
-	bool	check_GET_request_validity( struct header & header, id_server_type server_id );
+	void get_request( Request & client_request, int clientSocket, id_server_type &server_id );
+	bool	check_GET_request_validity( struct header & header, id_server_type &server_id );
 	std::string autoindex( std::string URI, std::string & raw_URI  );
 	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 	std::string return_content_type( std::string URI );
@@ -121,9 +121,9 @@ class Server{
 
 	//* POST
 	std::string get_file_name( const std::string & line );
-	void		post_request( Request & client_request, id_server_type server_id );
+	void		post_request( Request & client_request, id_server_type &server_id );
 	bool 		treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
-	bool		check_POST_request_validity( struct header & header, id_server_type server_id );
+	bool		check_POST_request_validity( struct header & header, id_server_type & server_id );
 
 
 
