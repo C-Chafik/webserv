@@ -107,6 +107,21 @@ void Server::send_405(id_server_type serverNb){
 	HGen.processResponse();
 }
 
+void Server::send_414( id_server_type serverNb ){
+	HGen.clear();
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[414].empty() == false )
+		fileSTR = get_error_page(confs[serverNb].errors[414]);
+	else
+		fileSTR = generate_414();
+
+	HGen.setStatus("414 URI Too Long");
+	HGen.setType("text/html");
+	HGen.setContentString(fileSTR);
+	HGen.processResponse();
+}
+
 void Server::send_500(id_server_type serverNb){
 	HGen.clear();
 	std::string fileSTR;

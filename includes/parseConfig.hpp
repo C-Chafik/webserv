@@ -30,7 +30,7 @@ struct config
 	std::map< std::string, struct parseLocation, greater<std::string> > 	locations;
 	long long         														body_max_size;
 
-	config( void ) { body_max_size = 100000; }
+	config( void ) { locations["/"].index = "default/index.html"; body_max_size = 100000; }
 	~config ( void ) {}
 
 	void clear( void )
@@ -44,6 +44,7 @@ struct config
 		query_string.clear();
 
 		body_max_size = 100000;
+		locations["/"].index = "default/index.html";
 	}
 };
 

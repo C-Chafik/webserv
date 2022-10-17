@@ -88,6 +88,28 @@ std::string Server::generate_413( void )
     return buffer;
 }
 
+std::string Server::generate_414( void )
+{
+    std::string buffer;
+
+    buffer += "<html>\n";
+    buffer += "<head><title>414 URI Too Long</title></head>\n";
+    buffer += "<body>\n";
+    buffer += "<center><h1>414 URI Too Long</h1></center>\n";
+    buffer += "<hr><center>WebServ</center>\n";
+    buffer += "</body>\n";
+    buffer += "</html>\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += "<!-- a padding to disable MSIE and Chrome friendly error page -->\n";
+    buffer += '\n';
+
+    return buffer;
+}
+
 std::string Server::generate_500( void )
 {
     std::string buffer;

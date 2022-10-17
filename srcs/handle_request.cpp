@@ -107,6 +107,12 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 
 	check_server_name(client_request.get_header(), server_id);
 
+	if ( client_request.get_header().path.size() > 1000 )
+	{
+		send_414(server_id);
+		return reject_client(clientSocket, server_id, client_request.get_file_path());
+	}
+
 	if ( client_request.get_header().method == GET )
 	{
 		if ( check_GET_request_validity(client_request.get_header(), server_id ) == false )

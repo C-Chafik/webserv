@@ -57,6 +57,7 @@ class Server{
 	std::string generate_404( void );
 	std::string generate_405( void );
 	std::string generate_413( void );
+	std::string generate_414( void );
 	std::string generate_500( void );
 	std::string generate_501( void );
 
@@ -82,6 +83,7 @@ class Server{
 	void send_202( void );
 	void send_400(id_server_type serverNb);
 	void send_413(id_server_type serverNb);
+	void send_414( id_server_type serverNb );
 	void send_404(id_server_type serverNb);
 	void send_405(id_server_type serverNb);
 	void send_301(std::string location);

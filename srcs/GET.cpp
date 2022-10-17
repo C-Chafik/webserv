@@ -96,7 +96,10 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 	else if ( slash == true )
 	{
 		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() && !confs[server_id].locations[location_name].index.empty() )
-				return confs[server_id].locations[location_name].index;
+		{
+			std::cout << confs[server_id].locations[location_name].index << std::endl;
+			return confs[server_id].locations[location_name].index;
+		}
 		else
 		{
 			send_404(server_id);
@@ -126,6 +129,6 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	redirect(rtnFile, server_id);
 
-	// std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
+	std::clog << GREEN << "[" << responses << "]" << WHITE << std::endl;
 	return responses;	
 }
