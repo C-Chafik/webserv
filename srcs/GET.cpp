@@ -96,6 +96,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	else if ( slash == true )
 	{
+		// std::clog << "\"" << confs[server_id].locations[location_name].index << "\"" << std::endl;
 		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() && !confs[server_id].locations[location_name].index.empty() )
 			return confs[server_id].locations[location_name].index;
 		else
@@ -117,7 +118,7 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 		if ( ext != std::string::npos && (tar_loc[ext + confs[server_id].cgi_extension.size()] == '?' || tar_loc[ext + confs[server_id].cgi_extension.size()] == '/' || !tar_loc[ext + confs[server_id].cgi_extension.size()]) ){
 			std::string script_path = fileLocation(header.path, server_id) + parse_uri_lite(targetLocation(header.path, server_id));
-			std::clog << parse_uri_lite(targetLocation(header.path, server_id)) << std::endl;
+			// std::clog << parse_uri_lite(targetLocation(header.path, server_id)) << std::endl;
 			while ( script_path.find("//") != std::string::npos )
 				script_path.erase(script_path.find("//"), 1);
 			php_cgi(header, server_id , script_path, "GET");

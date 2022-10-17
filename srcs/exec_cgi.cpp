@@ -30,7 +30,10 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 		read(fd_body, buff_body, header.content_length);
 		close(fd_body);
 
-		write(fdFileIn, buff_body, header.content_length);
+		if (write(fdFileIn, buff_body, header.content_length) == -1){
+			exitCloseSock();
+			exit (1);
+		}
 		lseek(fdFileIn, 0, SEEK_SET);
 		// char test[header.content_length];
 		// read(fdFileIn, test, header.content_length);
@@ -59,7 +62,10 @@ std::string Server::cgi_exec(struct header & header, id_server_type server_id, s
 			delete[] arg[i];
 		}
 		delete[] arg;
-		write(STDOUT_FILENO, "Status: 500\n\n", 13);
+		if (write(STDOUT_FILENO, "Status: 500\n\n", 13) == -1){
+			exitCloseSock();
+			exit (1);
+		}
 		exit (1);
 	}
 	else{

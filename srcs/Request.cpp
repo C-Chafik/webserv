@@ -94,12 +94,8 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 {
 	file.write(buffer, len);
 	
-	// if ( _with_body == true )
-	// {
-		_read_content_length += len;
-		if ( _with_body == true )
-			// std::cout << RED << _header.content_length << WHITE << std::endl;
-	// }
+	_read_content_length += len;
+	if ( _with_body == true )
 
 	if ( _with_body == true )
 		if ( _read_content_length >= _header.content_length )
