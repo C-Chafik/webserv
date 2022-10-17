@@ -34,6 +34,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				std::string file_path = "/tmp/cgi_post.log";
 				bod.body_path = file_path;
 				new_file.open(file_path.c_str(), std::ios::out);
+				
 				if ( !new_file.is_open() )
 				{
 					send_500(server_id); //! for now its an internal server error 500
@@ -131,6 +132,14 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				std::string file_path = path + filename;
 				bod.body_path = file_path;
 				std::cout << "OPENING " << file_path << std::endl;
+
+				if ( file_already_exist(file_path) == true )
+				{
+					send_202();
+					remove(file.c_str());
+					return ;
+				}
+
 				new_file.open(file_path.c_str(), std::ios::out);
 				if ( !new_file.is_open() )
 				{
@@ -164,7 +173,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
-		// std::clog << "5\n";
+		std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -178,6 +187,14 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 		std::string file_path = "/tmp/default.txt";
 		bod.body_path = file_path;
+
+		if ( file_already_exist(file_path) == true )
+		{
+			send_202();
+			remove(file.c_str());
+			return ;
+		}
+
 		new_file.open(file_path.c_str(), std::ios::out);
 		if ( !new_file.is_open() )
 		{

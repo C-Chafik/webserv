@@ -25,6 +25,8 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 
 	if ( fill_file() == false )
 		return ;
+	if ( check_fd_system() == false )
+		return ;
 
 	parse_file();
 }
@@ -34,6 +36,18 @@ parseConfig::parseConfig( std::string path ) : _file_path(path)
 ///          CONSTRUCTOR - DESTRUCTOR             ///
 ///                                               ///
 /////////////////////////////////////////////////////
+
+bool parseConfig::check_fd_system( void )
+{
+	if ( open(TMP_FILE_NAME, O_CREAT) < 0 )
+	{
+		parsing_error("FD SYSTEM IS COMPROMISED ABORTING");
+		_state = false;
+		return false;
+	}
+	unlink(TMP_FILE_NAME);
+	return true;
+}
 
 bool parseConfig::check_conf_name( std::string & str )
 {

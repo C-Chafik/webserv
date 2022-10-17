@@ -21,17 +21,16 @@ struct parseLocation
 
 struct config 
 {
-	std::string					cgi_extension;
-	std::string					cgi_path;
-	std::vector<std::string> server_names;
-	std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> listening;
-	std::map< int, std::string > errors;
-	std::map< std::string, struct parseLocation, greater<std::string> > locations;
-	long long         body_max_size;
-	// std::map<std::string, std::string> get_vars;
-	std::string query_string;
+	std::string 															query_string;
+	std::string																cgi_extension;
+	std::string																cgi_path;
+	std::vector<std::string> 												server_names;
+	std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
+	std::map< int, std::string > 											errors;
+	std::map< std::string, struct parseLocation, greater<std::string> > 	locations;
+	long long         														body_max_size;
 
-	config( void ) { locations["/"].index = "default/index.html"; body_max_size = 100000; errors[400] = "default/error_400.html"; errors[404] = "default/error_404.html"; errors[413] = "default/error_413.html"; errors[500] = "default/error_500.html"; errors[405] = "default/error_405.html"; errors[501] = "default/error_501.html";}
+	config( void ) { body_max_size = 100000; }
 	~config ( void ) {}
 
 	void clear( void )
@@ -40,18 +39,11 @@ struct config
 		server_names.clear();
 		listening.clear();
 		errors.clear();	
-		body_max_size = 100000;
 		cgi_extension.clear();
 		cgi_path.clear();
 		query_string.clear();
-		
-		errors[400] = "default/error_400.html";
-		errors[404] = "default/error_404.html";
-		errors[405] = "default/error_405.html";
-		errors[413] = "default/error_413.html";
-		errors[500] = "default/error_500.html";
-		errors[501] = "default/error_501.html";
-		locations["/"].index = "default/index.html";
+
+		body_max_size = 100000;
 	}
 };
 
@@ -98,6 +90,7 @@ class parseConfig
 		void												parse_file( void );
 		void												set_default_value( void );
 		bool			 					 				check_conf_name( std::string & str );
+		bool												check_fd_system( void );
 
 		//? Insertion
 		std::string 										insert_upload_path( std::string & line );

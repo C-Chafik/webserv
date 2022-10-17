@@ -46,3 +46,21 @@ std::string Server::fileToString(std::string fileName, bool error){
 
 	return fileSTR;
 }
+
+std::string Server::get_error_page(std::string fileName){
+	std::ifstream file;
+	std::string	buffer;
+	std::string	fileSTR;
+
+	file.open(fileName.c_str());
+	if (!file.is_open())
+		return generate_404();
+	while (getline(file, buffer, '\n'))
+	{
+		fileSTR += buffer;
+		fileSTR += "\n";
+	}
+	file.close();
+
+	return fileSTR;
+}

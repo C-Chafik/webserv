@@ -7,7 +7,7 @@ SRC= main.cpp server.cpp Request.cpp accept_connection.cpp \
 	send.cpp utils.cpp listen.cpp parseConfig_insert.cpp \
 	parseConfig_utils.cpp parseConfig_common.cpp \
 	common.cpp GET.cpp redirect.cpp parse_uri.cpp \
-	php-cgi.cpp DELETE.cpp exec_cgi.cpp  POST.cpp \
+	php-cgi.cpp DELETE.cpp exec_cgi.cpp  POST.cpp error_generator.cpp \
 
 SRCS=$(addprefix srcs/, $(SRC))
 INC_DIR=includes

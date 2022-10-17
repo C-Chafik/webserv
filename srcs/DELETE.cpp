@@ -11,19 +11,19 @@ void	Server::treat_DELETE_request( struct header & head, id_server_type server_i
         upload_path = confs[server_id].locations["/"].upload_path;
 
     std::string file_path = upload_path + "/" + targetLocation(head.path, server_id);
+
     while ( file_path.find("//") != std::string::npos )
         file_path.erase(file_path.find("//"), 1);
-
-    if ( file_path.size() >= 2 && file_path[0] == '/')
-        file_path.erase(0, 1);
 
     std::cout << RED << "[" << file_path << "]" << WHITE << std::endl;
 
     if ( file_already_exist(file_path) == true )
+    {
         if ( unlink(file_path.c_str()) == -1 )
         {
             send_500(server_id);
             return ;
         }
+    }
     send_202();
 }

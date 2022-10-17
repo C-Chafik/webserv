@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmarouf <qatar75020@gmail.com>             +#+  +:+       +#+        */
+/*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/15 12:48:57 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/17 16:01:58 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Request.hpp"
 
-Request::Request( void ) :  _read_content_length(0), _is_full(false), _with_body(false), _header_found(false)
+Request::Request( void ) : _read_content_length(0), _is_valid(false), _is_full(false), _with_body(false), _header_found(false)
 {
 	search_tmp_name();
 }
@@ -86,7 +86,11 @@ void Request::read_client( int requestFd )
 	if ( ( end = recv(requestFd, buffer, 8192 - 1, 0)) > 0 )
 		insert(buffer, end, file);
 	if ( check_if_header_is_received() == true )
+	{
 		read_header();
+		if ( _is_valid == false )
+			_is_full = true;
+	}
 	file.close();
 }
 
@@ -95,7 +99,6 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	file.write(buffer, len);
 	
 	_read_content_length += len;
-	if ( _with_body == true )
 
 	if ( _with_body == true )
 		if ( _read_content_length >= _header.content_length )
@@ -117,6 +120,7 @@ bool	Request::check_if_header_is_received( void )
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
 			std::cout << YELLOW << full_buffer << WHITE << std::endl;
+			_header_buffer = full_buffer;
 			return true;
 		}
 	}
@@ -125,19 +129,12 @@ bool	Request::check_if_header_is_received( void )
 
 void	Request::read_header( void )
 {
-	std::ifstream tmp(_tmp_filename.c_str(), std::ifstream::binary );
-	
-	std::string buff;
-	std::string end;
-
-	bool first = false;
+	std::istringstream 	tmp(_header_buffer);
+	std::string 		buff;
+	bool 				first = false;
 
 	while ( std::getline(tmp, buff) )
 	{
-		end += buff;
-		end += '\n';
-		if ( end.rfind("\r\n\r\n") != std::string::npos )
-			break ;
 		std::list<std::string> infos = ft_split_no_r(buff, " \r");
 
 		if ( infos.size() == 3 && (infos.front() == "GET" || infos.front() == "POST" || infos.front() == "DELETE") )
@@ -177,9 +174,9 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = infos.front() + " " + infos.back();
-			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 
 			_header.boundary = "--" + infos.back().substr(9);		
 			_header.content_type.erase(_header.content_type.size() - 1);
+			_is_valid = true;
 		}
 
 		else if ( infos.size() == 2 && infos.front() == "Content-Type:" )
@@ -187,7 +184,7 @@ void	Request::read_header( void )
 			infos.pop_front();
 			_header.content_type = infos.front();
 			_header.raw_content_type = _header.content_type;
-			// std::clog << "[" << _header.raw_content_type << "]" << std::endl; 	
+			_is_valid = true;
 		}
 	}
 }
@@ -195,6 +192,11 @@ void	Request::read_header( void )
 struct header & Request::get_header( void )
 {
 	return _header;
+}
+
+bool	Request::is_valid_request( void )
+{
+	return _is_valid;
 }
 
 struct body & Request::get_body( void )

@@ -6,6 +6,22 @@ void Server::send_responses(std::string file){ //? Look for the file extension a
 	send_200(file, content_type);
 }
 
+void Server::send_204( void )
+{
+	HGen.clear();
+
+	HGen.setStatus("204 No Content");
+	HGen.processResponse();
+}
+
+void Server::send_201( void )
+{
+	HGen.clear();
+
+	HGen.setStatus("201 Created");
+	HGen.processResponse();
+}
+
 void Server::send_200_autoindex(std::string content){
 	HGen.clear();
 	HGen.setStatus("200 OK");
@@ -33,7 +49,12 @@ void Server::send_202(void){
 
 void Server::send_400(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[400], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[400].empty() == false)
+		fileSTR = get_error_page(confs[serverNb].errors[400]);
+	else
+		fileSTR = generate_400();
 
 	HGen.setStatus("400 Bad Request");
 	HGen.setType("text/html");
@@ -43,7 +64,12 @@ void Server::send_400(id_server_type serverNb){
 
 void Server::send_413(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[413], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[413].empty() == false)
+		fileSTR = get_error_page(confs[serverNb].errors[413]);
+	else
+		fileSTR = generate_413();
 
 	HGen.setStatus("413 Bad Request");
 	HGen.setType("text/html");
@@ -53,9 +79,12 @@ void Server::send_413(id_server_type serverNb){
 
 void Server::send_404(id_server_type serverNb){
 	HGen.clear();
-	// std::clog << "serverNb : " << serverNb << std::endl;
-	// std::clog << "path error_404 : " << confs[serverNb].errors[404] << std::endl;
-	std::string fileSTR = fileToString(confs[serverNb].errors[404], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[404].empty() == false)
+		fileSTR = get_error_page(confs[serverNb].errors[404]);
+	else
+		fileSTR = generate_404();
 
 	HGen.setStatus("404 Not Found");
 	HGen.setType("text/html");
@@ -65,7 +94,12 @@ void Server::send_404(id_server_type serverNb){
 
 void Server::send_405(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[405], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[405].empty() == false )
+		fileSTR = get_error_page(confs[serverNb].errors[405]);
+	else
+		fileSTR = generate_405();
 
 	HGen.setStatus("404 Not Found");
 	HGen.setType("text/html");
@@ -75,7 +109,12 @@ void Server::send_405(id_server_type serverNb){
 
 void Server::send_500(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[500], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[500].empty() == false)
+		fileSTR = get_error_page(confs[serverNb].errors[500]);
+	else
+		fileSTR = generate_500();
 
 	HGen.setStatus("500 Internal Server Error");
 	HGen.setType("text/html");
@@ -85,7 +124,12 @@ void Server::send_500(id_server_type serverNb){
 
 void Server::send_501(id_server_type serverNb){
 	HGen.clear();
-	std::string fileSTR = fileToString(confs[serverNb].errors[501], true);
+	std::string fileSTR;
+
+	if ( confs[serverNb].errors[501].empty() == false)
+		fileSTR = get_error_page(confs[serverNb].errors[501]);
+	else
+		fileSTR = generate_501();
 
 	HGen.setStatus("501 Not Implemented");
 	HGen.setType("text/html");

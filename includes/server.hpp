@@ -51,6 +51,18 @@ class Server{
 	bool 	treat_request( Request & client_request, int clientSocket, id_server_type server_id );
 
 
+	//? Error generator
+	
+	std::string generate_400( void );
+	std::string generate_404( void );
+	std::string generate_405( void );
+	std::string generate_413( void );
+	std::string generate_500( void );
+	std::string generate_501( void );
+
+	//? Error generator
+
+	std::string get_error_page( std::string fileName );
 	int accept_connection(int fdServer);
 	void receive_request_body( struct request & req, int requestFd );
 	std::string fileLocation(std::string request, id_server_type serverNb);
@@ -65,6 +77,8 @@ class Server{
 	void send_responses(std::string file);
 	void send_200_autoindex(std::string content);
 	void send_200(std::string file, std::string & extension );
+	void send_201( void );
+	void send_204( void );
 	void send_202( void );
 	void send_400(id_server_type serverNb);
 	void send_413(id_server_type serverNb);
@@ -87,7 +101,7 @@ class Server{
 	char **create_arg(std::string php_arg);
 
 
-	bool reject_client( int clientSocket, std::string & file_to_delete );
+	bool reject_client( int clientSocket, id_server_type server_id, std::string & file_to_delete );
 
 	//* DELETE
 	
@@ -98,7 +112,7 @@ class Server{
 	//* GET
 	void get_request( Request & client_request, int clientSocket, id_server_type server_id );
 	bool	check_GET_request_validity( struct header & header, id_server_type server_id );
-	std::string autoindex( std::string URI );
+	std::string autoindex( std::string URI, std::string & raw_URI  );
 	std::string treat_GET_request(struct header & header, id_server_type serverNb, int clientFd);
 	std::string return_content_type( std::string URI );
 

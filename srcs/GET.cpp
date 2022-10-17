@@ -7,7 +7,7 @@ std::string		Server::return_content_type( std::string URI )
 	return "text/html";
 }
 
-std::string Server::autoindex( std::string URI )
+std::string Server::autoindex( std::string URI, std::string & raw_URI )
 {
 	std::string listing;
 	std::string empty;
@@ -20,7 +20,7 @@ std::string Server::autoindex( std::string URI )
 		URI = "./";
 	
 	listing += "<html>\n<head><title>Index of /</title></head>\n<body bgcolor=\"white\">";
-	listing += "\n<h1>Index of " + URI + "</h1><hr><pre>\n";
+	listing += "\n<h1>Index of " + raw_URI + "</h1><hr><pre>\n";
 
 	//! Now retrieving every filename of the current folder
 
@@ -66,7 +66,6 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 	header.clientFd=clientFd;
 
 	/*have to be the first check because can change the server_id*/
-	check_server_name(header, server_id);
 
 	file = parse_uri(header, server_id);
 
@@ -89,16 +88,15 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 	
 	if ( slash == true && autoindexed == true ) //! IF autoindexed
 	{
-        rtnFile = autoindex(rtnFile);
+        rtnFile = autoindex(rtnFile, header.path);
 		send_200_autoindex(rtnFile);
 		return "";
 	}
 
 	else if ( slash == true )
 	{
-		// std::clog << "\"" << confs[server_id].locations[location_name].index << "\"" << std::endl;
 		if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() && !confs[server_id].locations[location_name].index.empty() )
-			return confs[server_id].locations[location_name].index;
+				return confs[server_id].locations[location_name].index;
 		else
 		{
 			send_404(server_id);
