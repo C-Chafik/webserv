@@ -26,6 +26,7 @@ class Server{
 	typedef std::vector< struct config >::size_type id_server_type;
 
 	//var
+	id_server_type _old_id;
 	std::string _header;std::map<std::string/*port*/, std::vector<std::string>/*server_names*/> mutiple_server_port;
 	std::vector< struct config > confs;
 	std::vector<int> server_sockets;
@@ -48,7 +49,7 @@ class Server{
 	int		send_client_response( int clientSocket );
 
 	bool 	handle_connection(int clientSocket, id_server_type server_id);
-	bool 	treat_request( Request & client_request, int clientSocket, id_server_type server_id );
+	bool 	treat_request( Request & client_request, int clientSocket, id_server_type & server_id );
 
 
 	//? Error generator
@@ -72,7 +73,7 @@ class Server{
 	std::string fileToString(std::string fileName, bool error = false);
 	void listenSocketServer();
 	std::string ipToHost(std::string hostname);
-	void check_server_name(struct header & header, id_server_type &id);
+	std::vector< struct config >::size_type check_server_name(struct header & header, id_server_type &id);
 	std::string parse_uri(struct header & header, id_server_type server_id);
 	void redirect(std::string file, id_server_type server_id);
 	void send_responses(std::string file);
@@ -103,7 +104,7 @@ class Server{
 	char **create_arg(std::string php_arg);
 
 
-	bool reject_client( int clientSocket, id_server_type server_id, std::string & file_to_delete );
+	bool reject_client( int clientSocket, std::string & file_to_delete );
 
 	//* DELETE
 	

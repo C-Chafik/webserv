@@ -57,17 +57,18 @@ std::string Server::ipToHost(std::string host){
 	return hostname_str;
 }
 
-void Server::check_server_name(struct header & header, id_server_type &id){
+std::vector< struct config >::size_type  Server::check_server_name(struct header & header, id_server_type &id){
+	id_server_type save = id;
 	if (isIpAddress(header.host)){//if host is an ip
 		if ((ipToHost(header.host) == ipToHost("localhost")))//check if the ip is the hostname
 			if (id > 0)
 				id = 0;//take first server config
-		return;
+		return save;
 	}
 	else{//if host is an hostname
 			for (std::vector<std::string>::size_type i = 0; i < confs[id].server_names.size(); i++){//check si le serv actuel a le bon host
 				if (confs[id].server_names[i] == header.host){
-					return ;
+					return save;
 				}
 			}
 
@@ -83,7 +84,7 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 									for (std::vector<std::string>::size_type i = 0; i < confs[k].server_names.size(); i++){
 										if (confs[k].server_names[i] == header.host){
 											id = k;
-											return ;
+											return save;
 										}
 									}
 							}
@@ -93,4 +94,5 @@ void Server::check_server_name(struct header & header, id_server_type &id){
 			if (other > 1)
 				id = 0;
 	}
+	return save;
 }
