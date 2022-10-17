@@ -123,7 +123,7 @@ bool parseConfig::fill_file( void )
 
 int parseConfig::exit_on_error ( void )
 {
-	std::cout << RED << _actual_error << std::endl;
+	std::cerr << RED << _actual_error << std::endl;
 	return 1;
 }
 

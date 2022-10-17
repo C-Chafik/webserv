@@ -15,7 +15,7 @@ void	Server::treat_DELETE_request( struct header & head, id_server_type server_i
     while ( file_path.find("//") != std::string::npos )
         file_path.erase(file_path.find("//"), 1);
 
-    std::cout << RED << "[" << file_path << "]" << WHITE << std::endl;
+    // std::cout << RED << "[" << file_path << "]" << WHITE << std::endl;
 
     if ( file_already_exist(file_path) == true )
     {

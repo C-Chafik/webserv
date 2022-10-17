@@ -119,7 +119,7 @@ bool	Request::check_if_header_is_received( void )
 		
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
-			std::cout << YELLOW << full_buffer << WHITE << std::endl;
+			std::clog << YELLOW << full_buffer << WHITE << std::endl;
 			_header_buffer = full_buffer;
 			return true;
 		}

@@ -122,7 +122,7 @@ class Server{
 	//* POST
 	std::string get_file_name( const std::string & line );
 	void		post_request( Request & client_request, id_server_type server_id );
-	void 		treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
+	bool 		treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id );
 	bool		check_POST_request_validity( struct header & header, id_server_type server_id );
 
 

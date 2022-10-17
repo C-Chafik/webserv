@@ -35,7 +35,7 @@ bool		Server::check_POST_request_validity( struct header & header, id_server_typ
 {
 	std::string location_name = retrieve_location_name(header.path, server_id);
 	
-	std::cout << location_name << std::endl;
+	// std::cout << location_name << std::endl;
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
 		if ( header.content_length > confs[server_id].body_max_size && header.method == POST )
@@ -84,15 +84,15 @@ void Server::delete_request( Request & client_request, id_server_type server_id 
 
 void Server::post_request( Request & client_request, id_server_type server_id )
 {
-	treat_POST_request(client_request.get_header(), client_request.get_body(), client_request.get_file_path(), server_id);
-	send_201();
+	if ( treat_POST_request(client_request.get_header(), client_request.get_body(), client_request.get_file_path(), server_id) == true )
+		send_201();
 }
 
 bool Server::reject_client( int clientSocket, id_server_type server_id, std::string & file_to_delete )
 {
 	if ( send_client_response(clientSocket) < 0 ) //? Send final response
 	{
-		std::cout << RED << " FATAL ERROR SENDING RESPONSE " << WHITE << std::endl;
+		std::cerr << RED << " FATAL ERROR SENDING RESPONSE " << WHITE << std::endl;
 		exit(1);
 	}
 
@@ -152,6 +152,7 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 
 int	Server::send_client_response( int clientSocket )
 {
+	// std::clog << "\"" << HGen.getStr() << "\"" << std::endl;
 	if ( send(clientSocket, HGen.getStr().c_str(), HGen.getStr().size(), SOCK_DGRAM) < 0 )
 	{
 		std::cerr << MAGENTA << " FATAL ERROR SENDING CLIENT RESPONSE. ABORTING " << WHITE << std::endl;

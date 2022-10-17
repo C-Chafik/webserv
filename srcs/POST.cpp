@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 
-void	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id )
+bool	Server::treat_POST_request( struct header & head, struct body & bod, const std::string & file, id_server_type server_id )
 {
 	std::ifstream 	tmp(file.c_str(), std::ifstream::binary ); //? We first open the raw_data file
 	std::fstream 	new_file;
@@ -39,7 +39,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				{
 					send_500(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
-					return ;
+					return false;
 				}
 				std::string tmp_line;
 				while ( std::getline(tmp, tmp_line) )
@@ -79,7 +79,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				send_500(server_id);
 				remove(file.c_str());
-				return ;
+				return false;
 			}
 
 			while ( std::getline(tmp, line) )
@@ -120,7 +120,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 					std::cerr << "No file name found in the body! Make a proper form" << std::endl;
 					send_400(server_id); //! for now its an internal server error 500
 					remove(file.c_str());
-					return ;
+					return false;
 				}
 				filename = name.back().substr(10);
 				filename = filename.substr(0, filename.find("\""));
@@ -137,7 +137,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				{
 					send_202();
 					remove(file.c_str());
-					return ;
+					return false;
 				}
 
 				new_file.open(file_path.c_str(), std::ios::out);
@@ -145,7 +145,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				{
 					send_500(server_id);
 					remove(file.c_str());
-					return ;
+					return false;
 				}
 				std::string tmp_line;
 				std::string offset;
@@ -173,7 +173,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
-		std::clog << "5\n";
+		// std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -190,9 +190,10 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 		if ( file_already_exist(file_path) == true )
 		{
+			std::cout << "SEND 202" << std::endl;
 			send_202();
 			remove(file.c_str());
-			return ;
+			return false;
 		}
 
 		new_file.open(file_path.c_str(), std::ios::out);
@@ -200,7 +201,7 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		{
 			send_500(server_id);
 			remove(file.c_str());
-			return ;
+			return false;
 		}
 
 		while ( std::getline(tmp, line) )
@@ -210,4 +211,5 @@ void	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	tmp.close();
 	remove(file.c_str());
+	return true;
 }

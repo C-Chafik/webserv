@@ -44,6 +44,7 @@ void Server::send_202(void){
 	HGen.clear();
 
 	HGen.setStatus("202 Accepted");
+	HGen.setType("text/html");
 	HGen.processResponse();
 }
 
