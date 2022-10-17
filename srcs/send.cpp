@@ -11,6 +11,7 @@ void Server::send_204( void )
 	HGen.clear();
 
 	HGen.setStatus("204 No Content");
+	HGen.setType("text/html");
 	HGen.processResponse();
 }
 
@@ -19,6 +20,7 @@ void Server::send_201( void )
 	HGen.clear();
 
 	HGen.setStatus("201 Created");
+	HGen.setType("text/html");
 	HGen.processResponse();
 }
 

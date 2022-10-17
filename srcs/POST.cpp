@@ -13,10 +13,10 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 	if ( head.path.size() > 4 && head.path.substr(head.path.size() - 4) == ".php" )
 	{
-		// std::clog << "1\n";
+		std::clog << "1\n";
 		if ( head.content_type == "multipart/form-data" )
 		{
-		// std::clog << "2\n";
+		std::clog << "2\n";
 
 			std::string filename;
 			std::string line;
@@ -38,6 +38,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				if ( !new_file.is_open() )
 				{
 					send_500(server_id); //! for now its an internal server error 500
+					tmp.close();
 					remove(file.c_str());
 					return false;
 				}
@@ -59,7 +60,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		}
 		else
 		{ //! Need to find how to store it
-		// std::clog << "3\n";
+		std::clog << "3\n";
 		
 			std::string filename;
 			std::string line;
@@ -78,6 +79,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			if ( !new_file.is_open() )
 			{
 				send_500(server_id);
+				tmp.close();
 				remove(file.c_str());
 				return false;
 			}
@@ -97,7 +99,6 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else if ( head.content_type == "multipart/form-data" )
 	{
-		// std::clog << "4\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -114,11 +115,12 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			if ( line.substr(0, 20) == "Content-Disposition:" )
 			{
 				std::list<std::string> name = ft_split_no_r(line, " \r"); //! This version doesn't autorise space in the filename, but is more safer, to be discussed
-				// std::clog << name.back() << std::endl;
 				if ( name.back().find("filename") == std::string::npos )
 				{
+					std::cout << name.back()  << std::endl;
 					std::cerr << "No file name found in the body! Make a proper form" << std::endl;
 					send_400(server_id); //! for now its an internal server error 500
+					tmp.close();
 					remove(file.c_str());
 					return false;
 				}
@@ -131,11 +133,13 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 			{
 				std::string file_path = path + filename;
 				bod.body_path = file_path;
-				std::cout << "OPENING " << file_path << std::endl;
 
+				std::cout << "OPENING " << file_path << std::endl;
 				if ( file_already_exist(file_path) == true )
 				{
+					std::cout << "FILE ALREADY EXIST" << std::endl;
 					send_202();
+					tmp.close();
 					remove(file.c_str());
 					return false;
 				}
@@ -144,6 +148,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 				if ( !new_file.is_open() )
 				{
 					send_500(server_id);
+					tmp.close();
 					remove(file.c_str());
 					return false;
 				}
@@ -173,7 +178,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 	}
 	else
 	{ //! Need to find how to store it
-		// std::clog << "5\n";
+		std::clog << "5\n";
 		std::string filename;
 		std::string line;
 		std::string content;
@@ -190,8 +195,8 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 
 		if ( file_already_exist(file_path) == true )
 		{
-			std::cout << "SEND 202" << std::endl;
 			send_202();
+			tmp.close();
 			remove(file.c_str());
 			return false;
 		}
@@ -200,6 +205,7 @@ bool	Server::treat_POST_request( struct header & head, struct body & bod, const 
 		if ( !new_file.is_open() )
 		{
 			send_500(server_id);
+			tmp.close();
 			remove(file.c_str());
 			return false;
 		}

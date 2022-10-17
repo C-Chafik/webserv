@@ -18,6 +18,7 @@ bool		Server::check_GET_request_validity( struct header & header, id_server_type
 
 bool		Server::check_DELETE_request_validity( struct header & header, id_server_type server_id )
 {
+	check_server_name(header, server_id);
 	std::string location_name = retrieve_location_name(header.path, server_id);
 		
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
@@ -33,6 +34,7 @@ bool		Server::check_DELETE_request_validity( struct header & header, id_server_t
 
 bool		Server::check_POST_request_validity( struct header & header, id_server_type server_id )
 {
+	check_server_name(header, server_id);
 	std::string location_name = retrieve_location_name(header.path, server_id);
 	
 	// std::cout << location_name << std::endl;
@@ -105,8 +107,6 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 {
 	client_request.read_client(clientSocket);
 
-	check_server_name(client_request.get_header(), server_id);
-
 	if ( client_request.get_header().path.size() > 1000 )
 	{
 		send_414(server_id);
@@ -125,12 +125,15 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 	{
 		if ( check_POST_request_validity(client_request.get_header(), server_id ) == false )
 			return reject_client(clientSocket, server_id, client_request.get_file_path());
+		else if ( client_request.is_valid_request() == false )
+		{
+			send_204();
+			return reject_client(clientSocket, server_id, client_request.get_file_path());
+		}
 		else if ( client_request.is_full() == false )
 			return true;
-		else if ( client_request.is_valid_request() == true )
-			post_request( client_request, server_id );
 		else
-			send_204();
+			post_request( client_request, server_id );
 	}
 	else if ( client_request.get_header().method == DELETE )
 	{

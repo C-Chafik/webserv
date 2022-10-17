@@ -67,6 +67,8 @@ std::string Server::treat_GET_request(struct header & header, id_server_type ser
 
 	/*have to be the first check because can change the server_id*/
 
+	check_server_name(header, server_id);
+
 	file = parse_uri(header, server_id);
 
 	rtnFile = fileLocation(file, server_id);//routing

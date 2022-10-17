@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/17 16:01:58 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/17 20:39:07 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,7 @@ void Request::read_client( int requestFd )
 	if ( ( end = recv(requestFd, buffer, 8192 - 1, 0)) > 0 )
 		insert(buffer, end, file);
 	if ( check_if_header_is_received() == true )
-	{
 		read_header();
-		if ( _is_valid == false )
-			_is_full = true;
-	}
 	file.close();
 }
 
@@ -99,6 +95,7 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	file.write(buffer, len);
 	
 	_read_content_length += len;
+	// std::cout << RED << "[" << _read_content_length << "]" << WHITE << std::endl;
 
 	if ( _with_body == true )
 		if ( _read_content_length >= _header.content_length )
