@@ -24,6 +24,16 @@ void Server::send_201( void )
 	HGen.processResponse();
 }
 
+void Server::send_200_chunked( void )
+{
+	HGen.clear();
+
+	HGen.setStatus("200 OK");
+	HGen.setType("text/html");
+	HGen.setTransEnc("chunked");
+	HGen.processResponse();
+}
+
 void Server::send_200_autoindex(std::string content){
 	HGen.clear();
 	HGen.setStatus("200 OK");
@@ -104,7 +114,7 @@ void Server::send_405(id_server_type serverNb){
 	else
 		fileSTR = generate_405();
 
-	HGen.setStatus("404 Not Found");
+	HGen.setStatus("405 Method Not Allowed");
 	HGen.setType("text/html");
 	HGen.setContentString(fileSTR);
 	HGen.processResponse();

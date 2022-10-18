@@ -6,13 +6,13 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/18 11:36:11 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/18 15:46:12 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Request.hpp"
 
-Request::Request( void ) : _read_content_length(0), _is_valid(false), _is_full(false), _with_body(false), _header_found(false)
+Request::Request( void ) : _read_content_length(0), _error_code(0), _is_valid(false), _is_full(false), _is_chunked(false), _with_body(false), _header_found(false)
 {
 	search_tmp_name();
 }
@@ -95,7 +95,6 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 	file.write(buffer, len);
 	
 	_read_content_length += len;
-	// std::cout << RED << "[" << _read_content_length << "]" << WHITE << std::endl;
 
 	if ( _with_body == true )
 		if ( _read_content_length >= _header.content_length )
@@ -114,10 +113,9 @@ bool	Request::check_if_header_is_received( void )
 	{
 		full_buffer += buffer;
 		full_buffer += '\n';
-
+		
 		if ( full_buffer.size() > 2000 )
 		{
-			std::cout << "its 414 bro" << std::endl;
 			_error_code = 414;
 			return false;
 		}
@@ -138,6 +136,7 @@ void	Request::read_header( void )
 	std::istringstream 	tmp(_header_buffer);
 	std::string 		buff;
 	bool 				first = false;
+	bool	 			is_there_host = false;
 
 	while ( std::getline(tmp, buff) )
 	{
@@ -161,10 +160,19 @@ void	Request::read_header( void )
 			return ;
 		}
 
-		if ( infos.size() == 2 && infos.front() == "Host:" )
+		else if ( infos.size() == 2 && infos.front() == "Host:" )
+		{
 			assign_host(infos.back());
+			is_there_host = true;
+		}
+		else if ( infos.size() == 1 && infos.front().find("Host:") != std::string::npos )
+		{
+			std::string host = trim_data(infos.front(), "Host:");
+			assign_host(host);
+			is_there_host = true;
+		}
 
-		if ( infos.size() == 2 && infos.front() == "Content-Length:" ) //! If content_length is missing and the method is POST, must throw an 411
+		else if ( infos.size() == 2 && infos.front() == "Content-Length:" ) //! If content_length is missing and the method is POST, must throw an 411
 		{
 			_with_body = true;
 			_header.content_length = -1;
@@ -176,9 +184,16 @@ void	Request::read_header( void )
 			}
 			if ( _read_content_length >= _header.content_length ) //? Here we check if we didnt get the full body while reading the header
 				_is_full = true;
+			_is_valid = true;
+		}
+
+		else if ( infos.size() == 2 && infos.front() == "Transfer-Encoding:" )
+		{
+			if ( infos.back() == "chunked" )
+				_is_chunked = true;
 		}
 		
-		if ( infos.size() == 2 && infos.front() == "Connection:" )
+		else if ( infos.size() == 2 && infos.front() == "Connection:" )
 		{
 			if ( infos.back() == "keep_alive")
 				_header.keep_alive = true;
@@ -186,7 +201,7 @@ void	Request::read_header( void )
 				_header.keep_alive = false;
 		}
 
-		if ( infos.size() == 3 && infos.front() == "Content-Type:" )
+		else if ( infos.size() == 3 && infos.front() == "Content-Type:" )
 		{
 			infos.pop_front();
 			_header.content_type = infos.front();
@@ -203,6 +218,12 @@ void	Request::read_header( void )
 			_header.raw_content_type = _header.content_type;
 			_is_valid = true;
 		}
+		
+	}
+	if ( is_there_host == false )	
+	{
+		_error_code = 400;
+		return ;
 	}
 }
 
@@ -219,11 +240,6 @@ bool	Request::is_valid_request( void )
 struct body & Request::get_body( void )
 {
 	return _body;
-}
-
-void				Request::set_curr_response( std::string & src )
-{
-	_curr_response = src;
 }
 
 int					Request::get_actual_error( void )

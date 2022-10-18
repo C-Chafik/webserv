@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#define NB_INFOS 5
+#define NB_INFOS 6
 
 class HeaderGen{
 private:
@@ -13,6 +13,7 @@ private:
 		LOC,
 		TYPE,
 		LENGTH,
+		TRANSFER,
 		CONTENT
 	};
 
@@ -41,6 +42,12 @@ public:
 		_Info[LOC].append("Location: ");
 		_Info[LOC].append(str);
 		_Info[LOC].append("\n");
+	}
+
+	void setTransEnc(std::string str){
+		_Info[TRANSFER].append("Transfer-Encoding: ");
+		_Info[TRANSFER].append(str);
+		_Info[TRANSFER].append("\n");
 	}
 
 	void setContentString(std::string str){

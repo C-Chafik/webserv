@@ -196,7 +196,7 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 		else if ( exact_match(*it, "client_max_body_size") == true )
 		{
 			_config.locations[path].body_max_size = insert_body_max_size(*it);
-			if ( _config.locations[path].body_max_size )
+			if ( _config.locations[path].body_max_size == -1 )
 			{
 				parsing_error("ERROR AT : ", *it);
 				return _file.end();

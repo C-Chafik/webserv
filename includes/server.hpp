@@ -79,6 +79,7 @@ class Server{
 	void send_responses(std::string file);
 	void send_200_autoindex(std::string content);
 	void send_200(std::string file, std::string & extension );
+	void send_200_chunked( void );
 	void send_201( void );
 	void send_204( void );
 	void send_202( void );
