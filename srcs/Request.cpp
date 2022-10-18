@@ -6,7 +6,7 @@
 /*   By: cmarouf <cmarouf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 13:50:09 by cmarouf           #+#    #+#             */
-/*   Updated: 2022/10/17 22:10:29 by cmarouf          ###   ########.fr       */
+/*   Updated: 2022/10/18 11:36:11 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	Request::insert( char * buffer, size_t len, std::fstream & file )
 
 bool	Request::check_if_header_is_received( void )
 {
+	_error_code = 0;
 	std::string	 	buffer;
 	std::string		full_buffer;
 	std::ifstream 	tmp(_tmp_filename.c_str(), std::ifstream::binary );
@@ -113,7 +114,14 @@ bool	Request::check_if_header_is_received( void )
 	{
 		full_buffer += buffer;
 		full_buffer += '\n';
-		
+
+		if ( full_buffer.size() > 2000 )
+		{
+			std::cout << "its 414 bro" << std::endl;
+			_error_code = 414;
+			return false;
+		}
+
 		if ( full_buffer.rfind("\r\n\r\n") != std::string::npos )
 		{
 			std::clog << YELLOW << full_buffer << WHITE << std::endl;
@@ -126,6 +134,7 @@ bool	Request::check_if_header_is_received( void )
 
 void	Request::read_header( void )
 {
+	_error_code = 0;
 	std::istringstream 	tmp(_header_buffer);
 	std::string 		buff;
 	bool 				first = false;
@@ -137,6 +146,11 @@ void	Request::read_header( void )
 		if ( infos.size() == 3 && (infos.front() == "GET" || infos.front() == "POST" || infos.front() == "DELETE") )
 		{
 			_header.method = assign_method(infos.front());
+			if ( infos.back() != "HTTP/1.1" )
+			{
+				_error_code = 400;
+				return ;
+			}
 			infos.pop_back();
 			_header.path = infos.back();
 			first = true;
@@ -153,7 +167,13 @@ void	Request::read_header( void )
 		if ( infos.size() == 2 && infos.front() == "Content-Length:" ) //! If content_length is missing and the method is POST, must throw an 411
 		{
 			_with_body = true;
+			_header.content_length = -1;
 			_header.content_length = std::atoi(infos.back().c_str());
+			if ( _header.content_length <= 0 )
+			{
+				_error_code = 400;
+				return ;
+			}
 			if ( _read_content_length >= _header.content_length ) //? Here we check if we didnt get the full body while reading the header
 				_is_full = true;
 		}
@@ -204,6 +224,11 @@ struct body & Request::get_body( void )
 void				Request::set_curr_response( std::string & src )
 {
 	_curr_response = src;
+}
+
+int					Request::get_actual_error( void )
+{
+	return _error_code;
 }
 
 std::string &		Request::get_curr_response( void )

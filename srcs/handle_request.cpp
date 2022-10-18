@@ -39,7 +39,7 @@ bool		Server::check_POST_request_validity( struct header & header, id_server_typ
 
 	if ( confs[server_id].locations.find(location_name) != confs[server_id].locations.end() )
 	{
-		if ( header.content_length > confs[server_id].body_max_size && header.method == POST )
+		if ( header.content_length > confs[server_id].locations[location_name].body_max_size && header.method == POST )
 		{
 			send_413(server_id);
 			return false;
@@ -106,8 +106,21 @@ bool Server::treat_request( Request & client_request, int clientSocket, id_serve
 {
 	client_request.read_client(clientSocket);
 
+	if ( client_request.get_actual_error() == 414 )
+	{
+		send_414(server_id);
+		return reject_client(clientSocket, client_request.get_file_path());
+	}
+
+	if ( client_request.get_actual_error() == 400 )
+	{
+		send_400(server_id);
+		return reject_client(clientSocket, client_request.get_file_path());
+	}
+
 	if ( client_request.get_header().path.size() > 1000 )
 	{
+		
 		send_414(server_id);
 		return reject_client(clientSocket, client_request.get_file_path());
 	}

@@ -193,6 +193,16 @@ std::list<std::string>::iterator	parseConfig::parse_location( std::list<std::str
 			_config.locations[path].index = ret;
 		}
 
+		else if ( exact_match(*it, "client_max_body_size") == true )
+		{
+			_config.locations[path].body_max_size = insert_body_max_size(*it);
+			if ( _config.locations[path].body_max_size )
+			{
+				parsing_error("ERROR AT : ", *it);
+				return _file.end();
+			}
+		}
+		
 		else if ( exact_match(*it, "return") == true )
 			_config.locations[path].http_redirection = insert_http_redirection(*it);
 
@@ -224,8 +234,8 @@ bool parseConfig::search_informations( std::string & line )
 
 		else if ( exact_match(line, "client_max_body_size") == true )
 		{
-			_config.body_max_size = insert_body_max_size(line);
-			if ( _config.body_max_size == -1 )
+			_config.locations["/"].body_max_size = insert_body_max_size(line);
+			if ( _config.locations["/"].body_max_size == -1 )
 			{
 				parsing_error("ERROR AT : ", line);
 				return false;

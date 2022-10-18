@@ -5,6 +5,7 @@
 
 struct parseLocation 
 {
+	long long         					body_max_size;
 	int	 	 							location_type;
 	bool 								GET;
 	bool 								POST;
@@ -15,7 +16,7 @@ struct parseLocation
 	std::string 						upload_path;
 	std::pair< int, std::string >		http_redirection;
 
-	parseLocation( void ){ autoindex = false; GET = false; POST = false; DELETE = false; upload_path = "./"; }
+	parseLocation( void ){ body_max_size = 100000; autoindex = false; GET = false; POST = false; DELETE = false; upload_path = "./"; }
 	~parseLocation ( void ) {}
 };
 
@@ -28,9 +29,8 @@ struct config
 	std::map<std::string/*ip*/, std::vector<std::string> /*ports list*/> 	listening;
 	std::map< int, std::string > 											errors;
 	std::map< std::string, struct parseLocation, greater<std::string> > 	locations;
-	long long         														body_max_size;
 
-	config( void ) { locations["/"].index = "default/index.html"; body_max_size = 100000; }
+	config( void ) { locations["/"].index = "default/index.html"; }
 	~config ( void ) {}
 
 	void clear( void )
@@ -42,8 +42,7 @@ struct config
 		cgi_extension.clear();
 		cgi_path.clear();
 		query_string.clear();
-
-		body_max_size = 100000;
+		
 		locations["/"].index = "default/index.html";
 	}
 };

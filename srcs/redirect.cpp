@@ -2,10 +2,11 @@
 
 void Server::redirect(std::string file, id_server_type server_id){
 
-	if (file.find("/") != std::string::npos)
-		file = file.substr(0, file.find("/"));
+	file = retrieve_location_name(file, server_id);
 
-	// std::clog << file << std::endl;
+	// if (file.find("/") != std::string::npos)
+	// 	file = file.substr(file.find("/") + 1, file.size() - file.find("/") - 1);
+
 	if (confs[server_id].locations.find(file) != confs[server_id].locations.end()
 		 && confs[server_id].locations[file].http_redirection.first == 301
 		 && confs[server_id].locations[file].http_redirection.second != file){
@@ -17,6 +18,7 @@ void Server::redirect(std::string file, id_server_type server_id){
 		 && confs[server_id].locations["/"].http_redirection.first == 301
 		 && confs[server_id].locations[file].http_redirection.second != file){
 
+			std::clog << "=>" <<  confs[server_id].locations["/"].http_redirection.second  << "|" << std::endl;
 		throw (Error_page("/"));
 	}
 }
